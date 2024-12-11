@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="cPlayer.exe" version="1.0.0.83" publicKeyToken="6f1fd0ebc6282a4b" language="neutral" processorArchitecture="x86" type="win32" />
+  <description asmv2:iconFile="favicon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="cPlayer" version="3.0.0.0" language="neutral" processorArchitecture="x86" />
+    <commandLine file="cPlayer.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet version="1" class="System.Security.NamedPermissionSet" Name="LocalIntranet" Description="Default rights given to applications on the local intranet" Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- UAC Manifest Options
+            If you want to change the Windows User Account Control level replace the 
+            requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+            Specifying requestedExecutionLevel node will disable file and registry virtualization.
+            If you want to utilize File and Registry Virtualization for backward 
+            compatibility then delete the requestedExecutionLevel node.
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AxInterop.WMPLib.dll" size="53760">
+      <assemblyIdentity name="AxInterop.WMPLib" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>yHU0TFQ9gBDuR7CNMZVVPDYGFUnUzikpHYHZbDUZXwU=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bass.Net.dll" size="651264">
+      <assemblyIdentity name="Bass.Net" version="2.4.17.2" publicKeyToken="B7566C273E6EF480" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>F6yhQ02+GuP61R/GV4YwtNaFytK5vHv3t/74EXrSh+8=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="cPlayer.exe" size="707992">
+      <assemblyIdentity name="cPlayer" version="3.0.0.0" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>C4Cg2UGAxB5teWtRUaNachHZwd/BM/zEnc3P5EyfIPA=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Interop.WMPLib.dll" size="330752">
+      <assemblyIdentity name="Interop.WMPLib" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>xEEKvb/QaQl+NRXi7wdqVw2S4udeXJAV0LyLetX6Shc=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NAudio.dll" size="55808">
+      <assemblyIdentity name="NAudio" version="1.7.2.19" language="neutral" processorArchitecture="x86" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>1SAiUxrM+hxa9x5vlbIxHgLQVL4W3M+q9PNxO5TLzaE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="nautilus.dll" size="25088">
+      <assemblyIdentity name="Nautilus" version="3.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>q8gCf9CzW94dvbVuiLtvaLxsFmsW5/XVfI1d9BmdDiU=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="cPlayer.exe.config" size="352">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>upjIssEqUCU5pOrl1vAW3yur+spBv4b23W3hUprolmA=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="favicon.ico" size="32988">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>HNq8TeJ44LNfgxrK/sv+afdvYnxil3OqvVvubCrKzeM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Resources\random.png" size="1370">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>VX8chmnhE9CCdddlG0MYOxAB5biQFt7OZ8pPKstuY7s=</dsig:DigestValue>
+    </hash>
+  </file>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- A list of all Windows versions that this application is designed to work with. Windows will automatically select the most compatible environment.-->
+      <!-- If your application is designed to work with Windows 7, uncomment the following supportedOS node-->
+      <!--<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>-->
+    </application>
+  </compatibility>
+<publisherIdentity name="CN=NEMOPC\Yemil-PC" issuerKeyHash="1d11bbc517358dffccdeea42ae02a0d2cabd1cca" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>1fmtrafqs71lNno92FAWUgSSHcU=</DigestValue></Reference></SignedInfo><SignatureValue>iXyUtl8o6o8qPxpxOT/GS7oprzaXgFFIyar4w30R4VTPnkhQsZl4qALHZ8X7JRz/80PCB0c76zrk1IIOmoJSvNzQev2Z1mzRbXzfCKFOBmh/9dLSgdmxyLxTtHWpnINA+S8pEH+HWz4Dqr91ecQDEBXNWBW/lengmtmg9O9sYQs=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>m/vMO56f/eU4mh5UxqhHNQKT3LrAh6FvJVqOQ6qPVV5fb9/Or8wxM4du7tHEbF34jkJJcwyyK09AVkBE5fHCH0SSwjVfTXMBy8Rfzhzxgmv4MJ7B5WP/pZECDzZ7wml6hVnjU/2zQcfD8RKe24V6bMGmh4QDxqqEc6cp8+CoQFU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="c51d9204521650d83d7a3665bdb3eaa7adadf9d5" Description="" Url=""><as:assemblyIdentity name="cPlayer.exe" version="1.0.0.83" publicKeyToken="6f1fd0ebc6282a4b" language="neutral" processorArchitecture="x86" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=NEMOPC\Yemil-PC</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /><DigestValue>lQbS0MYTVivMnEwQSVdlclMo5sI=</DigestValue></Reference></SignedInfo><SignatureValue>lEPyEzPZkKGqVE6VAwJC36fj+RBppHnLFx6hcK9VhOOZB1YeIcKeora9RRmHk+e+NthBGr2+8Y3/r6GMcEcU3Eh4u+OrVZp5GVFiPzy+30CdQg6bVpcA+rUzM7YdxqJRtd4W+9JjDOUFas9uNDJUo/cG3a1bh4yl3gPPowuI7yQ=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>m/vMO56f/eU4mh5UxqhHNQKT3LrAh6FvJVqOQ6qPVV5fb9/Or8wxM4du7tHEbF34jkJJcwyyK09AVkBE5fHCH0SSwjVfTXMBy8Rfzhzxgmv4MJ7B5WP/pZECDzZ7wml6hVnjU/2zQcfD8RKe24V6bMGmh4QDxqqEc6cp8+CoQFU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB1TCCAT6gAwIBAgIQIFloneDnboNCvjLUV3zXfzANBgkqhkiG9w0BAQUFADApMScwJQYDVQQDHh4ATgBFAE0ATwBQAEMAXABZAGUAbQBpAGwALQBQAEMwHhcNMjMwODE3MjEzNzI1WhcNMjQwODE3MDMzNzI1WjApMScwJQYDVQQDHh4ATgBFAE0ATwBQAEMAXABZAGUAbQBpAGwALQBQAEMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJv7zDuen/3lOJoeVMaoRzUCk9y6wIehbyVajkOqj1VeX2/fzq/MMTOHbu7RxGxd+I5CSXMMsitPQFZAROXxwh9EksI1X01zAcvEX84c8YJr+DCeweVj/6WRAg82e8JpeoVZ41P9s0HHw/ESntuFemzBpoeEA8aqhHOnKfPgqEBVAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAm+Q8Q7G1gNtxhQF3k8ylLWlJd02zVaK2lIpn8njPk2ob3r3brN71mLAWrM9I1Ah+s+J1PivBzsuywS34nfbnHW0rFZ7GrF/j7mNQ+/MlWfy49vwbCqeJyfywXtd5rdTDTq6H7gVW4SZcxMUcGZc1wXsyHY71+7KH3u1cwFfvNZA=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

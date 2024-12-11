@@ -1,0 +1,71 @@
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Resources\cowbellb.png
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe.config
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe.manifest
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.application
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.pdb
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Bass.Net.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\NAudio.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\nautilus.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Interop.WMPLib.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\AxInterop.WMPLib.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.AssemblyReference.cache
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\Interop.WMPLib.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\AxInterop.WMPLib.dll
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.ResolveComReference.cache
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Art.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.AudioSelector.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.frmMain.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.HelpForm.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.LyricSelector.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.MIDISelector.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Properties.Resources.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Rebuilder.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.SectionSelector.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Updater.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Volume.resources
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.GenerateResource.cache
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.CoreCompileInputs.cache
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.TrustInfo.xml
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.exe.manifest
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.application
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.exe
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.pdb
+E:\My Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.Up2Date
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Resources\cowbellb.png
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe.config
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe.manifest
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.application
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.exe
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\cPlayer.pdb
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Bass.Net.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\NAudio.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\Interop.WMPLib.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\AxInterop.WMPLib.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.AssemblyReference.cache
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\Interop.WMPLib.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\AxInterop.WMPLib.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.ResolveComReference.cache
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Art.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.AudioSelector.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.frmMain.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.HelpForm.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.LyricSelector.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.MIDISelector.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Properties.Resources.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Rebuilder.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.SectionSelector.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Updater.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.Volume.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.GenerateResource.cache
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.CoreCompileInputs.cache
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.TrustInfo.xml
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.exe.manifest
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.application
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.csproj.Up2Date
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.exe
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.pdb
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\NautilusFREE.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\bin\Debug\SharpMp4Parser.dll
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.KaraokeOverlayForm.resources
+D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.gifOverlay.resources
