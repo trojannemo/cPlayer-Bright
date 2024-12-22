@@ -36,7 +36,10 @@ namespace cPlayer
         public PhraseCollection PhrasesHarm3;
         private List<PracticeSection> InternalPracticeSessions;
         public List<PracticeSection> PracticeSessions;
-        
+        private const int SOLO_MARKER = 103;
+        private const int FILL_MARKER = 120;
+        private const int OD_MARKER = 116;
+
         public void Initialize(bool doall)
         {
             MIDIInfo = new MIDIChart();
@@ -64,6 +67,11 @@ namespace cPlayer
             }
         }
 
+        private List<SpecialMarker> GetSpecialMarker(IEnumerable<MidiEvent> track, int marker_note)
+        {
+            return (from notes in track where notes.CommandCode == MidiCommandCode.NoteOn select (NoteOnEvent)notes into note where note.Velocity > 0 && note.NoteNumber == marker_note let time = GetRealtime(note.AbsoluteTime) let end = GetRealtime(note.AbsoluteTime + note.NoteLength) select new SpecialMarker { MarkerBegin = time, MarkerEnd = end }).ToList();
+        }
+
         public bool ReadMIDIFile(string midi, bool output_info = true)
         {
             if (!File.Exists(midi)) return false;
@@ -71,7 +79,7 @@ namespace cPlayer
             LengthLong = 0;
             MIDIFile = null;
             MIDIFile = Tools.NemoLoadMIDI(midi);
-            if (MIDIFile == null) return false;
+            if (MIDIFile == null) return false;                      
             try
             {
                 TicksPerQuarter = MIDIFile.DeltaTicksPerQuarterNote;
@@ -88,13 +96,15 @@ namespace cPlayer
                             MIDIInfo.Drums.Initialize();
                         }
                         GetDiscoFlips(MIDIFile.Events[i]);
-                        GetToms(MIDIFile.Events[i]);
+                        MIDIInfo.Drums.Toms = GetToms(MIDIFile.Events[i]);
+                        MIDIInfo.Drums.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Drums.ValidNotes, out toadd, true);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Drums, MIDIInfo.Drums.ValidNotes, out toadd, true);
                         if (!output_info) continue;
                         MIDIInfo.Drums.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Drums.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Drums.ChartedNotes);
-                        MIDIInfo.Drums.Solos = GetInstrumentSolos(MIDIFile.Events[i], 103);
+                        MIDIInfo.Drums.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
+                        MIDIInfo.Drums.Fills = GetSpecialMarker(MIDIFile.Events[i], FILL_MARKER);
                         foreach (var note in MIDIInfo.Drums.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -133,12 +143,13 @@ namespace cPlayer
                             MIDIInfo.Bass = new MIDITrack { Name = "Bass", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Bass.Initialize();
                         }
+                        MIDIInfo.Bass.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Bass.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Bass, MIDIInfo.Bass.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Bass.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Bass.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Bass.ChartedNotes);
-                        MIDIInfo.Bass.Solos = GetInstrumentSolos(MIDIFile.Events[i], 103);
+                        MIDIInfo.Bass.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Bass.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -168,12 +179,13 @@ namespace cPlayer
                             MIDIInfo.Guitar = new MIDITrack { Name = "Guitar", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Guitar.Initialize();  
                         }
+                        MIDIInfo.Guitar.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Guitar.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Guitar, MIDIInfo.Guitar.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Guitar.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Guitar.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Guitar.ChartedNotes);
-                        MIDIInfo.Guitar.Solos = GetInstrumentSolos(MIDIFile.Events[i], 103);
+                        MIDIInfo.Guitar.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Guitar.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -203,12 +215,13 @@ namespace cPlayer
                             MIDIInfo.Keys = new MIDITrack { Name = "Keys", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } }; //not supported currently but future proofing
                             MIDIInfo.Keys.Initialize();
                         }
+                        MIDIInfo.Keys.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Keys.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Keys, MIDIInfo.Keys.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Keys.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Keys.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Keys.ChartedNotes);
-                        MIDIInfo.Keys.Solos = GetInstrumentSolos(MIDIFile.Events[i], 103);
+                        MIDIInfo.Keys.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Keys.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -234,7 +247,8 @@ namespace cPlayer
                     else if (trackname.Contains("REAL_KEYS_X"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.ProKeys.ValidNotes, out toadd);
+                        MIDIInfo.ProKeys.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.ProKeys, MIDIInfo.ProKeys.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.ProKeys.ChartedNotes.AddRange(toadd);
                         MIDIInfo.ProKeys.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.ProKeys.ChartedNotes);
@@ -243,7 +257,7 @@ namespace cPlayer
                     else if (trackname.Contains("VOCALS"))
                     {
                         List<MIDINote> toAdd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Vocals.ValidNotes, out toAdd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Vocals, MIDIInfo.Vocals.ValidNotes, out toAdd);
                         if (!output_info) continue;
                         MIDIInfo.Vocals.ChartedNotes.AddRange(toAdd);
                         MIDIInfo.Vocals.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Vocals.ChartedNotes);
@@ -252,21 +266,28 @@ namespace cPlayer
                         MIDIInfo.UsesCowbell = SongUsesCowbell(MIDIFile.Events[i]);
 
                         //only do this if we have exact match of lyrics and vocal notes
-                        if (MIDIInfo.Vocals.ChartedNotes.Count == InternalVocals.Lyrics.Count)
+                        var ChartedNotesNoPercussion = new List<MIDINote>();
+                        for (var c = 0; c < MIDIInfo.Vocals.ChartedNotes.Count; c++)
                         {
-                            List<MIDINote> mNotes = MIDIInfo.Vocals.ChartedNotes;
-                            mNotes.Sort((a, b) => a.NoteStart.CompareTo(b.NoteStart));
+                            if ((MIDIInfo.Vocals.ChartedNotes[c].NoteNumber < 96)) //avoid percussion
+                                {
+                                ChartedNotesNoPercussion.Add(MIDIInfo.Vocals.ChartedNotes[c]);
+                            }
+                        }
+                        if (ChartedNotesNoPercussion.Count == InternalVocals.Lyrics.Count)
+                        {
+                            ChartedNotesNoPercussion.Sort((a, b) => a.NoteStart.CompareTo(b.NoteStart));
 
-                            for (int z = 0; z < mNotes.Count; z++)
+                            for (int z = 0; z < ChartedNotesNoPercussion.Count; z++)
                             {
-                                InternalVocals.Lyrics[z].LyricDuration = mNotes[z].NoteLength;
+                                InternalVocals.Lyrics[z].LyricDuration = ChartedNotesNoPercussion[z].NoteLength;
                             }
                         }
                     }
                     else if (trackname.Contains("HARM1"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm1.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm1, MIDIInfo.Harm1.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm1.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm1.ChartedNotes);
@@ -276,7 +297,7 @@ namespace cPlayer
                     else if (trackname.Contains("HARM2"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm2.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm2, MIDIInfo.Harm2.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm2.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm2.ChartedNotes, MIDIInfo.Harm1.NoteRange);
@@ -286,7 +307,7 @@ namespace cPlayer
                     else if (trackname.Contains("HARM3"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm3.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm3, MIDIInfo.Harm3.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm3.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm3.ChartedNotes, MIDIInfo.Harm1.NoteRange);
@@ -337,8 +358,10 @@ namespace cPlayer
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                //Clipboard.SetText(ex.Message + "\n\n" + ex.StackTrace + "\n\n" + ex.StackTrace);
+                //MessageBox.Show("Error when loading with MidiProcessor:\n" + ex.Message);
                 return false;
             }
             MIDIInfo.AverageBPM = AverageBPM();
@@ -385,9 +408,10 @@ namespace cPlayer
             }
         }
 
-        private void GetToms(IList<MidiEvent> track)
+        private List<MIDINote> GetToms(IList<MidiEvent> track)
         {
             var ValidToms = new List<int> { 110, 111, 112 };
+            var toms = new List<MIDINote>();
             for (var z = 0; z < track.Count(); z++)
             {
                 try
@@ -411,11 +435,12 @@ namespace cPlayer
                         NoteNumber = note.NoteNumber,
                         isTom = true
                     };
-                    MIDIInfo.Toms.Add(n);
+                    toms.Add(n);
                 }
                 catch (Exception)
                 { }
             }
+            return toms;
         }
 
         private List<SpecialMarker> GetInstrumentSolos(IEnumerable<MidiEvent> track, int solo_note)
@@ -581,7 +606,7 @@ namespace cPlayer
             }
         }
 
-        private void CheckMIDITrack(IList<MidiEvent> track, ICollection<int> valid_notes, out List<MIDINote> output, bool isDrums = false)
+        private void CheckMIDITrack(IList<MidiEvent> track, MIDITrack instrument, ICollection<int> valid_notes, out List<MIDINote> output, bool isDrums = false)
         {
             output = new List<MIDINote>();
             for (var z = 0; z < track.Count(); z++)
@@ -607,7 +632,8 @@ namespace cPlayer
                             note.NoteNumber = note.NoteNumber == 97 ? 98 : 97;
                         }
                     }
-                    var isTom = MIDIInfo.Toms.Where(tom => tom.NoteStart <= time).Where(tom => tom.NoteEnd >= time).Any(tom => tom.NoteNumber - note.NoteNumber == 12);
+                    var isTom = instrument.Toms.Where(tom => tom.NoteStart <= time).Where(tom => tom.NoteEnd >= time).Any(tom => tom.NoteNumber - note.NoteNumber == 12);
+                    var hasOD = instrument.Overdrive.Where(OD => OD.MarkerBegin <= time).Any(OD => OD.MarkerEnd >= end);
                     var n = new MIDINote
                     {
                         NoteStart = time,
@@ -615,7 +641,8 @@ namespace cPlayer
                         NoteEnd = end,
                         NoteNumber = note.NoteNumber,
                         NoteName = note.NoteName,
-                        isTom = isTom
+                        isTom = isTom,
+                        hasOD = hasOD
                     };
                     output.Add(n);
                 }
@@ -623,7 +650,7 @@ namespace cPlayer
                 {}
             }
         }
-        
+
         private double GetRealtime(long absdelta)
         {
             //code by raynebc
@@ -640,7 +667,6 @@ namespace cPlayer
             return Math.Round(time / 1000, 5);
         }
 
-        
         private void BuildTimeSignatureList()
         {
             TimeSignatures = new List<TimeSignature>();
@@ -696,8 +722,8 @@ namespace cPlayer
                 };
                 TempoEvents.Add(tempo_event);
             }
-        }
-              
+        }  
+
         private double AverageBPM()
         {
             var total_bpm = 0.0;
@@ -740,17 +766,26 @@ namespace cPlayer
         public List<int> ValidNotes { get; set; }
         public List<int> NoteRange { get; set; }
         public int ActiveIndex { get; set; }
-        public List<SpecialMarker> Solos { get; set; } 
+        public List<MIDINote> Toms { get; set; }
+        public List<SpecialMarker> Solos { get; set; }
+        public List<SpecialMarker> Overdrive { get; set; }
+        public List<SpecialMarker> Fills { get; set; }
+
         public void Sort()
         {
             ChartedNotes.Sort((a,b) => a.NoteStart.CompareTo(b.NoteStart));
             Solos.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
+            Overdrive.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
+            Fills.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
         }
         public void Initialize()
         {
             ChartedNotes = new List<MIDINote>();
             NoteRange = new List<int>();
             Solos = new List<SpecialMarker>();
+            Toms = new List<MIDINote>();
+            Fills = new List<SpecialMarker>();
+            Overdrive = new List<SpecialMarker>();
         }
     }
 
@@ -767,7 +802,7 @@ namespace cPlayer
         public MIDITrack Harm3 { get; set; }
         public double AverageBPM { get; set; }
         public bool UsesCowbell { get; set; }
-        public List<MIDINote> Toms { get; set; }
+
         public List<SpecialMarker> DiscoFlips; 
 
         public void Initialize()
@@ -792,7 +827,6 @@ namespace cPlayer
             Harm2.Initialize();
             Harm3.Initialize();
             DiscoFlips = new List<SpecialMarker>();
-            Toms = new List<MIDINote>();
             AverageBPM = 0.0;
             UsesCowbell = false;
         }
@@ -894,6 +928,7 @@ namespace cPlayer
         public string NoteName { get; set; }
         public Color NoteColor { get; set; }
         public bool isTom { get; set; }
+        public bool hasOD { get; set; }
     }
 
     public class TempoEvent

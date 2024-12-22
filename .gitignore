@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/CONPlayer/FileContentIndex
+/.vs/CONPlayer/v17
+/CONPlayer/.vs/cPlayer.csproj.dtbcache.json
+/.cr/personal/FavoritesList

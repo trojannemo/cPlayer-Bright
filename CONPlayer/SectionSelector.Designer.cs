@@ -51,13 +51,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(235, 252);
             this.Controls.Add(this.lstSections);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.KeyPreview = true;
             this.Name = "SectionSelector";
-            this.Text = "SectionSelector";
+            this.Opacity = 0.9D;
+            this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.Text = "Section Selector";
             this.Deactivate += new System.EventHandler(this.SectionSelector_Deactivate);
             this.Shown += new System.EventHandler(this.SectionSelector_Shown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SectionSelector_KeyUp);

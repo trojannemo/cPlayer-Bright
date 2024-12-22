@@ -41,10 +41,10 @@
             // picWorking
             // 
             this.picWorking.BackColor = System.Drawing.Color.Transparent;
-            this.picWorking.Image = global::cPlayer.Properties.Resources.loading_blue;
-            this.picWorking.Location = new System.Drawing.Point(49, 36);
+            this.picWorking.Image = global::cPlayer.Properties.Resources.loadingnew_small;
+            this.picWorking.Location = new System.Drawing.Point(30, 34);
             this.picWorking.Name = "picWorking";
-            this.picWorking.Size = new System.Drawing.Size(100, 100);
+            this.picWorking.Size = new System.Drawing.Size(128, 128);
             this.picWorking.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picWorking.TabIndex = 32;
             this.picWorking.TabStop = false;
@@ -52,10 +52,11 @@
             // 
             // label1
             // 
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(12, 4);
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.ForeColor = System.Drawing.Color.Black;
+            this.label1.Location = new System.Drawing.Point(30, 4);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 23);
+            this.label1.Size = new System.Drawing.Size(128, 23);
             this.label1.TabIndex = 33;
             this.label1.Text = "Rebuilding playlist...";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -63,8 +64,8 @@
             // lblCurrent
             // 
             this.lblCurrent.BackColor = System.Drawing.Color.Transparent;
-            this.lblCurrent.ForeColor = System.Drawing.Color.White;
-            this.lblCurrent.Location = new System.Drawing.Point(12, 145);
+            this.lblCurrent.ForeColor = System.Drawing.Color.Black;
+            this.lblCurrent.Location = new System.Drawing.Point(11, 168);
             this.lblCurrent.Name = "lblCurrent";
             this.lblCurrent.Size = new System.Drawing.Size(169, 23);
             this.lblCurrent.TabIndex = 34;
@@ -79,7 +80,6 @@
             // 
             this.btnCancel.BackColor = System.Drawing.Color.White;
             this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Location = new System.Drawing.Point(167, 4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(23, 23);
@@ -93,8 +93,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(192, 174);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(192, 200);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.lblCurrent);
             this.Controls.Add(this.label1);

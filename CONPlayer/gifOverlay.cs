@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cPlayer.Properties;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -14,18 +15,7 @@ namespace cPlayer
         public gifOverlay(frmMain MainForm)
         {
             InitializeComponent();
-            // Load the GIF
-            var gifPATH = Application.StartupPath + "\\res\\working.gif";
-            if (File.Exists(gifPATH) )
-            {
-                spinningGif = Image.FromFile(gifPATH);
-            }
-            else
-            {
-                MessageBox.Show("Can't find that GIF file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Dispose();
-                return;
-            }
+            spinningGif = Resources.loadingnew_small;
             if (spinningGif == null)
             {
                 MessageBox.Show("Failed to load GIF!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -41,8 +31,8 @@ namespace cPlayer
             UpdateStyles();
 
             // Configure the form
-            this.BackColor = Color.Black;
-            this.TransparencyKey = Color.Black;
+            this.BackColor = Color.White;
+            this.TransparencyKey = Color.White;
             this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
 

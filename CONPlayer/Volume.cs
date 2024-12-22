@@ -9,9 +9,9 @@ namespace cPlayer
     {
         private readonly frmMain xParent;
         private readonly Point StartLocation;
-        private int mouseX;
-        private const double MinVolume = 50;
         private double CurrentVolume;
+        private const double MinVolume = 50;
+        private int yOffset;
 
         public Volume(frmMain parent, Point start)
         {
@@ -19,16 +19,27 @@ namespace cPlayer
             xParent = parent;
             StartLocation = start;
             CurrentVolume = xParent.VolumeLevel;
+            yOffset = picBackground.Top;
         }
 
         private void Volume_Shown(object sender, EventArgs e)
         {
             Location = new Point(StartLocation.X - (Width / 2), StartLocation.Y - (Height / 2));
-            picSlider.Parent = picBackground;
-            picSlider.Left = 0;
-            var percent = CurrentVolume / MinVolume ;
-            picSlider.Left = (int)((Width - (picSlider.Width)) * (1.0 - percent));
-            lblVolume.Text = CurrentVolume == 0 ? "100" : ((int)(100 - (CurrentVolume / MinVolume * 100))).ToString(CultureInfo.InvariantCulture);
+            picBackground.Left = (Width - picBackground.Width) / 2;
+            picSlider.Left= (Width - picSlider.Width) / 2;
+                        
+            var percent = CurrentVolume / MinVolume;
+            picSlider.Top = (int)((picBackground.Height - picSlider.Height) * (1.0 - (CurrentVolume / MinVolume))) + yOffset;
+            if (picSlider.Top < yOffset)
+            {
+                picSlider.Top = yOffset;
+            }
+            if (picSlider.Top > yOffset + picBackground.Height - picSlider.Height)
+            {
+                picSlider.Top = yOffset + picBackground.Height - picSlider.Height;
+            }
+            picSlider.Top = (int)((picBackground.Height - picSlider.Height) * (1.0 - percent)) + yOffset;
+            lblVolume.Text = "Vol: " + (int)(CurrentVolume * 2);
         }
 
         private void picBackground_Click(object sender, EventArgs e)
@@ -48,36 +59,36 @@ namespace cPlayer
         
         private void picSlider_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picSlider.Cursor != Cursors.NoMoveHoriz) return;
+            if (e.Button != MouseButtons.Left) return;
 
-            if (MousePosition.X != mouseX)
+            picSlider.Top = PointToClient(MousePosition).Y - (picSlider.Height/2);
+            if (picSlider.Top < picBackground.Top)
             {
-                if (MousePosition.X > mouseX)
-                {
-                    picSlider.Left = picSlider.Left + (MousePosition.X - mouseX);
-                }
-                else if (MousePosition.X < mouseX)
-                {
-                    picSlider.Left = picSlider.Left - (mouseX - MousePosition.X);
-                }
-                mouseX = MousePosition.X;
+                picSlider.Top = picBackground.Top;
+            }
+            var bottom = picBackground.Top + picBackground.Height - picSlider.Height;
+            if (picSlider.Top > bottom)
+            {
+                picSlider.Top = bottom;
             }
 
-            if (picSlider.Left < 0)
-            {
-                picSlider.Left = 0;
-            }
-            else if (picSlider.Left > Width - picSlider.Width)
-            {
-                picSlider.Left = Width - picSlider.Width;
-            }
-            CurrentVolume = Math.Round(-1 * (-MinVolume + (MinVolume*picSlider.Left/(Width - picSlider.Width))),1);
-            xParent.UpdateVolume(CurrentVolume);
-            lblVolume.Text = CurrentVolume == 0 ? "100" : ((int)(100 - (CurrentVolume / MinVolume * 100))).ToString(CultureInfo.InvariantCulture);
+            CurrentVolume = Math.Round(-1 * (-MinVolume + (MinVolume * (picSlider.Top - yOffset) / (picBackground.Height - picSlider.Height))), 1);
+            xParent.UpdateVolume(MinVolume-CurrentVolume);
+            lblVolume.Text = "Vol: " + (int)(CurrentVolume*2);
         }
 
         private void picSlider_MouseUp(object sender, MouseEventArgs e)
         {
+            picSlider.Cursor = Cursors.Hand;
+            if (picSlider.Top < picBackground.Top)
+            {
+                picSlider.Top = picBackground.Top;
+            }
+            var bottom = picBackground.Top + picBackground.Height - picSlider.Height;
+            if (picSlider.Top > bottom)
+            {
+                picSlider.Top = bottom;
+            }
             SaveVolume();
         }
 
@@ -85,8 +96,17 @@ namespace cPlayer
         {
             if (e.Button != MouseButtons.Left) return;
 
-            picSlider.Cursor = Cursors.NoMoveHoriz;
-            mouseX = MousePosition.X;
+            picSlider.Cursor = Cursors.NoMoveVert;
+
+            if (picSlider.Top < picBackground.Top)
+            {
+                picSlider.Top = picBackground.Top;
+            }
+            var bottom = picBackground.Top + picBackground.Height - picSlider.Height;
+            if (picSlider.Top > bottom)
+            {
+                picSlider.Top = bottom;
+            }
         }
 
         private void Volume_Deactivate(object sender, EventArgs e)

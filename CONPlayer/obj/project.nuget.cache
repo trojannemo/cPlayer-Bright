@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "H6/2OLSMQGA8aOftQTb+xODYvWsItaUB54YFFt4aU4RTt6fMtGmM7U7FsWG88Jr+R9EsDLx7HcoDn2xQlCGsLQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\cPlayer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\naudio.core\\2.2.1\\naudio.core.2.2.1.nupkg.sha512",
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\naudio.winforms\\2.2.1\\naudio.winforms.2.2.1.nupkg.sha512",
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\naudio.winmm\\2.2.1\\naudio.winmm.2.2.1.nupkg.sha512",
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\system.security.accesscontrol\\4.7.0\\system.security.accesscontrol.4.7.0.nupkg.sha512",
+    "C:\\Users\\Yemil-PC\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

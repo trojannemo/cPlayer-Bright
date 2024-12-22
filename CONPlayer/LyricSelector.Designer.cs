@@ -215,7 +215,7 @@ namespace cPlayer
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(289, 211);
             this.Controls.Add(this.btnDefault);
             this.Controls.Add(this.grpOptions);
@@ -229,6 +229,7 @@ namespace cPlayer
             this.MinimizeBox = false;
             this.Name = "LyricSelector";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Lyrics settings:";
             this.TopMost = true;

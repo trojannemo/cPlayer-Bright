@@ -86,6 +86,13 @@ namespace cPlayer
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
             this.uploadScreenshots = new System.Windows.Forms.ToolStripMenuItem();
             this.openSideWindow = new System.Windows.Forms.ToolStripMenuItem();
+            this.equipmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.microphoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stageKitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.controller1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.controller2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.controller3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.controller4 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.howToUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
@@ -93,7 +100,6 @@ namespace cPlayer
             this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
             this.viewChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.picVisuals = new System.Windows.Forms.PictureBox();
             this.VisualsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.displayBackgroundVideo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
@@ -103,21 +109,19 @@ namespace cPlayer
             this.displayMIDIChartVisuals = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
             this.styleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chartVertical = new System.Windows.Forms.ToolStripMenuItem();
             this.chartSnippet = new System.Windows.Forms.ToolStripMenuItem();
             this.chartFull = new System.Windows.Forms.ToolStripMenuItem();
-            this.lblHarm3 = new System.Windows.Forms.Label();
-            this.lblHarm2 = new System.Windows.Forms.Label();
-            this.lblSections = new System.Windows.Forms.Label();
-            this.lblHarm1 = new System.Windows.Forms.Label();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.panelPlaying = new System.Windows.Forms.Panel();
+            this.picShuffle = new System.Windows.Forms.PictureBox();
+            this.picLoop = new System.Windows.Forms.PictureBox();
+            this.picNext = new System.Windows.Forms.PictureBox();
+            this.picPause = new System.Windows.Forms.PictureBox();
+            this.picStop = new System.Windows.Forms.PictureBox();
+            this.picPlay = new System.Windows.Forms.PictureBox();
             this.picRandom = new System.Windows.Forms.PictureBox();
             this.picVolume = new System.Windows.Forms.PictureBox();
-            this.btnNext = new System.Windows.Forms.Button();
-            this.btnShuffle = new System.Windows.Forms.Button();
-            this.btnLoop = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnPlayPause = new System.Windows.Forms.Button();
             this.panelSlider = new System.Windows.Forms.Panel();
             this.panelLine = new System.Windows.Forms.Panel();
             this.lblTime = new System.Windows.Forms.Label();
@@ -130,8 +134,6 @@ namespace cPlayer
             this.lblArtist = new System.Windows.Forms.Label();
             this.picPreview = new System.Windows.Forms.PictureBox();
             this.panelPlaylist = new System.Windows.Forms.Panel();
-            this.workingContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.cancelProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.lstPlaylist = new System.Windows.Forms.ListView();
             this.colIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSong = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -181,27 +183,35 @@ namespace cPlayer
             this.Uploader = new System.ComponentModel.BackgroundWorker();
             this.updater = new System.ComponentModel.BackgroundWorker();
             this.gifTmr = new System.Windows.Forms.Timer(this.components);
+            this.picVisuals = new System.Windows.Forms.PictureBox();
+            this.lblSections = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).BeginInit();
-            this.picVisuals.SuspendLayout();
             this.VisualsContextMenu.SuspendLayout();
             this.panelPlaying.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picLoop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picNext)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPause)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picStop)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPlay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRandom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.panelPlaylist.SuspendLayout();
-            this.workingContextMenu.SuspendLayout();
             this.PlaylistContextMenu.SuspendLayout();
             this.NotifyContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).BeginInit();
+            this.picVisuals.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.Black;
+            this.menuStrip1.BackColor = System.Drawing.Color.White;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.optionsToolStripMenuItem,
+            this.equipmentToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -218,15 +228,15 @@ namespace cPlayer
             this.saveCurrentPlaylist,
             this.saveAsToolStripMenuItem,
             this.exitToolStrip});
-            this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // createNewPlaylist
             // 
-            this.createNewPlaylist.BackColor = System.Drawing.Color.Black;
-            this.createNewPlaylist.ForeColor = System.Drawing.Color.White;
+            this.createNewPlaylist.BackColor = System.Drawing.Color.White;
+            this.createNewPlaylist.ForeColor = System.Drawing.Color.Black;
             this.createNewPlaylist.Name = "createNewPlaylist";
             this.createNewPlaylist.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.createNewPlaylist.Size = new System.Drawing.Size(195, 22);
@@ -235,8 +245,8 @@ namespace cPlayer
             // 
             // loadExistingPlaylist
             // 
-            this.loadExistingPlaylist.BackColor = System.Drawing.Color.Black;
-            this.loadExistingPlaylist.ForeColor = System.Drawing.Color.White;
+            this.loadExistingPlaylist.BackColor = System.Drawing.Color.White;
+            this.loadExistingPlaylist.ForeColor = System.Drawing.Color.Black;
             this.loadExistingPlaylist.Name = "loadExistingPlaylist";
             this.loadExistingPlaylist.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.loadExistingPlaylist.Size = new System.Drawing.Size(195, 22);
@@ -245,22 +255,22 @@ namespace cPlayer
             // 
             // openRecent
             // 
-            this.openRecent.BackColor = System.Drawing.Color.Black;
+            this.openRecent.BackColor = System.Drawing.Color.White;
             this.openRecent.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.recent1,
             this.recent2,
             this.recent3,
             this.recent4,
             this.recent5});
-            this.openRecent.ForeColor = System.Drawing.Color.White;
+            this.openRecent.ForeColor = System.Drawing.Color.Black;
             this.openRecent.Name = "openRecent";
             this.openRecent.Size = new System.Drawing.Size(195, 22);
             this.openRecent.Text = "Open recent...";
             // 
             // recent1
             // 
-            this.recent1.BackColor = System.Drawing.Color.Black;
-            this.recent1.ForeColor = System.Drawing.Color.White;
+            this.recent1.BackColor = System.Drawing.Color.White;
+            this.recent1.ForeColor = System.Drawing.Color.Black;
             this.recent1.Name = "recent1";
             this.recent1.Size = new System.Drawing.Size(119, 22);
             this.recent1.Text = "Recent 1";
@@ -268,8 +278,8 @@ namespace cPlayer
             // 
             // recent2
             // 
-            this.recent2.BackColor = System.Drawing.Color.Black;
-            this.recent2.ForeColor = System.Drawing.Color.White;
+            this.recent2.BackColor = System.Drawing.Color.White;
+            this.recent2.ForeColor = System.Drawing.Color.Black;
             this.recent2.Name = "recent2";
             this.recent2.Size = new System.Drawing.Size(119, 22);
             this.recent2.Text = "Recent 2";
@@ -277,8 +287,8 @@ namespace cPlayer
             // 
             // recent3
             // 
-            this.recent3.BackColor = System.Drawing.Color.Black;
-            this.recent3.ForeColor = System.Drawing.Color.White;
+            this.recent3.BackColor = System.Drawing.Color.White;
+            this.recent3.ForeColor = System.Drawing.Color.Black;
             this.recent3.Name = "recent3";
             this.recent3.Size = new System.Drawing.Size(119, 22);
             this.recent3.Text = "Recent 3";
@@ -286,8 +296,8 @@ namespace cPlayer
             // 
             // recent4
             // 
-            this.recent4.BackColor = System.Drawing.Color.Black;
-            this.recent4.ForeColor = System.Drawing.Color.White;
+            this.recent4.BackColor = System.Drawing.Color.White;
+            this.recent4.ForeColor = System.Drawing.Color.Black;
             this.recent4.Name = "recent4";
             this.recent4.Size = new System.Drawing.Size(119, 22);
             this.recent4.Text = "Recent 4";
@@ -295,8 +305,8 @@ namespace cPlayer
             // 
             // recent5
             // 
-            this.recent5.BackColor = System.Drawing.Color.Black;
-            this.recent5.ForeColor = System.Drawing.Color.White;
+            this.recent5.BackColor = System.Drawing.Color.White;
+            this.recent5.ForeColor = System.Drawing.Color.Black;
             this.recent5.Name = "recent5";
             this.recent5.Size = new System.Drawing.Size(119, 22);
             this.recent5.Text = "Recent 5";
@@ -304,8 +314,8 @@ namespace cPlayer
             // 
             // saveCurrentPlaylist
             // 
-            this.saveCurrentPlaylist.BackColor = System.Drawing.Color.Black;
-            this.saveCurrentPlaylist.ForeColor = System.Drawing.Color.White;
+            this.saveCurrentPlaylist.BackColor = System.Drawing.Color.White;
+            this.saveCurrentPlaylist.ForeColor = System.Drawing.Color.Black;
             this.saveCurrentPlaylist.Name = "saveCurrentPlaylist";
             this.saveCurrentPlaylist.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveCurrentPlaylist.Size = new System.Drawing.Size(195, 22);
@@ -314,8 +324,8 @@ namespace cPlayer
             // 
             // saveAsToolStripMenuItem
             // 
-            this.saveAsToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.saveAsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.saveAsToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.saveAsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
@@ -325,8 +335,8 @@ namespace cPlayer
             // 
             // exitToolStrip
             // 
-            this.exitToolStrip.BackColor = System.Drawing.Color.Black;
-            this.exitToolStrip.ForeColor = System.Drawing.Color.White;
+            this.exitToolStrip.BackColor = System.Drawing.Color.White;
+            this.exitToolStrip.ForeColor = System.Drawing.Color.Black;
             this.exitToolStrip.Name = "exitToolStrip";
             this.exitToolStrip.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.exitToolStrip.Size = new System.Drawing.Size(195, 22);
@@ -345,15 +355,15 @@ namespace cPlayer
             this.takeScreenshot,
             this.toolStripMenuItem7,
             this.consoleToolStripMenuItem});
-            this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.toolsToolStripMenuItem.Text = "&Playlist";
             // 
             // renamePlaylist
             // 
-            this.renamePlaylist.BackColor = System.Drawing.Color.Black;
-            this.renamePlaylist.ForeColor = System.Drawing.Color.White;
+            this.renamePlaylist.BackColor = System.Drawing.Color.White;
+            this.renamePlaylist.ForeColor = System.Drawing.Color.Black;
             this.renamePlaylist.Name = "renamePlaylist";
             this.renamePlaylist.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             this.renamePlaylist.Size = new System.Drawing.Size(248, 22);
@@ -362,8 +372,8 @@ namespace cPlayer
             // 
             // selectAndAddSongsManually
             // 
-            this.selectAndAddSongsManually.BackColor = System.Drawing.Color.Black;
-            this.selectAndAddSongsManually.ForeColor = System.Drawing.Color.White;
+            this.selectAndAddSongsManually.BackColor = System.Drawing.Color.White;
+            this.selectAndAddSongsManually.ForeColor = System.Drawing.Color.Black;
             this.selectAndAddSongsManually.Name = "selectAndAddSongsManually";
             this.selectAndAddSongsManually.Size = new System.Drawing.Size(248, 22);
             this.selectAndAddSongsManually.Text = "Select and add songs manually";
@@ -371,8 +381,8 @@ namespace cPlayer
             // 
             // scanForSongsAutomatically
             // 
-            this.scanForSongsAutomatically.BackColor = System.Drawing.Color.Black;
-            this.scanForSongsAutomatically.ForeColor = System.Drawing.Color.White;
+            this.scanForSongsAutomatically.BackColor = System.Drawing.Color.White;
+            this.scanForSongsAutomatically.ForeColor = System.Drawing.Color.Black;
             this.scanForSongsAutomatically.Name = "scanForSongsAutomatically";
             this.scanForSongsAutomatically.Size = new System.Drawing.Size(248, 22);
             this.scanForSongsAutomatically.Text = "Scan for songs automatically";
@@ -380,8 +390,8 @@ namespace cPlayer
             // 
             // rebuildPlaylistMetadata
             // 
-            this.rebuildPlaylistMetadata.BackColor = System.Drawing.Color.Black;
-            this.rebuildPlaylistMetadata.ForeColor = System.Drawing.Color.White;
+            this.rebuildPlaylistMetadata.BackColor = System.Drawing.Color.White;
+            this.rebuildPlaylistMetadata.ForeColor = System.Drawing.Color.Black;
             this.rebuildPlaylistMetadata.Name = "rebuildPlaylistMetadata";
             this.rebuildPlaylistMetadata.Size = new System.Drawing.Size(248, 22);
             this.rebuildPlaylistMetadata.Text = "Rebuild playlist metadata";
@@ -394,8 +404,8 @@ namespace cPlayer
             // 
             // viewSongDetails
             // 
-            this.viewSongDetails.BackColor = System.Drawing.Color.Black;
-            this.viewSongDetails.ForeColor = System.Drawing.Color.White;
+            this.viewSongDetails.BackColor = System.Drawing.Color.White;
+            this.viewSongDetails.ForeColor = System.Drawing.Color.Black;
             this.viewSongDetails.Name = "viewSongDetails";
             this.viewSongDetails.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
             this.viewSongDetails.Size = new System.Drawing.Size(248, 22);
@@ -404,8 +414,8 @@ namespace cPlayer
             // 
             // takeScreenshot
             // 
-            this.takeScreenshot.BackColor = System.Drawing.Color.Black;
-            this.takeScreenshot.ForeColor = System.Drawing.Color.White;
+            this.takeScreenshot.BackColor = System.Drawing.Color.White;
+            this.takeScreenshot.ForeColor = System.Drawing.Color.Black;
             this.takeScreenshot.Name = "takeScreenshot";
             this.takeScreenshot.ShortcutKeys = System.Windows.Forms.Keys.F12;
             this.takeScreenshot.Size = new System.Drawing.Size(248, 22);
@@ -419,7 +429,7 @@ namespace cPlayer
             // 
             // consoleToolStripMenuItem
             // 
-            this.consoleToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.consoleToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.consoleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.xbox360,
             this.pS3,
@@ -432,17 +442,17 @@ namespace cPlayer
             this.powerGig,
             this.toolStripMenuItem12,
             this.bandFuse});
-            this.consoleToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.consoleToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
             this.consoleToolStripMenuItem.Size = new System.Drawing.Size(248, 22);
             this.consoleToolStripMenuItem.Text = "Game console: Xbox 360";
             // 
             // xbox360
             // 
-            this.xbox360.BackColor = System.Drawing.Color.Black;
+            this.xbox360.BackColor = System.Drawing.Color.White;
             this.xbox360.Checked = true;
             this.xbox360.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.xbox360.ForeColor = System.Drawing.Color.White;
+            this.xbox360.ForeColor = System.Drawing.Color.Black;
             this.xbox360.Name = "xbox360";
             this.xbox360.Size = new System.Drawing.Size(403, 22);
             this.xbox360.Text = "Xbox 360 (CON | LIVE)";
@@ -450,8 +460,8 @@ namespace cPlayer
             // 
             // pS3
             // 
-            this.pS3.BackColor = System.Drawing.Color.Black;
-            this.pS3.ForeColor = System.Drawing.Color.White;
+            this.pS3.BackColor = System.Drawing.Color.White;
+            this.pS3.ForeColor = System.Drawing.Color.Black;
             this.pS3.Name = "pS3";
             this.pS3.Size = new System.Drawing.Size(403, 22);
             this.pS3.Text = "PlayStation 3 (.pkg | songs.dta)";
@@ -459,8 +469,8 @@ namespace cPlayer
             // 
             // wii
             // 
-            this.wii.BackColor = System.Drawing.Color.Black;
-            this.wii.ForeColor = System.Drawing.Color.White;
+            this.wii.BackColor = System.Drawing.Color.White;
+            this.wii.ForeColor = System.Drawing.Color.Black;
             this.wii.Name = "wii";
             this.wii.Size = new System.Drawing.Size(403, 22);
             this.wii.Text = "Wii (songs.dta)";
@@ -473,8 +483,8 @@ namespace cPlayer
             // 
             // yarg
             // 
-            this.yarg.BackColor = System.Drawing.Color.Black;
-            this.yarg.ForeColor = System.Drawing.Color.White;
+            this.yarg.BackColor = System.Drawing.Color.White;
+            this.yarg.ForeColor = System.Drawing.Color.Black;
             this.yarg.Name = "yarg";
             this.yarg.Size = new System.Drawing.Size(403, 22);
             this.yarg.Text = "PC: YARG / Clone Hero (songs.dta | .yargsong | song.ini | .sng )";
@@ -482,8 +492,8 @@ namespace cPlayer
             // 
             // fortNite
             // 
-            this.fortNite.BackColor = System.Drawing.Color.Black;
-            this.fortNite.ForeColor = System.Drawing.Color.White;
+            this.fortNite.BackColor = System.Drawing.Color.White;
+            this.fortNite.ForeColor = System.Drawing.Color.Black;
             this.fortNite.Name = "fortNite";
             this.fortNite.Size = new System.Drawing.Size(403, 22);
             this.fortNite.Text = "PC: Fortnite Festival (.fnf | .m4a)";
@@ -491,8 +501,8 @@ namespace cPlayer
             // 
             // rockSmith
             // 
-            this.rockSmith.BackColor = System.Drawing.Color.Black;
-            this.rockSmith.ForeColor = System.Drawing.Color.White;
+            this.rockSmith.BackColor = System.Drawing.Color.White;
+            this.rockSmith.ForeColor = System.Drawing.Color.Black;
             this.rockSmith.Name = "rockSmith";
             this.rockSmith.Size = new System.Drawing.Size(403, 22);
             this.rockSmith.Text = "PC: Rocksmith 2014 (.psarc)";
@@ -500,8 +510,8 @@ namespace cPlayer
             // 
             // guitarHero
             // 
-            this.guitarHero.BackColor = System.Drawing.Color.Black;
-            this.guitarHero.ForeColor = System.Drawing.Color.White;
+            this.guitarHero.BackColor = System.Drawing.Color.White;
+            this.guitarHero.ForeColor = System.Drawing.Color.Black;
             this.guitarHero.Name = "guitarHero";
             this.guitarHero.Size = new System.Drawing.Size(403, 22);
             this.guitarHero.Text = "PC: GHWT:DE (.fsb.xen)";
@@ -509,8 +519,8 @@ namespace cPlayer
             // 
             // powerGig
             // 
-            this.powerGig.BackColor = System.Drawing.Color.Black;
-            this.powerGig.ForeColor = System.Drawing.Color.White;
+            this.powerGig.BackColor = System.Drawing.Color.White;
+            this.powerGig.ForeColor = System.Drawing.Color.Black;
             this.powerGig.Name = "powerGig";
             this.powerGig.Size = new System.Drawing.Size(403, 22);
             this.powerGig.Text = "PC: Power Gig (.xml)";
@@ -523,8 +533,8 @@ namespace cPlayer
             // 
             // bandFuse
             // 
-            this.bandFuse.BackColor = System.Drawing.Color.Black;
-            this.bandFuse.ForeColor = System.Drawing.Color.White;
+            this.bandFuse.BackColor = System.Drawing.Color.White;
+            this.bandFuse.ForeColor = System.Drawing.Color.Black;
             this.bandFuse.Name = "bandFuse";
             this.bandFuse.Size = new System.Drawing.Size(403, 22);
             this.bandFuse.Text = "Xbox 360: BandFuse (LIVE)";
@@ -546,27 +556,27 @@ namespace cPlayer
             this.toolStripMenuItem9,
             this.uploadScreenshots,
             this.openSideWindow});
-            this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // autoloadLastPlaylist
             // 
-            this.autoloadLastPlaylist.BackColor = System.Drawing.Color.Black;
+            this.autoloadLastPlaylist.BackColor = System.Drawing.Color.White;
             this.autoloadLastPlaylist.Checked = true;
             this.autoloadLastPlaylist.CheckOnClick = true;
             this.autoloadLastPlaylist.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.autoloadLastPlaylist.ForeColor = System.Drawing.Color.White;
+            this.autoloadLastPlaylist.ForeColor = System.Drawing.Color.Black;
             this.autoloadLastPlaylist.Name = "autoloadLastPlaylist";
             this.autoloadLastPlaylist.Size = new System.Drawing.Size(242, 22);
             this.autoloadLastPlaylist.Text = "Auto-load last playlist";
             // 
             // autoPlay
             // 
-            this.autoPlay.BackColor = System.Drawing.Color.Black;
+            this.autoPlay.BackColor = System.Drawing.Color.White;
             this.autoPlay.CheckOnClick = true;
-            this.autoPlay.ForeColor = System.Drawing.Color.White;
+            this.autoPlay.ForeColor = System.Drawing.Color.Black;
             this.autoPlay.Name = "autoPlay";
             this.autoPlay.Size = new System.Drawing.Size(242, 22);
             this.autoPlay.Text = "Auto-play after loading";
@@ -578,17 +588,17 @@ namespace cPlayer
             // 
             // skipIntroOutroSilence
             // 
-            this.skipIntroOutroSilence.BackColor = System.Drawing.Color.Black;
+            this.skipIntroOutroSilence.BackColor = System.Drawing.Color.White;
             this.skipIntroOutroSilence.CheckOnClick = true;
-            this.skipIntroOutroSilence.ForeColor = System.Drawing.Color.White;
+            this.skipIntroOutroSilence.ForeColor = System.Drawing.Color.Black;
             this.skipIntroOutroSilence.Name = "skipIntroOutroSilence";
             this.skipIntroOutroSilence.Size = new System.Drawing.Size(242, 22);
             this.skipIntroOutroSilence.Text = "Skip intro/outro silence";
             // 
             // audioTracks
             // 
-            this.audioTracks.BackColor = System.Drawing.Color.Black;
-            this.audioTracks.ForeColor = System.Drawing.Color.White;
+            this.audioTracks.BackColor = System.Drawing.Color.White;
+            this.audioTracks.ForeColor = System.Drawing.Color.Black;
             this.audioTracks.Name = "audioTracks";
             this.audioTracks.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
             this.audioTracks.Size = new System.Drawing.Size(242, 22);
@@ -597,11 +607,11 @@ namespace cPlayer
             // 
             // playBGVideos
             // 
-            this.playBGVideos.BackColor = System.Drawing.Color.Black;
+            this.playBGVideos.BackColor = System.Drawing.Color.White;
             this.playBGVideos.Checked = true;
             this.playBGVideos.CheckOnClick = true;
             this.playBGVideos.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.playBGVideos.ForeColor = System.Drawing.Color.White;
+            this.playBGVideos.ForeColor = System.Drawing.Color.Black;
             this.playBGVideos.Name = "playBGVideos";
             this.playBGVideos.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.playBGVideos.Size = new System.Drawing.Size(242, 22);
@@ -615,11 +625,11 @@ namespace cPlayer
             // 
             // showPracticeSections
             // 
-            this.showPracticeSections.BackColor = System.Drawing.Color.Black;
+            this.showPracticeSections.BackColor = System.Drawing.Color.White;
             this.showPracticeSections.Checked = true;
             this.showPracticeSections.CheckOnClick = true;
             this.showPracticeSections.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showPracticeSections.ForeColor = System.Drawing.Color.White;
+            this.showPracticeSections.ForeColor = System.Drawing.Color.Black;
             this.showPracticeSections.Name = "showPracticeSections";
             this.showPracticeSections.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.showPracticeSections.Size = new System.Drawing.Size(242, 22);
@@ -628,8 +638,8 @@ namespace cPlayer
             // 
             // showMIDIVisuals
             // 
-            this.showMIDIVisuals.BackColor = System.Drawing.Color.Black;
-            this.showMIDIVisuals.ForeColor = System.Drawing.Color.White;
+            this.showMIDIVisuals.BackColor = System.Drawing.Color.White;
+            this.showMIDIVisuals.ForeColor = System.Drawing.Color.Black;
             this.showMIDIVisuals.Name = "showMIDIVisuals";
             this.showMIDIVisuals.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
             this.showMIDIVisuals.Size = new System.Drawing.Size(242, 22);
@@ -638,8 +648,8 @@ namespace cPlayer
             // 
             // showLyrics
             // 
-            this.showLyrics.BackColor = System.Drawing.Color.Black;
-            this.showLyrics.ForeColor = System.Drawing.Color.White;
+            this.showLyrics.BackColor = System.Drawing.Color.White;
+            this.showLyrics.ForeColor = System.Drawing.Color.Black;
             this.showLyrics.Name = "showLyrics";
             this.showLyrics.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
             this.showLyrics.Size = new System.Drawing.Size(242, 22);
@@ -653,27 +663,89 @@ namespace cPlayer
             // 
             // uploadScreenshots
             // 
-            this.uploadScreenshots.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.uploadScreenshots.BackColor = System.Drawing.Color.White;
             this.uploadScreenshots.Checked = true;
             this.uploadScreenshots.CheckOnClick = true;
             this.uploadScreenshots.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.uploadScreenshots.ForeColor = System.Drawing.Color.White;
+            this.uploadScreenshots.ForeColor = System.Drawing.Color.Black;
             this.uploadScreenshots.Name = "uploadScreenshots";
             this.uploadScreenshots.Size = new System.Drawing.Size(242, 22);
             this.uploadScreenshots.Text = "Upload screenshots to Imgur";
             // 
             // openSideWindow
             // 
-            this.openSideWindow.BackColor = System.Drawing.Color.Black;
+            this.openSideWindow.BackColor = System.Drawing.Color.White;
             this.openSideWindow.Checked = true;
             this.openSideWindow.CheckOnClick = true;
             this.openSideWindow.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.openSideWindow.ForeColor = System.Drawing.Color.White;
+            this.openSideWindow.ForeColor = System.Drawing.Color.Black;
             this.openSideWindow.Name = "openSideWindow";
             this.openSideWindow.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
             this.openSideWindow.Size = new System.Drawing.Size(242, 22);
             this.openSideWindow.Text = "Open side window";
             this.openSideWindow.Click += new System.EventHandler(this.openSideWindow_Click);
+            // 
+            // equipmentToolStripMenuItem
+            // 
+            this.equipmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.microphoneToolStripMenuItem,
+            this.stageKitToolStripMenuItem});
+            this.equipmentToolStripMenuItem.Name = "equipmentToolStripMenuItem";
+            this.equipmentToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
+            this.equipmentToolStripMenuItem.Text = "&Equipment";
+            // 
+            // microphoneToolStripMenuItem
+            // 
+            this.microphoneToolStripMenuItem.Name = "microphoneToolStripMenuItem";
+            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.microphoneToolStripMenuItem.Text = "Microphone";
+            this.microphoneToolStripMenuItem.Click += new System.EventHandler(this.microphoneToolStripMenuItem_Click);
+            // 
+            // stageKitToolStripMenuItem
+            // 
+            this.stageKitToolStripMenuItem.CheckOnClick = true;
+            this.stageKitToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.controller1,
+            this.controller2,
+            this.controller3,
+            this.controller4});
+            this.stageKitToolStripMenuItem.Name = "stageKitToolStripMenuItem";
+            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stageKitToolStripMenuItem.Text = "Enable Stage Kit";
+            this.stageKitToolStripMenuItem.CheckedChanged += new System.EventHandler(this.stageKitToolStripMenuItem_CheckedChanged);
+            this.stageKitToolStripMenuItem.Click += new System.EventHandler(this.stageKitToolStripMenuItem_Click);
+            // 
+            // controller1
+            // 
+            this.controller1.Enabled = false;
+            this.controller1.Name = "controller1";
+            this.controller1.Size = new System.Drawing.Size(180, 22);
+            this.controller1.Text = "Controller 1";
+            this.controller1.Click += new System.EventHandler(this.controller1_Click);
+            // 
+            // controller2
+            // 
+            this.controller2.Enabled = false;
+            this.controller2.Name = "controller2";
+            this.controller2.Size = new System.Drawing.Size(180, 22);
+            this.controller2.Text = "Controller 2";
+            this.controller2.Click += new System.EventHandler(this.controller2_Click);
+            // 
+            // controller3
+            // 
+            this.controller3.Enabled = false;
+            this.controller3.Name = "controller3";
+            this.controller3.Size = new System.Drawing.Size(180, 22);
+            this.controller3.Text = "Controller 3";
+            this.controller3.Click += new System.EventHandler(this.controller3_Click);
+            // 
+            // controller4
+            // 
+            this.controller4.Enabled = false;
+            this.controller4.Name = "controller4";
+            this.controller4.Size = new System.Drawing.Size(180, 22);
+            this.controller4.Text = "Controller 4";
+            this.controller4.Click += new System.EventHandler(this.controller4_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -684,15 +756,15 @@ namespace cPlayer
             this.toolStripMenuItem11,
             this.viewChangeLog,
             this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
             // howToUseToolStripMenuItem
             // 
-            this.howToUseToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.howToUseToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.howToUseToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.howToUseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
             this.howToUseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F1)));
             this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
@@ -706,8 +778,8 @@ namespace cPlayer
             // 
             // checkForUpdates
             // 
-            this.checkForUpdates.BackColor = System.Drawing.Color.Black;
-            this.checkForUpdates.ForeColor = System.Drawing.Color.White;
+            this.checkForUpdates.BackColor = System.Drawing.Color.White;
+            this.checkForUpdates.ForeColor = System.Drawing.Color.Black;
             this.checkForUpdates.Name = "checkForUpdates";
             this.checkForUpdates.Size = new System.Drawing.Size(203, 22);
             this.checkForUpdates.Text = "Check for updates";
@@ -720,8 +792,8 @@ namespace cPlayer
             // 
             // viewChangeLog
             // 
-            this.viewChangeLog.BackColor = System.Drawing.Color.Black;
-            this.viewChangeLog.ForeColor = System.Drawing.Color.White;
+            this.viewChangeLog.BackColor = System.Drawing.Color.White;
+            this.viewChangeLog.ForeColor = System.Drawing.Color.Black;
             this.viewChangeLog.Name = "viewChangeLog";
             this.viewChangeLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F1)));
             this.viewChangeLog.Size = new System.Drawing.Size(203, 22);
@@ -730,41 +802,13 @@ namespace cPlayer
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.aboutToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.aboutToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.aboutToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // picVisuals
-            // 
-            this.picVisuals.AllowDrop = true;
-            this.picVisuals.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.picVisuals.BackColor = System.Drawing.Color.Black;
-            this.picVisuals.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.picVisuals.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picVisuals.ContextMenuStrip = this.VisualsContextMenu;
-            this.picVisuals.Controls.Add(this.lblHarm3);
-            this.picVisuals.Controls.Add(this.lblHarm2);
-            this.picVisuals.Controls.Add(this.lblSections);
-            this.picVisuals.Controls.Add(this.lblHarm1);
-            this.picVisuals.Location = new System.Drawing.Point(396, 27);
-            this.picVisuals.Name = "picVisuals";
-            this.picVisuals.Size = new System.Drawing.Size(590, 654);
-            this.picVisuals.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picVisuals.TabIndex = 1;
-            this.picVisuals.TabStop = false;
-            this.picVisuals.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
-            this.picVisuals.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
-            this.picVisuals.Paint += new System.Windows.Forms.PaintEventHandler(this.picVisuals_Paint);
-            this.picVisuals.DoubleClick += new System.EventHandler(this.panelVisuals_DoubleClick);
-            this.picVisuals.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
-            this.picVisuals.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
-            this.picVisuals.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             // 
             // VisualsContextMenu
             // 
@@ -783,11 +827,11 @@ namespace cPlayer
             // 
             // displayBackgroundVideo
             // 
-            this.displayBackgroundVideo.BackColor = System.Drawing.Color.Black;
+            this.displayBackgroundVideo.BackColor = System.Drawing.Color.White;
             this.displayBackgroundVideo.Checked = true;
             this.displayBackgroundVideo.CheckOnClick = true;
             this.displayBackgroundVideo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.displayBackgroundVideo.ForeColor = System.Drawing.Color.White;
+            this.displayBackgroundVideo.ForeColor = System.Drawing.Color.Black;
             this.displayBackgroundVideo.Name = "displayBackgroundVideo";
             this.displayBackgroundVideo.Size = new System.Drawing.Size(214, 22);
             this.displayBackgroundVideo.Text = "Play Background Videos";
@@ -800,10 +844,10 @@ namespace cPlayer
             // 
             // displayAlbumArt
             // 
-            this.displayAlbumArt.BackColor = System.Drawing.Color.Black;
+            this.displayAlbumArt.BackColor = System.Drawing.Color.White;
             this.displayAlbumArt.Checked = true;
             this.displayAlbumArt.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.displayAlbumArt.ForeColor = System.Drawing.Color.White;
+            this.displayAlbumArt.ForeColor = System.Drawing.Color.Black;
             this.displayAlbumArt.Name = "displayAlbumArt";
             this.displayAlbumArt.Size = new System.Drawing.Size(214, 22);
             this.displayAlbumArt.Text = "Display: Album Art";
@@ -811,8 +855,8 @@ namespace cPlayer
             // 
             // displayAudioSpectrum
             // 
-            this.displayAudioSpectrum.BackColor = System.Drawing.Color.Black;
-            this.displayAudioSpectrum.ForeColor = System.Drawing.Color.White;
+            this.displayAudioSpectrum.BackColor = System.Drawing.Color.White;
+            this.displayAudioSpectrum.ForeColor = System.Drawing.Color.Black;
             this.displayAudioSpectrum.Name = "displayAudioSpectrum";
             this.displayAudioSpectrum.Size = new System.Drawing.Size(214, 22);
             this.displayAudioSpectrum.Text = "Display: Audio Spectrum";
@@ -820,8 +864,8 @@ namespace cPlayer
             // 
             // displayKaraokeMode
             // 
-            this.displayKaraokeMode.BackColor = System.Drawing.Color.Black;
-            this.displayKaraokeMode.ForeColor = System.Drawing.Color.White;
+            this.displayKaraokeMode.BackColor = System.Drawing.Color.White;
+            this.displayKaraokeMode.ForeColor = System.Drawing.Color.Black;
             this.displayKaraokeMode.Name = "displayKaraokeMode";
             this.displayKaraokeMode.Size = new System.Drawing.Size(214, 22);
             this.displayKaraokeMode.Text = "Display: Karaoke Mode";
@@ -829,8 +873,8 @@ namespace cPlayer
             // 
             // displayMIDIChartVisuals
             // 
-            this.displayMIDIChartVisuals.BackColor = System.Drawing.Color.Black;
-            this.displayMIDIChartVisuals.ForeColor = System.Drawing.Color.White;
+            this.displayMIDIChartVisuals.BackColor = System.Drawing.Color.White;
+            this.displayMIDIChartVisuals.ForeColor = System.Drawing.Color.Black;
             this.displayMIDIChartVisuals.Name = "displayMIDIChartVisuals";
             this.displayMIDIChartVisuals.Size = new System.Drawing.Size(214, 22);
             this.displayMIDIChartVisuals.Text = "Display: MIDI Chart Visuals";
@@ -844,117 +888,51 @@ namespace cPlayer
             // 
             // styleToolStripMenuItem
             // 
-            this.styleToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.styleToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.styleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chartVertical,
             this.chartSnippet,
             this.chartFull});
-            this.styleToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.styleToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.styleToolStripMenuItem.Name = "styleToolStripMenuItem";
             this.styleToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.styleToolStripMenuItem.Text = "MIDI: Style";
+            this.styleToolStripMenuItem.Text = "MIDI: Chart Style";
             this.styleToolStripMenuItem.Visible = false;
+            // 
+            // chartVertical
+            // 
+            this.chartVertical.Checked = true;
+            this.chartVertical.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chartVertical.Name = "chartVertical";
+            this.chartVertical.Size = new System.Drawing.Size(133, 22);
+            this.chartVertical.Text = "Game Style";
+            this.chartVertical.Click += new System.EventHandler(this.UpdateVisualStyle);
             // 
             // chartSnippet
             // 
-            this.chartSnippet.BackColor = System.Drawing.Color.Black;
-            this.chartSnippet.Checked = true;
-            this.chartSnippet.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chartSnippet.ForeColor = System.Drawing.Color.White;
+            this.chartSnippet.BackColor = System.Drawing.Color.White;
+            this.chartSnippet.ForeColor = System.Drawing.Color.Black;
             this.chartSnippet.Name = "chartSnippet";
-            this.chartSnippet.Size = new System.Drawing.Size(149, 22);
-            this.chartSnippet.Text = "Chart: Snippet";
+            this.chartSnippet.Size = new System.Drawing.Size(133, 22);
+            this.chartSnippet.Text = "MIDI Style";
             this.chartSnippet.Click += new System.EventHandler(this.UpdateVisualStyle);
             // 
             // chartFull
             // 
-            this.chartFull.BackColor = System.Drawing.Color.Black;
-            this.chartFull.ForeColor = System.Drawing.Color.White;
+            this.chartFull.BackColor = System.Drawing.Color.White;
+            this.chartFull.ForeColor = System.Drawing.Color.Black;
             this.chartFull.Name = "chartFull";
-            this.chartFull.Size = new System.Drawing.Size(149, 22);
+            this.chartFull.Size = new System.Drawing.Size(133, 22);
             this.chartFull.Text = "Chart: Full";
+            this.chartFull.Visible = false;
             this.chartFull.Click += new System.EventHandler(this.UpdateVisualStyle);
-            // 
-            // lblHarm3
-            // 
-            this.lblHarm3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHarm3.AutoEllipsis = true;
-            this.lblHarm3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lblHarm3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblHarm3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHarm3.ForeColor = System.Drawing.Color.White;
-            this.lblHarm3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblHarm3.Location = new System.Drawing.Point(0, 632);
-            this.lblHarm3.Margin = new System.Windows.Forms.Padding(0);
-            this.lblHarm3.Name = "lblHarm3";
-            this.lblHarm3.Size = new System.Drawing.Size(588, 20);
-            this.lblHarm3.TabIndex = 4;
-            this.lblHarm3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblHarm3.UseMnemonic = false;
-            this.lblHarm3.Paint += new System.Windows.Forms.PaintEventHandler(this.lblHarm3_Paint);
-            // 
-            // lblHarm2
-            // 
-            this.lblHarm2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHarm2.AutoEllipsis = true;
-            this.lblHarm2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lblHarm2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblHarm2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHarm2.ForeColor = System.Drawing.Color.White;
-            this.lblHarm2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblHarm2.Location = new System.Drawing.Point(0, 613);
-            this.lblHarm2.Margin = new System.Windows.Forms.Padding(0);
-            this.lblHarm2.Name = "lblHarm2";
-            this.lblHarm2.Size = new System.Drawing.Size(588, 20);
-            this.lblHarm2.TabIndex = 3;
-            this.lblHarm2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblHarm2.UseMnemonic = false;
-            this.lblHarm2.Paint += new System.Windows.Forms.PaintEventHandler(this.lblHarm2_Paint);
-            // 
-            // lblSections
-            // 
-            this.lblSections.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblSections.AutoEllipsis = true;
-            this.lblSections.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lblSections.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblSections.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSections.ForeColor = System.Drawing.Color.White;
-            this.lblSections.Location = new System.Drawing.Point(0, 0);
-            this.lblSections.Margin = new System.Windows.Forms.Padding(0);
-            this.lblSections.Name = "lblSections";
-            this.lblSections.Size = new System.Drawing.Size(588, 20);
-            this.lblSections.TabIndex = 2;
-            this.lblSections.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblSections.UseMnemonic = false;
-            this.lblSections.Visible = false;
-            // 
-            // lblHarm1
-            // 
-            this.lblHarm1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHarm1.AutoEllipsis = true;
-            this.lblHarm1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
-            this.lblHarm1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblHarm1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHarm1.ForeColor = System.Drawing.Color.White;
-            this.lblHarm1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblHarm1.Location = new System.Drawing.Point(0, 594);
-            this.lblHarm1.Margin = new System.Windows.Forms.Padding(0);
-            this.lblHarm1.Name = "lblHarm1";
-            this.lblHarm1.Size = new System.Drawing.Size(588, 20);
-            this.lblHarm1.TabIndex = 1;
-            this.lblHarm1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblHarm1.UseMnemonic = false;
-            this.lblHarm1.Paint += new System.Windows.Forms.PaintEventHandler(this.lblHarm1_Paint);
             // 
             // lblAuthor
             // 
             this.lblAuthor.AutoEllipsis = true;
             this.lblAuthor.BackColor = System.Drawing.Color.Transparent;
-            this.lblAuthor.ForeColor = System.Drawing.Color.White;
-            this.lblAuthor.Location = new System.Drawing.Point(61, 191);
+            this.lblAuthor.ForeColor = System.Drawing.Color.Black;
+            this.lblAuthor.Location = new System.Drawing.Point(61, 195);
             this.lblAuthor.Name = "lblAuthor";
             this.lblAuthor.Size = new System.Drawing.Size(209, 21);
             this.lblAuthor.TabIndex = 0;
@@ -964,15 +942,15 @@ namespace cPlayer
             // 
             this.panelPlaying.AllowDrop = true;
             this.panelPlaying.BackColor = System.Drawing.Color.Transparent;
-            this.panelPlaying.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelPlaying.Controls.Add(this.picShuffle);
+            this.panelPlaying.Controls.Add(this.picLoop);
+            this.panelPlaying.Controls.Add(this.picNext);
+            this.panelPlaying.Controls.Add(this.picPause);
+            this.panelPlaying.Controls.Add(this.picStop);
+            this.panelPlaying.Controls.Add(this.picPlay);
             this.panelPlaying.Controls.Add(this.picRandom);
             this.panelPlaying.Controls.Add(this.picVolume);
             this.panelPlaying.Controls.Add(this.lblAuthor);
-            this.panelPlaying.Controls.Add(this.btnNext);
-            this.panelPlaying.Controls.Add(this.btnShuffle);
-            this.panelPlaying.Controls.Add(this.btnLoop);
-            this.panelPlaying.Controls.Add(this.btnStop);
-            this.panelPlaying.Controls.Add(this.btnPlayPause);
             this.panelPlaying.Controls.Add(this.panelSlider);
             this.panelPlaying.Controls.Add(this.panelLine);
             this.panelPlaying.Controls.Add(this.lblTime);
@@ -984,6 +962,7 @@ namespace cPlayer
             this.panelPlaying.Controls.Add(this.lblSong);
             this.panelPlaying.Controls.Add(this.lblArtist);
             this.panelPlaying.Controls.Add(this.picPreview);
+            this.panelPlaying.ForeColor = System.Drawing.Color.Black;
             this.panelPlaying.Location = new System.Drawing.Point(8, 27);
             this.panelPlaying.Name = "panelPlaying";
             this.panelPlaying.Size = new System.Drawing.Size(380, 221);
@@ -994,13 +973,104 @@ namespace cPlayer
             this.panelPlaying.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.panelPlaying.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             // 
+            // picShuffle
+            // 
+            this.picShuffle.BackColor = System.Drawing.Color.Transparent;
+            this.picShuffle.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picShuffle.Image = global::cPlayer.Properties.Resources.icon_shuffle_disabled;
+            this.picShuffle.Location = new System.Drawing.Point(265, 126);
+            this.picShuffle.Name = "picShuffle";
+            this.picShuffle.Size = new System.Drawing.Size(50, 50);
+            this.picShuffle.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picShuffle.TabIndex = 56;
+            this.picShuffle.TabStop = false;
+            this.picShuffle.Tag = "noshuffle";
+            this.toolTip1.SetToolTip(this.picShuffle, "Enable track shuffling");
+            this.picShuffle.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picShuffle_MouseClick);
+            // 
+            // picLoop
+            // 
+            this.picLoop.BackColor = System.Drawing.Color.Transparent;
+            this.picLoop.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picLoop.Image = global::cPlayer.Properties.Resources.icon_loop_disabled1;
+            this.picLoop.Location = new System.Drawing.Point(215, 126);
+            this.picLoop.Name = "picLoop";
+            this.picLoop.Size = new System.Drawing.Size(50, 50);
+            this.picLoop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picLoop.TabIndex = 55;
+            this.picLoop.TabStop = false;
+            this.picLoop.Tag = "noloop";
+            this.toolTip1.SetToolTip(this.picLoop, "Enable track looping");
+            this.picLoop.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picLoop_MouseClick);
+            // 
+            // picNext
+            // 
+            this.picNext.BackColor = System.Drawing.Color.Transparent;
+            this.picNext.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picNext.Enabled = false;
+            this.picNext.Image = global::cPlayer.Properties.Resources.icon_next;
+            this.picNext.Location = new System.Drawing.Point(165, 126);
+            this.picNext.Name = "picNext";
+            this.picNext.Size = new System.Drawing.Size(50, 50);
+            this.picNext.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picNext.TabIndex = 54;
+            this.picNext.TabStop = false;
+            this.toolTip1.SetToolTip(this.picNext, "Click to skip to next song");
+            this.picNext.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picNext_MouseClick);
+            // 
+            // picPause
+            // 
+            this.picPause.BackColor = System.Drawing.Color.Transparent;
+            this.picPause.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picPause.Enabled = false;
+            this.picPause.Image = global::cPlayer.Properties.Resources.icon_pause;
+            this.picPause.Location = new System.Drawing.Point(65, 126);
+            this.picPause.Name = "picPause";
+            this.picPause.Size = new System.Drawing.Size(50, 50);
+            this.picPause.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picPause.TabIndex = 53;
+            this.picPause.TabStop = false;
+            this.toolTip1.SetToolTip(this.picPause, "Click to pause playback");
+            this.picPause.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picPause_MouseClick);
+            // 
+            // picStop
+            // 
+            this.picStop.BackColor = System.Drawing.Color.Transparent;
+            this.picStop.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picStop.Enabled = false;
+            this.picStop.Image = global::cPlayer.Properties.Resources.icon_stop;
+            this.picStop.Location = new System.Drawing.Point(115, 126);
+            this.picStop.Name = "picStop";
+            this.picStop.Size = new System.Drawing.Size(50, 50);
+            this.picStop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picStop.TabIndex = 52;
+            this.picStop.TabStop = false;
+            this.toolTip1.SetToolTip(this.picStop, "Click to stop playback");
+            this.picStop.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picStop_MouseClick);
+            // 
+            // picPlay
+            // 
+            this.picPlay.BackColor = System.Drawing.Color.Transparent;
+            this.picPlay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picPlay.Enabled = false;
+            this.picPlay.Image = global::cPlayer.Properties.Resources.icon_play;
+            this.picPlay.Location = new System.Drawing.Point(15, 126);
+            this.picPlay.Name = "picPlay";
+            this.picPlay.Size = new System.Drawing.Size(50, 50);
+            this.picPlay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picPlay.TabIndex = 51;
+            this.picPlay.TabStop = false;
+            this.toolTip1.SetToolTip(this.picPlay, "Click to begin playback");
+            this.picPlay.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picPlay_MouseClick);
+            // 
             // picRandom
             // 
             this.picRandom.BackColor = System.Drawing.Color.Transparent;
             this.picRandom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picRandom.Location = new System.Drawing.Point(339, 139);
+            this.picRandom.Image = global::cPlayer.Properties.Resources.dice_trippy;
+            this.picRandom.Location = new System.Drawing.Point(332, 126);
             this.picRandom.Name = "picRandom";
-            this.picRandom.Size = new System.Drawing.Size(30, 30);
+            this.picRandom.Size = new System.Drawing.Size(40, 40);
             this.picRandom.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picRandom.TabIndex = 50;
             this.picRandom.TabStop = false;
@@ -1011,98 +1081,21 @@ namespace cPlayer
             // 
             this.picVolume.BackColor = System.Drawing.Color.Transparent;
             this.picVolume.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picVolume.Image = global::cPlayer.Properties.Resources.speaker;
-            this.picVolume.Location = new System.Drawing.Point(333, 174);
+            this.picVolume.Image = global::cPlayer.Properties.Resources.icon_speaker;
+            this.picVolume.Location = new System.Drawing.Point(330, 171);
             this.picVolume.Name = "picVolume";
-            this.picVolume.Size = new System.Drawing.Size(35, 35);
+            this.picVolume.Size = new System.Drawing.Size(45, 45);
             this.picVolume.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picVolume.TabIndex = 49;
             this.picVolume.TabStop = false;
             this.toolTip1.SetToolTip(this.picVolume, "Click to adjust volume");
             this.picVolume.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picVolume_MouseClick);
             // 
-            // btnNext
-            // 
-            this.btnNext.BackColor = System.Drawing.Color.Orange;
-            this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNext.Location = new System.Drawing.Point(136, 142);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(54, 22);
-            this.btnNext.TabIndex = 48;
-            this.btnNext.Text = "NEXT";
-            this.toolTip1.SetToolTip(this.btnNext, "Next");
-            this.btnNext.UseVisualStyleBackColor = false;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
-            // 
-            // btnShuffle
-            // 
-            this.btnShuffle.BackColor = System.Drawing.Color.Thistle;
-            this.btnShuffle.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnShuffle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnShuffle.Location = new System.Drawing.Point(268, 142);
-            this.btnShuffle.Name = "btnShuffle";
-            this.btnShuffle.Size = new System.Drawing.Size(66, 22);
-            this.btnShuffle.TabIndex = 47;
-            this.btnShuffle.Tag = "noshuffle";
-            this.btnShuffle.Text = "SHUFFLE";
-            this.toolTip1.SetToolTip(this.btnShuffle, "Shuffle");
-            this.btnShuffle.UseVisualStyleBackColor = false;
-            this.btnShuffle.EnabledChanged += new System.EventHandler(this.btnPlayPause_EnabledChanged);
-            this.btnShuffle.Click += new System.EventHandler(this.btnShuffle_Click);
-            // 
-            // btnLoop
-            // 
-            this.btnLoop.BackColor = System.Drawing.Color.LightYellow;
-            this.btnLoop.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLoop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoop.Location = new System.Drawing.Point(196, 142);
-            this.btnLoop.Name = "btnLoop";
-            this.btnLoop.Size = new System.Drawing.Size(66, 22);
-            this.btnLoop.TabIndex = 46;
-            this.btnLoop.Tag = "noloop";
-            this.btnLoop.Text = "LOOP";
-            this.toolTip1.SetToolTip(this.btnLoop, "Loop");
-            this.btnLoop.UseVisualStyleBackColor = false;
-            this.btnLoop.EnabledChanged += new System.EventHandler(this.btnPlayPause_EnabledChanged);
-            this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.BackColor = System.Drawing.Color.LightCoral;
-            this.btnStop.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStop.Location = new System.Drawing.Point(76, 142);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(54, 22);
-            this.btnStop.TabIndex = 45;
-            this.btnStop.Text = "STOP";
-            this.toolTip1.SetToolTip(this.btnStop, "Stop");
-            this.btnStop.UseVisualStyleBackColor = false;
-            this.btnStop.EnabledChanged += new System.EventHandler(this.btnPlayPause_EnabledChanged);
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // btnPlayPause
-            // 
-            this.btnPlayPause.BackColor = System.Drawing.Color.PaleGreen;
-            this.btnPlayPause.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnPlayPause.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPlayPause.Location = new System.Drawing.Point(16, 142);
-            this.btnPlayPause.Name = "btnPlayPause";
-            this.btnPlayPause.Size = new System.Drawing.Size(54, 22);
-            this.btnPlayPause.TabIndex = 44;
-            this.btnPlayPause.Tag = "play";
-            this.btnPlayPause.Text = "PLAY";
-            this.toolTip1.SetToolTip(this.btnPlayPause, "Play");
-            this.btnPlayPause.UseVisualStyleBackColor = false;
-            this.btnPlayPause.EnabledChanged += new System.EventHandler(this.btnPlayPause_EnabledChanged);
-            this.btnPlayPause.Click += new System.EventHandler(this.btnPlayPause_Click);
-            // 
             // panelSlider
             // 
-            this.panelSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.panelSlider.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(209)))), ((int)(((byte)(209)))));
             this.panelSlider.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.panelSlider.Location = new System.Drawing.Point(10, 176);
+            this.panelSlider.Location = new System.Drawing.Point(10, 180);
             this.panelSlider.Name = "panelSlider";
             this.panelSlider.Size = new System.Drawing.Size(14, 14);
             this.panelSlider.TabIndex = 43;
@@ -1113,8 +1106,8 @@ namespace cPlayer
             // 
             // panelLine
             // 
-            this.panelLine.BackColor = System.Drawing.Color.White;
-            this.panelLine.Location = new System.Drawing.Point(10, 180);
+            this.panelLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.panelLine.Location = new System.Drawing.Point(10, 184);
             this.panelLine.Name = "panelLine";
             this.panelLine.Size = new System.Drawing.Size(310, 6);
             this.panelLine.TabIndex = 42;
@@ -1125,8 +1118,8 @@ namespace cPlayer
             // lblTime
             // 
             this.lblTime.BackColor = System.Drawing.Color.Transparent;
-            this.lblTime.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblTime.Location = new System.Drawing.Point(7, 193);
+            this.lblTime.ForeColor = System.Drawing.Color.Black;
+            this.lblTime.Location = new System.Drawing.Point(7, 197);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(48, 16);
             this.lblTime.TabIndex = 41;
@@ -1137,8 +1130,8 @@ namespace cPlayer
             // lblDuration
             // 
             this.lblDuration.BackColor = System.Drawing.Color.Transparent;
-            this.lblDuration.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblDuration.Location = new System.Drawing.Point(276, 193);
+            this.lblDuration.ForeColor = System.Drawing.Color.Black;
+            this.lblDuration.Location = new System.Drawing.Point(276, 197);
             this.lblDuration.Name = "lblDuration";
             this.lblDuration.Size = new System.Drawing.Size(48, 16);
             this.lblDuration.TabIndex = 40;
@@ -1150,8 +1143,8 @@ namespace cPlayer
             // 
             this.lblYear.AutoEllipsis = true;
             this.lblYear.BackColor = System.Drawing.Color.Transparent;
-            this.lblYear.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblYear.Location = new System.Drawing.Point(307, 108);
+            this.lblYear.ForeColor = System.Drawing.Color.Black;
+            this.lblYear.Location = new System.Drawing.Point(307, 101);
             this.lblYear.Name = "lblYear";
             this.lblYear.Size = new System.Drawing.Size(65, 23);
             this.lblYear.TabIndex = 6;
@@ -1163,8 +1156,8 @@ namespace cPlayer
             // 
             this.lblTrack.AutoEllipsis = true;
             this.lblTrack.BackColor = System.Drawing.Color.Transparent;
-            this.lblTrack.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblTrack.Location = new System.Drawing.Point(191, 108);
+            this.lblTrack.ForeColor = System.Drawing.Color.Black;
+            this.lblTrack.Location = new System.Drawing.Point(191, 101);
             this.lblTrack.Name = "lblTrack";
             this.lblTrack.Size = new System.Drawing.Size(70, 23);
             this.lblTrack.TabIndex = 5;
@@ -1176,8 +1169,8 @@ namespace cPlayer
             // 
             this.lblGenre.AutoEllipsis = true;
             this.lblGenre.BackColor = System.Drawing.Color.Transparent;
-            this.lblGenre.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.lblGenre.Location = new System.Drawing.Point(7, 108);
+            this.lblGenre.ForeColor = System.Drawing.Color.Black;
+            this.lblGenre.Location = new System.Drawing.Point(7, 101);
             this.lblGenre.Name = "lblGenre";
             this.lblGenre.Size = new System.Drawing.Size(173, 23);
             this.lblGenre.TabIndex = 4;
@@ -1189,7 +1182,7 @@ namespace cPlayer
             // 
             this.lblAlbum.AutoEllipsis = true;
             this.lblAlbum.BackColor = System.Drawing.Color.Transparent;
-            this.lblAlbum.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblAlbum.ForeColor = System.Drawing.Color.Black;
             this.lblAlbum.Location = new System.Drawing.Point(111, 73);
             this.lblAlbum.Name = "lblAlbum";
             this.lblAlbum.Size = new System.Drawing.Size(261, 23);
@@ -1202,7 +1195,7 @@ namespace cPlayer
             // 
             this.lblSong.AutoEllipsis = true;
             this.lblSong.BackColor = System.Drawing.Color.Transparent;
-            this.lblSong.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblSong.ForeColor = System.Drawing.Color.Black;
             this.lblSong.Location = new System.Drawing.Point(111, 40);
             this.lblSong.Name = "lblSong";
             this.lblSong.Size = new System.Drawing.Size(261, 23);
@@ -1215,7 +1208,7 @@ namespace cPlayer
             // 
             this.lblArtist.AutoEllipsis = true;
             this.lblArtist.BackColor = System.Drawing.Color.Transparent;
-            this.lblArtist.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblArtist.ForeColor = System.Drawing.Color.Black;
             this.lblArtist.Location = new System.Drawing.Point(111, 8);
             this.lblArtist.Name = "lblArtist";
             this.lblArtist.Size = new System.Drawing.Size(261, 23);
@@ -1226,7 +1219,7 @@ namespace cPlayer
             // 
             // picPreview
             // 
-            this.picPreview.Image = global::cPlayer.Properties.Resources.noart;
+            this.picPreview.Image = global::cPlayer.Properties.Resources.noart3;
             this.picPreview.Location = new System.Drawing.Point(1, 1);
             this.picPreview.Name = "picPreview";
             this.picPreview.Size = new System.Drawing.Size(100, 100);
@@ -1242,8 +1235,8 @@ namespace cPlayer
             this.panelPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panelPlaylist.BackColor = System.Drawing.Color.Transparent;
-            this.panelPlaylist.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelPlaylist.Controls.Add(this.lstPlaylist);
+            this.panelPlaylist.ForeColor = System.Drawing.Color.Black;
             this.panelPlaylist.Location = new System.Drawing.Point(8, 256);
             this.panelPlaylist.Name = "panelPlaylist";
             this.panelPlaylist.Size = new System.Drawing.Size(380, 399);
@@ -1252,41 +1245,25 @@ namespace cPlayer
             this.panelPlaylist.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.panelPlaylist.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             // 
-            // workingContextMenu
-            // 
-            this.workingContextMenu.BackColor = System.Drawing.Color.Black;
-            this.workingContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cancelProcess});
-            this.workingContextMenu.Name = "workingContextMenu";
-            this.workingContextMenu.ShowImageMargin = false;
-            this.workingContextMenu.Size = new System.Drawing.Size(129, 26);
-            // 
-            // cancelProcess
-            // 
-            this.cancelProcess.ForeColor = System.Drawing.Color.White;
-            this.cancelProcess.Name = "cancelProcess";
-            this.cancelProcess.Size = new System.Drawing.Size(128, 22);
-            this.cancelProcess.Text = "Cancel process";
-            this.cancelProcess.Click += new System.EventHandler(this.cancelProcess_Click);
-            // 
             // lstPlaylist
             // 
             this.lstPlaylist.AllowDrop = true;
             this.lstPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstPlaylist.BackColor = System.Drawing.Color.Black;
+            this.lstPlaylist.BackColor = System.Drawing.Color.White;
+            this.lstPlaylist.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstPlaylist.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colIndex,
             this.colSong,
             this.colLength});
             this.lstPlaylist.ContextMenuStrip = this.PlaylistContextMenu;
-            this.lstPlaylist.ForeColor = System.Drawing.Color.White;
+            this.lstPlaylist.ForeColor = System.Drawing.Color.Black;
             this.lstPlaylist.FullRowSelect = true;
             this.lstPlaylist.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstPlaylist.HideSelection = false;
-            this.lstPlaylist.Location = new System.Drawing.Point(3, 3);
+            this.lstPlaylist.Location = new System.Drawing.Point(4, 3);
             this.lstPlaylist.Name = "lstPlaylist";
-            this.lstPlaylist.Size = new System.Drawing.Size(372, 391);
+            this.lstPlaylist.Size = new System.Drawing.Size(372, 393);
             this.lstPlaylist.TabIndex = 0;
             this.lstPlaylist.UseCompatibleStateImageBehavior = false;
             this.lstPlaylist.View = System.Windows.Forms.View.Details;
@@ -1343,8 +1320,8 @@ namespace cPlayer
             // 
             // playNowToolStripMenuItem
             // 
-            this.playNowToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.playNowToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.playNowToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.playNowToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.playNowToolStripMenuItem.Name = "playNowToolStripMenuItem";
             this.playNowToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.playNowToolStripMenuItem.Text = "Play now";
@@ -1352,8 +1329,8 @@ namespace cPlayer
             // 
             // playNextToolStripMenuItem
             // 
-            this.playNextToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.playNextToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.playNextToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.playNextToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.playNextToolStripMenuItem.Name = "playNextToolStripMenuItem";
             this.playNextToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.playNextToolStripMenuItem.Text = "Play next";
@@ -1361,8 +1338,8 @@ namespace cPlayer
             // 
             // goToArtist
             // 
-            this.goToArtist.BackColor = System.Drawing.Color.Black;
-            this.goToArtist.ForeColor = System.Drawing.Color.White;
+            this.goToArtist.BackColor = System.Drawing.Color.White;
+            this.goToArtist.ForeColor = System.Drawing.Color.Black;
             this.goToArtist.Name = "goToArtist";
             this.goToArtist.Size = new System.Drawing.Size(163, 22);
             this.goToArtist.Text = "Go to artist";
@@ -1370,8 +1347,8 @@ namespace cPlayer
             // 
             // goToAlbum
             // 
-            this.goToAlbum.BackColor = System.Drawing.Color.Black;
-            this.goToAlbum.ForeColor = System.Drawing.Color.White;
+            this.goToAlbum.BackColor = System.Drawing.Color.White;
+            this.goToAlbum.ForeColor = System.Drawing.Color.Black;
             this.goToAlbum.Name = "goToAlbum";
             this.goToAlbum.Size = new System.Drawing.Size(163, 22);
             this.goToAlbum.Text = "Go to album";
@@ -1379,8 +1356,8 @@ namespace cPlayer
             // 
             // goToGenre
             // 
-            this.goToGenre.BackColor = System.Drawing.Color.Black;
-            this.goToGenre.ForeColor = System.Drawing.Color.White;
+            this.goToGenre.BackColor = System.Drawing.Color.White;
+            this.goToGenre.ForeColor = System.Drawing.Color.Black;
             this.goToGenre.Name = "goToGenre";
             this.goToGenre.Size = new System.Drawing.Size(163, 22);
             this.goToGenre.Text = "Go to genre";
@@ -1388,8 +1365,8 @@ namespace cPlayer
             // 
             // startInstaMix
             // 
-            this.startInstaMix.BackColor = System.Drawing.Color.Black;
-            this.startInstaMix.ForeColor = System.Drawing.Color.White;
+            this.startInstaMix.BackColor = System.Drawing.Color.White;
+            this.startInstaMix.ForeColor = System.Drawing.Color.Black;
             this.startInstaMix.Name = "startInstaMix";
             this.startInstaMix.Size = new System.Drawing.Size(163, 22);
             this.startInstaMix.Text = "Start Insta-Mix";
@@ -1402,8 +1379,8 @@ namespace cPlayer
             // 
             // markAsPlayed
             // 
-            this.markAsPlayed.BackColor = System.Drawing.Color.Black;
-            this.markAsPlayed.ForeColor = System.Drawing.Color.White;
+            this.markAsPlayed.BackColor = System.Drawing.Color.White;
+            this.markAsPlayed.ForeColor = System.Drawing.Color.Black;
             this.markAsPlayed.Name = "markAsPlayed";
             this.markAsPlayed.Size = new System.Drawing.Size(163, 22);
             this.markAsPlayed.Text = "Mark as played";
@@ -1411,8 +1388,8 @@ namespace cPlayer
             // 
             // markAsUnplayed
             // 
-            this.markAsUnplayed.BackColor = System.Drawing.Color.Black;
-            this.markAsUnplayed.ForeColor = System.Drawing.Color.White;
+            this.markAsUnplayed.BackColor = System.Drawing.Color.White;
+            this.markAsUnplayed.ForeColor = System.Drawing.Color.Black;
             this.markAsUnplayed.Name = "markAsUnplayed";
             this.markAsUnplayed.Size = new System.Drawing.Size(163, 22);
             this.markAsUnplayed.Text = "Mark as unplayed";
@@ -1420,8 +1397,8 @@ namespace cPlayer
             // 
             // moveUpToolStripMenuItem
             // 
-            this.moveUpToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.moveUpToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.moveUpToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.moveUpToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
             this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.moveUpToolStripMenuItem.Text = "Move up";
@@ -1429,8 +1406,8 @@ namespace cPlayer
             // 
             // moveDownToolStripMenuItem
             // 
-            this.moveDownToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.moveDownToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.moveDownToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.moveDownToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
             this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.moveDownToolStripMenuItem.Text = "Move down";
@@ -1438,8 +1415,8 @@ namespace cPlayer
             // 
             // openFileLocation
             // 
-            this.openFileLocation.BackColor = System.Drawing.Color.Black;
-            this.openFileLocation.ForeColor = System.Drawing.Color.White;
+            this.openFileLocation.BackColor = System.Drawing.Color.White;
+            this.openFileLocation.ForeColor = System.Drawing.Color.Black;
             this.openFileLocation.Name = "openFileLocation";
             this.openFileLocation.Size = new System.Drawing.Size(163, 22);
             this.openFileLocation.Text = "Open file location";
@@ -1447,8 +1424,8 @@ namespace cPlayer
             // 
             // removeToolStripMenuItem
             // 
-            this.removeToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.removeToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.removeToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.removeToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
             this.removeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.removeToolStripMenuItem.Text = "Remove from playlist";
@@ -1461,8 +1438,8 @@ namespace cPlayer
             // 
             // sortPlaylistByArtist
             // 
-            this.sortPlaylistByArtist.BackColor = System.Drawing.Color.Black;
-            this.sortPlaylistByArtist.ForeColor = System.Drawing.Color.White;
+            this.sortPlaylistByArtist.BackColor = System.Drawing.Color.White;
+            this.sortPlaylistByArtist.ForeColor = System.Drawing.Color.Black;
             this.sortPlaylistByArtist.Name = "sortPlaylistByArtist";
             this.sortPlaylistByArtist.Size = new System.Drawing.Size(163, 22);
             this.sortPlaylistByArtist.Text = "Sort by artist name";
@@ -1470,8 +1447,8 @@ namespace cPlayer
             // 
             // sortPlaylistBySong
             // 
-            this.sortPlaylistBySong.BackColor = System.Drawing.Color.Black;
-            this.sortPlaylistBySong.ForeColor = System.Drawing.Color.White;
+            this.sortPlaylistBySong.BackColor = System.Drawing.Color.White;
+            this.sortPlaylistBySong.ForeColor = System.Drawing.Color.Black;
             this.sortPlaylistBySong.Name = "sortPlaylistBySong";
             this.sortPlaylistBySong.Size = new System.Drawing.Size(163, 22);
             this.sortPlaylistBySong.Text = "Sort by song title";
@@ -1479,8 +1456,8 @@ namespace cPlayer
             // 
             // sortPlaylistByDuration
             // 
-            this.sortPlaylistByDuration.BackColor = System.Drawing.Color.Black;
-            this.sortPlaylistByDuration.ForeColor = System.Drawing.Color.White;
+            this.sortPlaylistByDuration.BackColor = System.Drawing.Color.White;
+            this.sortPlaylistByDuration.ForeColor = System.Drawing.Color.Black;
             this.sortPlaylistByDuration.Name = "sortPlaylistByDuration";
             this.sortPlaylistByDuration.Size = new System.Drawing.Size(163, 22);
             this.sortPlaylistByDuration.Text = "Sort by song duration";
@@ -1488,8 +1465,8 @@ namespace cPlayer
             // 
             // sortPlaylistByModifiedDate
             // 
-            this.sortPlaylistByModifiedDate.BackColor = System.Drawing.Color.Black;
-            this.sortPlaylistByModifiedDate.ForeColor = System.Drawing.Color.White;
+            this.sortPlaylistByModifiedDate.BackColor = System.Drawing.Color.White;
+            this.sortPlaylistByModifiedDate.ForeColor = System.Drawing.Color.Black;
             this.sortPlaylistByModifiedDate.Name = "sortPlaylistByModifiedDate";
             this.sortPlaylistByModifiedDate.Size = new System.Drawing.Size(163, 22);
             this.sortPlaylistByModifiedDate.Text = "Sort by modified date";
@@ -1497,8 +1474,8 @@ namespace cPlayer
             // 
             // randomizePlaylist
             // 
-            this.randomizePlaylist.BackColor = System.Drawing.Color.Black;
-            this.randomizePlaylist.ForeColor = System.Drawing.Color.White;
+            this.randomizePlaylist.BackColor = System.Drawing.Color.White;
+            this.randomizePlaylist.ForeColor = System.Drawing.Color.Black;
             this.randomizePlaylist.Name = "randomizePlaylist";
             this.randomizePlaylist.Size = new System.Drawing.Size(163, 22);
             this.randomizePlaylist.Text = "Randomize order";
@@ -1506,8 +1483,8 @@ namespace cPlayer
             // 
             // returnToPlaylist
             // 
-            this.returnToPlaylist.BackColor = System.Drawing.Color.Black;
-            this.returnToPlaylist.ForeColor = System.Drawing.Color.White;
+            this.returnToPlaylist.BackColor = System.Drawing.Color.White;
+            this.returnToPlaylist.ForeColor = System.Drawing.Color.Black;
             this.returnToPlaylist.Name = "returnToPlaylist";
             this.returnToPlaylist.Size = new System.Drawing.Size(163, 22);
             this.returnToPlaylist.Text = "Return to playlist";
@@ -1531,8 +1508,7 @@ namespace cPlayer
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.ForeColor = System.Drawing.Color.Gray;
+            this.btnClear.ForeColor = System.Drawing.Color.Black;
             this.btnClear.Location = new System.Drawing.Point(346, 661);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(42, 22);
@@ -1546,8 +1522,7 @@ namespace cPlayer
             // 
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSearch.ForeColor = System.Drawing.Color.Gray;
+            this.btnSearch.ForeColor = System.Drawing.Color.Black;
             this.btnSearch.Location = new System.Drawing.Point(298, 661);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(42, 22);
@@ -1561,8 +1536,7 @@ namespace cPlayer
             // 
             this.btnGoTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnGoTo.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGoTo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGoTo.ForeColor = System.Drawing.Color.Gray;
+            this.btnGoTo.ForeColor = System.Drawing.Color.Black;
             this.btnGoTo.Location = new System.Drawing.Point(244, 661);
             this.btnGoTo.Name = "btnGoTo";
             this.btnGoTo.Size = new System.Drawing.Size(48, 22);
@@ -1574,7 +1548,7 @@ namespace cPlayer
             // 
             // PlaybackTimer
             // 
-            this.PlaybackTimer.Interval = 500;
+            this.PlaybackTimer.Interval = 16;
             this.PlaybackTimer.Tick += new System.EventHandler(this.PlaybackTimer_Tick);
             // 
             // songPreparer
@@ -1617,35 +1591,32 @@ namespace cPlayer
             // 
             // playToolStripMenuItem
             // 
-            this.playToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.playToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.playToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.playToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.playToolStripMenuItem.Name = "playToolStripMenuItem";
             this.playToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.playToolStripMenuItem.Text = "Play";
-            this.playToolStripMenuItem.Click += new System.EventHandler(this.btnPlayPause_Click);
             // 
             // pauseToolStripMenuItem
             // 
-            this.pauseToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.pauseToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.pauseToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.pauseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
             this.pauseToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.pauseToolStripMenuItem.Text = "Pause";
-            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.btnPlayPause_Click);
             // 
             // nextToolStripMenuItem
             // 
-            this.nextToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.nextToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.nextToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.nextToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
             this.nextToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.nextToolStripMenuItem.Text = "Next";
-            this.nextToolStripMenuItem.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // restoreToolStripMenuItem
             // 
-            this.restoreToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.restoreToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.restoreToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.restoreToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
             this.restoreToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
@@ -1653,8 +1624,8 @@ namespace cPlayer
             // 
             // quitToolStripMenuItem
             // 
-            this.quitToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.quitToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.quitToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.quitToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.quitToolStripMenuItem.Text = "Quit";
@@ -1663,8 +1634,8 @@ namespace cPlayer
             // lblUpdates
             // 
             this.lblUpdates.AutoEllipsis = true;
-            this.lblUpdates.BackColor = System.Drawing.Color.Transparent;
-            this.lblUpdates.ForeColor = System.Drawing.Color.White;
+            this.lblUpdates.BackColor = System.Drawing.Color.White;
+            this.lblUpdates.ForeColor = System.Drawing.Color.Black;
             this.lblUpdates.Location = new System.Drawing.Point(396, 0);
             this.lblUpdates.Name = "lblUpdates";
             this.lblUpdates.Size = new System.Drawing.Size(590, 23);
@@ -1680,13 +1651,14 @@ namespace cPlayer
             // txtSearch
             // 
             this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtSearch.BackColor = System.Drawing.Color.Black;
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.ForeColor = System.Drawing.Color.Gray;
             this.txtSearch.Location = new System.Drawing.Point(8, 662);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(230, 20);
             this.txtSearch.TabIndex = 5;
+            this.txtSearch.TabStop = false;
             this.txtSearch.Text = "Type to search playlist...";
             this.txtSearch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.txtSearch_MouseClick);
             this.txtSearch.EnabledChanged += new System.EventHandler(this.txtSearch_EnabledChanged);
@@ -1729,11 +1701,53 @@ namespace cPlayer
             this.gifTmr.Interval = 16;
             this.gifTmr.Tick += new System.EventHandler(this.gifTmr_Tick);
             // 
+            // picVisuals
+            // 
+            this.picVisuals.AllowDrop = true;
+            this.picVisuals.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.picVisuals.BackColor = System.Drawing.Color.White;
+            this.picVisuals.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.picVisuals.ContextMenuStrip = this.VisualsContextMenu;
+            this.picVisuals.Controls.Add(this.lblSections);
+            this.picVisuals.Location = new System.Drawing.Point(396, 27);
+            this.picVisuals.Name = "picVisuals";
+            this.picVisuals.Size = new System.Drawing.Size(590, 654);
+            this.picVisuals.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picVisuals.TabIndex = 1;
+            this.picVisuals.TabStop = false;
+            this.picVisuals.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
+            this.picVisuals.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
+            this.picVisuals.Paint += new System.Windows.Forms.PaintEventHandler(this.picVisuals_Paint);
+            this.picVisuals.DoubleClick += new System.EventHandler(this.panelVisuals_DoubleClick);
+            this.picVisuals.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picVisuals_MouseClick);
+            this.picVisuals.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
+            this.picVisuals.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
+            this.picVisuals.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
+            // 
+            // lblSections
+            // 
+            this.lblSections.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSections.AutoEllipsis = true;
+            this.lblSections.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.lblSections.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSections.ForeColor = System.Drawing.Color.White;
+            this.lblSections.Location = new System.Drawing.Point(0, 0);
+            this.lblSections.Margin = new System.Windows.Forms.Padding(0);
+            this.lblSections.Name = "lblSections";
+            this.lblSections.Size = new System.Drawing.Size(590, 20);
+            this.lblSections.TabIndex = 2;
+            this.lblSections.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSections.UseMnemonic = false;
+            this.lblSections.Visible = false;
+            // 
             // frmMain
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.Black;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(994, 691);
             this.Controls.Add(this.btnGoTo);
             this.Controls.Add(this.btnSearch);
@@ -1753,6 +1767,7 @@ namespace cPlayer
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "cPlayer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
@@ -1764,17 +1779,22 @@ namespace cPlayer
             this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).EndInit();
-            this.picVisuals.ResumeLayout(false);
             this.VisualsContextMenu.ResumeLayout(false);
             this.panelPlaying.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picLoop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picNext)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPause)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picStop)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPlay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picRandom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.panelPlaylist.ResumeLayout(false);
-            this.workingContextMenu.ResumeLayout(false);
             this.PlaylistContextMenu.ResumeLayout(false);
             this.NotifyContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).EndInit();
+            this.picVisuals.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1809,10 +1829,6 @@ namespace cPlayer
         private System.Windows.Forms.ColumnHeader colIndex;
         private System.Windows.Forms.ColumnHeader colSong;
         private System.Windows.Forms.ColumnHeader colLength;
-        private System.Windows.Forms.Button btnShuffle;
-        private System.Windows.Forms.Button btnLoop;
-        private System.Windows.Forms.Button btnStop;
-        private System.Windows.Forms.Button btnPlayPause;
         private System.ComponentModel.BackgroundWorker batchSongLoader;
         private System.ComponentModel.BackgroundWorker songLoader;
         private System.Windows.Forms.ToolTip toolTip1;
@@ -1825,7 +1841,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem moveDownToolStripMenuItem;
         private System.ComponentModel.BackgroundWorker songPreparer;
         private System.Windows.Forms.ToolStripMenuItem showMIDIVisuals;
-        private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.ToolStripMenuItem howToUseToolStripMenuItem;
         private List<string> SongsToAdd;
         private System.Windows.Forms.PictureBox picVolume;
@@ -1856,10 +1871,7 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showLyrics;
-        private System.Windows.Forms.Label lblHarm1;
         private System.ComponentModel.BackgroundWorker folderScanner;
-        private System.Windows.Forms.ContextMenuStrip workingContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem cancelProcess;
         private System.Windows.Forms.ToolStripMenuItem openFileLocation;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
@@ -1896,8 +1908,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem displayAudioSpectrum;
         private System.Windows.Forms.ToolStripMenuItem displayMIDIChartVisuals;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
-        private System.Windows.Forms.Label lblHarm3;
-        private System.Windows.Forms.Label lblHarm2;
         private System.Windows.Forms.ToolStripMenuItem yarg;
         //private AxWMPLib.AxWindowsMediaPlayer MediaPlayer;
         private System.Windows.Forms.ToolStripMenuItem takeScreenshot;
@@ -1927,6 +1937,20 @@ namespace cPlayer
         private ToolStripMenuItem powerGig;
         private ToolStripSeparator toolStripMenuItem12;
         private Timer gifTmr;
+        private PictureBox picPlay;
+        private PictureBox picStop;
+        private PictureBox picPause;
+        private PictureBox picNext;
+        private PictureBox picLoop;
+        private PictureBox picShuffle;
+        private ToolStripMenuItem chartVertical;
+        private ToolStripMenuItem equipmentToolStripMenuItem;
+        private ToolStripMenuItem microphoneToolStripMenuItem;
+        private ToolStripMenuItem stageKitToolStripMenuItem;
+        private ToolStripMenuItem controller1;
+        private ToolStripMenuItem controller2;
+        private ToolStripMenuItem controller3;
+        private ToolStripMenuItem controller4;
     }
 }
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using Un4seen.Bass;
+using System.IO;
 
 namespace cPlayer
 {

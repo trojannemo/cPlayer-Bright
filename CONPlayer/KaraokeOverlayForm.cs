@@ -109,14 +109,14 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (ClientSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.WhiteSmoke, KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.White, KaraokeBackgroundColor);
 
                 // Draw the sung portion
                 var sungText = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
                 sungText = mainForm.ProcessLine(sungText, true);
                 if (!string.IsNullOrEmpty(sungText))
                 {
-                    TextRenderer.DrawText(graphics, sungText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.LightSkyBlue, KaraokeBackgroundColor);
+                    TextRenderer.DrawText(graphics, sungText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.FromArgb(95,209,209), KaraokeBackgroundColor);
                 }
             }
 
@@ -213,7 +213,7 @@ namespace cPlayer
                     var posY = (ClientSize.Height - lineSize.Height) / 2;
 
                     // Draw the entire word in white
-                    TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX + xOffset, posY + yOffset), Color.WhiteSmoke, KaraokeBackgroundColor);
+                    TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX + xOffset, posY + yOffset), Color.White, KaraokeBackgroundColor);
                     
                     // Calculate progress for the sung portion
                     var timeElapsed = time - activeWord.WordStart;
@@ -229,7 +229,7 @@ namespace cPlayer
                     // Overlay the sung portion in blue
                     if (!string.IsNullOrEmpty(sungPortion))
                     {
-                        TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX + xOffset, posY + yOffset), Color.LightSkyBlue, KaraokeBackgroundColor);                        
+                        TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX + xOffset, posY + yOffset), Color.FromArgb(95,209,209), KaraokeBackgroundColor);                        
                     }
                 }
             }
@@ -241,24 +241,28 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (ClientSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, nextLineTop - lineSize.Height + yOffset), Color.DarkGray, KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, nextLineTop - lineSize.Height + yOffset), Color.FromArgb(180,180,180), KaraokeBackgroundColor);
             }
 
-            // Waiting/countdown logic
+            var middleText = "";
+            var textColor = Color.FromArgb(180, 180, 180);
             if (currentLine == null && nextLine != null)
             {
                 var wait = nextLine.PhraseStart - time;
                 if (wait > 1.5)
                 {
-                    var middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
-                    var textColor = wait <= 5 ? Color.LightGreen : Color.LightYellow;
-
-                    lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, middleText, new Font("Tahoma", (float)12.0), 200));
-                    lineSize = TextRenderer.MeasureText(middleText, lineFont);
-                    posX = (ClientSize.Width - lineSize.Width) / 2;
-                    TextRenderer.DrawText(graphics, middleText, lineFont, new Point(posX + xOffset, ((ClientSize.Height - lineSize.Height) / 2) +  yOffset), textColor, KaraokeBackgroundColor);
+                    middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
+                    textColor = wait <= 5 ? Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);                    
                 }
             }
+            else if (currentLine == null)
+            {
+                middleText = "[fin]";
+            }
+            lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, middleText, new Font("Tahoma", (float)12.0), 200));
+            lineSize = TextRenderer.MeasureText(middleText, lineFont);
+            posX = (ClientSize.Width - lineSize.Width) / 2;
+            TextRenderer.DrawText(graphics, middleText, lineFont, new Point(posX + xOffset, ((ClientSize.Height - lineSize.Height) / 2) + yOffset), textColor, KaraokeBackgroundColor);
         }    
     }
 }

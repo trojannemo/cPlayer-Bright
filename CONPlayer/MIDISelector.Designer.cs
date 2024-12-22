@@ -211,7 +211,7 @@ namespace cPlayer
             this.groupBox2.Controls.Add(this.chkNameTracks);
             this.groupBox2.Location = new System.Drawing.Point(12, 139);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(258, 220);
+            this.groupBox2.Size = new System.Drawing.Size(258, 157);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc options:";
@@ -287,11 +287,12 @@ namespace cPlayer
             // 
             // cboWindow
             // 
+            this.cboWindow.Enabled = false;
             this.cboWindow.FormattingEnabled = true;
             this.cboWindow.Items.AddRange(new object[] {
             "1 second",
             "2 seconds",
-            "3 seconds (default)",
+            "3 seconds",
             "4 seconds",
             "5 seconds",
             "6 seconds",
@@ -303,19 +304,22 @@ namespace cPlayer
             this.cboWindow.Name = "cboWindow";
             this.cboWindow.Size = new System.Drawing.Size(121, 21);
             this.cboWindow.TabIndex = 2;
+            this.cboWindow.TabStop = false;
             this.cboWindow.SelectedIndexChanged += new System.EventHandler(this.cboWindow_SelectedIndexChanged);
             // 
             // cboSizing
             // 
+            this.cboSizing.Enabled = false;
             this.cboSizing.FormattingEnabled = true;
             this.cboSizing.Items.AddRange(new object[] {
-            "Size notes using mixed mode (default)",
+            "Size notes using mixed mode",
             "Size notes by charted note range",
             "Size notes by total valid note range"});
             this.cboSizing.Location = new System.Drawing.Point(15, 157);
             this.cboSizing.Name = "cboSizing";
             this.cboSizing.Size = new System.Drawing.Size(228, 21);
             this.cboSizing.TabIndex = 1;
+            this.cboSizing.TabStop = false;
             this.cboSizing.SelectedIndexChanged += new System.EventHandler(this.cboSizing_SelectedIndexChanged);
             // 
             // chkNameTracks
@@ -335,8 +339,8 @@ namespace cPlayer
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            this.ClientSize = new System.Drawing.Size(281, 371);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(281, 304);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
@@ -346,6 +350,7 @@ namespace cPlayer
             this.MinimizeBox = false;
             this.Name = "MIDISelector";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MIDI settings";
             this.TopMost = true;
