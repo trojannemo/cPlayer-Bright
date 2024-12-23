@@ -1031,7 +1031,7 @@ namespace cPlayer
             {
                 INI = DecryptExtractYARG(input, message, scanning, next, prep);
             }
-            else if (Path.GetExtension(input) == ".fnf")
+            else if (Path.GetExtension(input) == ".fnf" || Path.GetExtension(input) == ".ini")
             {
                 INI = input;
             }

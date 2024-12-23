@@ -540,7 +540,7 @@ namespace cPlayer
                             song.VocalParts = Convert.ToInt16(Tools.GetConfigString(line));
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     { }
                 }
                 sr.Dispose();
@@ -556,7 +556,7 @@ namespace cPlayer
 
                 Songs.Add(song);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
