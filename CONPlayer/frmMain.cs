@@ -3773,7 +3773,7 @@ namespace cPlayer
                     switch (harm)
                     {
                         case 0:
-                            note.NoteColor = !doMIDIHarm1onVocals ? GetNoteColor(note.NoteNumber, drums) : Harm1Color;
+                            note.NoteColor = !doMIDIHarm1onVocals ? GetNoteColor(note.NoteNumber) : Harm1Color;
                             break;
                         case 1:
                             note.NoteColor = Harm1Color;
@@ -6188,7 +6188,7 @@ namespace cPlayer
                 {
                     if (note.NoteColor == Color.Empty)
                     {
-                        note.NoteColor = GetNoteColor(note.NoteNumber, true);
+                        note.NoteColor = GetNoteColor(note.NoteNumber);
                     }
 
                     var percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
@@ -6282,7 +6282,7 @@ namespace cPlayer
             {
                 if (note.NoteColor == Color.Empty)
                 {
-                    note.NoteColor = GetNoteColor(note.NoteNumber, true);
+                    note.NoteColor = GetNoteColor(note.NoteNumber);
                 }
 
                 var percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
