@@ -2532,7 +2532,7 @@ namespace cPlayer
             {
                 text = "Scanning for songs...";
             }
-            else if (picPlay.Tag.ToString() == "pause")
+            else if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
                 var notify = "Playing: " + PlayingSong.Artist + " - " + PlayingSong.Name;
                 text = notify.Length > 63 ? notify.Substring(0, 63) : notify;
@@ -2675,7 +2675,6 @@ namespace cPlayer
             StopPlayback();
             UpdateTime();
             UpdateNotifyTray();
-            picPlay.Tag = "stop";
         }
 
         public int[] ArrangeStreamChannels(int totalChannels, bool isOgg)
@@ -2978,7 +2977,7 @@ namespace cPlayer
 
         public void UpdatePlayback(bool doFade)
         {
-            if (picPlay.Tag.ToString() != "pause") return;
+            if (Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING) return;
             PlaybackTimer.Enabled = false;
             StopPlayback();
             StartPlayback(doFade, false);
@@ -3370,7 +3369,6 @@ namespace cPlayer
             {
                 if (chartVertical.Checked)
                 {
-                    //DrawTrackBackground(graphics, 4, vocalsHeight, track_color, MIDITools.MIDI_Chart.Harm1.ChartedNotes.Any() && doMIDIHarmonies ? "HARMONIES" : "VOCALS", null);                    
                     graphics.DrawImage(bmpBackgroundVocals, 0, 0, picVisuals.Width, vocalsHeight + 8);
                     DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, vocalsHeight, 4);
                     track_y = vocalsHeight;
@@ -4370,7 +4368,7 @@ namespace cPlayer
             Log("removeToolStripMenuItem_Click");
             var indexes = lstPlaylist.SelectedIndices;
             var savedIndex = lstPlaylist.SelectedIndices[0];
-            var playing = (picPlay.Tag.ToString() == "pause");
+            var playing = Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING;
             var to_remove = new List<int>();
             Log("Removing " + indexes.Count + " song(s) from the playlist");
             foreach (int index in indexes)
@@ -4413,7 +4411,7 @@ namespace cPlayer
             }
             if (lstPlaylist.SelectedItems.Count > 0)
             {
-                if (playing && picPlay.Tag.ToString() == "play")
+                if (playing)
                 {
                     lstPlaylist_MouseDoubleClick(null, null);
                 }
@@ -6487,7 +6485,6 @@ namespace cPlayer
                 return;
             }
 
-            //var harmony = (doScrollingLyrics && MIDITools.LyricsHarm2.Lyrics.Any()) || ((doKaraokeLyrics || doStaticLyrics) && MIDITools.PhrasesHarm2.Phrases.Any());
             var phrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
             var lyrics = doHarmonyLyrics && MIDITools.LyricsHarm1.Lyrics.Any() ? MIDITools.LyricsHarm1.Lyrics : MIDITools.LyricsVocals.Lyrics;
             var font = new Font("Segoe UI", 12f);
@@ -6821,7 +6818,7 @@ namespace cPlayer
 
         private void StartPlayback(bool doFade, bool doNext, bool PlayAudio = true)
         {
-            Log("Starting playback");
+            Log("Starting playback");            
             if (PlayAudio)
             {
                 if ((!yarg.Checked && !fortNite.Checked && !guitarHero.Checked && !powerGig.Checked && !bandFuse.Checked) && (CurrentSongAudio == null || CurrentSongAudio.Length == 0))
@@ -7148,8 +7145,7 @@ namespace cPlayer
         }
 
         private void UpdatePlaybackStuff()
-        {
-            picPlay.Tag = "pause";
+        {            
             UpdateNotifyTray();
             PlaybackTimer.Enabled = true;
         }
@@ -7183,7 +7179,6 @@ namespace cPlayer
             {
                 Log("Error stopping playback: " + ex.Message);
             }
-            picPlay.Tag = "play";
         }
 
         private void StopVideoPlayback(bool stop = true)
@@ -7579,7 +7574,7 @@ namespace cPlayer
                 {
                     moveDownToolStripMenuItem.Visible = false;
                 }
-                if (picPlay.Tag.ToString() == "pause" && PlayingSong.Index == index)
+                if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING && PlayingSong.Index == index)
                 {
                     playNextToolStripMenuItem.Visible = false;
                 }
@@ -7602,8 +7597,8 @@ namespace cPlayer
         private void NotifyContextMenu_Opening(object sender, CancelEventArgs e)
         {
             restoreToolStripMenuItem.Visible = WindowState == FormWindowState.Minimized;
-            playToolStripMenuItem.Visible = picPlay.Tag.ToString() == "play" && picPlay.Enabled;
-            pauseToolStripMenuItem.Visible = picPlay.Tag.ToString() == "pause" && picPlay.Enabled;
+            playToolStripMenuItem.Visible = Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING && picPlay.Enabled;
+            pauseToolStripMenuItem.Visible = Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING && picPlay.Enabled;
             nextToolStripMenuItem.Visible = picNext.Enabled;
         }
 
@@ -8076,7 +8071,7 @@ namespace cPlayer
             MarkAsModified();
             picShuffle.Tag = "noshuffle";
             toolTip1.SetToolTip(picShuffle, "Enable track shuffling");
-            if (PlayingSong == null || ActiveSong != PlayingSong || picPlay.Tag.ToString() == "play")
+            if (PlayingSong == null || ActiveSong != PlayingSong || Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
                 lstPlaylist_MouseDoubleClick(null, null);
             }
@@ -8276,7 +8271,7 @@ namespace cPlayer
 
         private void DrawLyricsScrolling(List<Lyric> lyrics, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
         {
-            if (!openSideWindow.Checked || PlayingSong == null || picPlay.Tag.ToString() == "play" || !doScrollingLyrics) return;
+            if (!openSideWindow.Checked || PlayingSong == null || Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING || !doScrollingLyrics) return;
             if (lyrics == null || lyrics.Count == 0) return;
 
             var time = GetCorrectedTime();
@@ -8315,42 +8310,7 @@ namespace cPlayer
                     graphics.DrawString(ProcessLine(lyric.LyricText, true), font, textBrush, new PointF(left, posY - 4));
                 }
             }
-        }
-
-
-        private void DrawLyricsScrolling1(List<Lyric> lyrics, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
-        {
-            if (!openSideWindow.Checked || PlayingSong == null || picPlay.Tag.ToString() == "play" || !doScrollingLyrics) return;
-            if (lyrics == null || lyrics.Count == 0) return;
-
-            var time = GetCorrectedTime();
-            var playbackWindow = PlaybackWindowRBVocals;
-            var hitboxPosition = chartVertical.Checked ? HitboxVocalsX + (bmpHitboxVocals.Width / 2) : picVisuals.Width;
-
-            graphics.DrawImage(bmpBackgroundLyrics, 0, posY, picVisuals.Width, 20);
-
-            foreach (var lyric in lyrics)
-            {
-                if (lyric.LyricStart + lyric.LyricDuration < time) continue;
-
-                if (lyric.LyricStart > time + playbackWindow) return;
-
-                var left = chartVertical.Checked && displayMIDIChartVisuals.Checked
-                    ? (int)(((lyric.LyricStart - time) / playbackWindow) * (picVisuals.Width - hitboxPosition)) + hitboxPosition
-                    : (int)(((lyric.LyricStart - time) / playbackWindow) * picVisuals.Width);
-
-                if (chartVertical.Checked && displayMIDIChartVisuals.Checked && left < HitboxVocalsX - (HitboxVocalsX / 2))
-                {
-                    continue;
-                }
-                if (!chartVertical.Checked && left < 0) continue; // Ensure non-vertical mode doesn't show lyrics past the left edge
-
-                using (var textBrush = new SolidBrush(displayMIDIChartVisuals.Checked && chartVertical.Checked ? Color.White : Color.Black))// foreColor)) - force white/black for better legibility against backgrounds
-                {
-                    graphics.DrawString(ProcessLine(lyric.LyricText, true), font, textBrush, new PointF(left, posY - 4));
-                }
-            }
-        }
+        }               
 
         private void DrawLyricsKaraoke(IEnumerable<LyricPhrase> phrases, IEnumerable<Lyric> lyrics, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
         {
@@ -9064,7 +9024,7 @@ namespace cPlayer
         private void picPlay_MouseClick(object sender, MouseEventArgs e)
         {
             if (sender != null && e.Button != MouseButtons.Left) return;
-            if (picPlay.Tag != null && picPlay.Tag.ToString() == "pause") return;
+            if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING) return;
             Log("btnPlayPause_Click");
             if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PAUSED)
             {
@@ -9082,32 +9042,37 @@ namespace cPlayer
                 PlayingSong = ActiveSong;
                 StartPlayback(PlaybackSeconds == 0, true);
             }
-            picPlay.Tag = "pause";
         }
 
         private void picStop_MouseClick(object sender, MouseEventArgs e)
         {
             if (sender != null && e.Button != MouseButtons.Left) return;
-            Log("btnStop_Click");
-            Log("Stopping playback");
-            DoClickStop();
-            picPlay.Tag = "play";
+            if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING ||
+                Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PAUSED)
+            {
+                Log("btnStop_Click");
+                Log("Stopping playback");
+                DoClickStop();
+            }
         }
 
         private void picPause_MouseClick(object sender, MouseEventArgs e)
         {
             if (sender != null && e.Button != MouseButtons.Left) return;
-            if (picPause.Tag != null && picPause.Tag.ToString() == "play")
+            if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
-                picPause.Tag = "pause";
+                Log("Pausing playback");
+                StopPlayback(true);
+                UpdateNotifyTray();
+            }
+            else if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PAUSED)
+            {
                 picPlay_MouseClick(null, null);
+            }
+            else if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_STOPPED)
+            {
                 return;
             }
-            Log("Pausing playback");
-            StopPlayback(true);
-            UpdateNotifyTray();
-            picPlay.Tag = "play";
-            picPause.Tag = "play";
         }
 
         private void picLoop_MouseClick(object sender, MouseEventArgs e)
