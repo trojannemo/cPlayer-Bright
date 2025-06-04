@@ -39,6 +39,8 @@ namespace cPlayer
         private const int SOLO_MARKER = 103;
         private const int FILL_MARKER = 120;
         private const int OD_MARKER = 116;
+        private const int HOPOon = 101;
+        private const int HOPOoff = 102;
 
         public void Initialize(bool doall)
         {
@@ -72,7 +74,7 @@ namespace cPlayer
             return (from notes in track where notes.CommandCode == MidiCommandCode.NoteOn select (NoteOnEvent)notes into note where note.Velocity > 0 && note.NoteNumber == marker_note let time = GetRealtime(note.AbsoluteTime) let end = GetRealtime(note.AbsoluteTime + note.NoteLength) select new SpecialMarker { MarkerBegin = time, MarkerEnd = end }).ToList();
         }
 
-        public bool ReadMIDIFile(string midi, bool output_info = true)
+        public bool ReadMIDIFile(string midi, int HOPOThreshhold, bool output_info = true)
         {
             if (!File.Exists(midi)) return false;
             var Tools = new NemoTools();
@@ -143,10 +145,12 @@ namespace cPlayer
                             MIDIInfo.Bass = new MIDITrack { Name = "Bass", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Bass.Initialize();
                         }
-                        MIDIInfo.Bass.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
+                        MIDIInfo.Bass.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);                        
+                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile.Events[i], HOPOoff);
+                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile.Events[i], HOPOon);
                         List<MIDINote> toadd;
                         CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Bass, MIDIInfo.Bass.ValidNotes, out toadd);
-                        if (!output_info) continue;
+                        //if (!output_info) continue;
                         MIDIInfo.Bass.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Bass.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Bass.ChartedNotes);
                         MIDIInfo.Bass.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
@@ -170,6 +174,98 @@ namespace cPlayer
                                     note.NoteName = "O";
                                     break;
                             }
+                            foreach (var hopo in MIDIInfo.Bass.HOPOoff)
+                            {
+                                if (hopo.MarkerBegin <= note.NoteStart && hopo.MarkerEnd > note.NoteStart)
+                                {
+                                    note.isHOPOoff = true;
+                                    break;
+                                }
+                            }
+                            foreach (var hopo in MIDIInfo.Bass.HOPOon)
+                            {
+                                if (hopo.MarkerBegin <= note.NoteStart && hopo.MarkerEnd > note.NoteStart)
+                                {
+                                    note.isHOPOon = true;
+                                    note.IsForcedHOPOon = true;
+                                    break;
+                                }
+                            }
+                        }
+                        // Step 1: Sort by tick time
+                        MIDIInfo.Bass.ChartedNotes = MIDIInfo.Bass.ChartedNotes.OrderBy(n => n.Ticks).ToList();
+
+                        // Step 2: Mark chords (same tick time)
+                        for (int z = 0; z < MIDIInfo.Bass.ChartedNotes.Count;)
+                        {
+                            long tick = MIDIInfo.Bass.ChartedNotes[z].Ticks;
+                            int count = 1;
+
+                            // Look ahead to count how many notes share the same tick
+                            while (z + count < MIDIInfo.Bass.ChartedNotes.Count && MIDIInfo.Bass.ChartedNotes[z + count].Ticks == tick)
+                                count++;
+
+                            // Mark as chord if more than one note at the same tick
+                            if (count > 1)
+                            {
+                                for (int j = 0; j < count; j++)
+                                {
+                                    MIDIInfo.Bass.ChartedNotes[z + j].IsChord = true;
+                                    MIDIInfo.Bass.ChartedNotes[z + j].isHOPOon = false; // Enforce: chords cannot be HOPO
+                                }
+                            }
+                            z += count;
+                        }
+
+                        // Step 3: Apply HOPO logic (skip chords and forced off)
+                        MIDINote lastPlayableNote = null;
+
+                        for (int n = 0; n < MIDIInfo.Bass.ChartedNotes.Count; n++)
+                        {
+                            var curr = MIDIInfo.Bass.ChartedNotes[n];
+
+                            // Skip if this note is part of a chord or explicitly forced off
+                            if (curr.IsChord || curr.isHOPOoff)
+                            {
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // If there's no valid previous note, can't be HOPO
+                            if (lastPlayableNote == null)
+                            {
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // Rule 1: If same note number as previous and not forced on, HOPO off
+                            if (curr.NoteNumber == lastPlayableNote.NoteNumber && !curr.IsForcedHOPOon)
+                            {
+                                curr.isHOPOon = false;
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // Rule 2: If this note is the start of a repeated note group → force HOPO off
+                            if (n + 1 < MIDIInfo.Bass.ChartedNotes.Count)
+                            {
+                                var next = MIDIInfo.Bass.ChartedNotes[n + 1];
+                                if (!next.IsChord && next.NoteNumber == curr.NoteNumber)
+                                {
+                                    curr.isHOPOon = false;
+                                    lastPlayableNote = curr;
+                                    continue;
+                                }
+                            }
+
+                            // Rule 3: Timing check
+                            long deltaTicks = curr.Ticks - lastPlayableNote.Ticks;
+                            if (deltaTicks <= HOPOThreshhold)
+                            {
+                                curr.isHOPOon = true;
+                            }
+
+                            lastPlayableNote = curr;
                         }
                     }
                     else if ((trackname.Contains("GUITAR") && !trackname.Contains("FNF") && !trackname.Contains("REAL") && !trackname.Contains("COOP")) || trackname.Contains("T1 GEMS"))
@@ -180,9 +276,11 @@ namespace cPlayer
                             MIDIInfo.Guitar.Initialize();  
                         }
                         MIDIInfo.Guitar.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
+                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile.Events[i], HOPOoff);
+                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile.Events[i], HOPOon);
                         List<MIDINote> toadd;
                         CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Guitar, MIDIInfo.Guitar.ValidNotes, out toadd);
-                        if (!output_info) continue;
+                        //if (!output_info) continue;
                         MIDIInfo.Guitar.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Guitar.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Guitar.ChartedNotes);
                         MIDIInfo.Guitar.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
@@ -206,6 +304,99 @@ namespace cPlayer
                                     note.NoteName = "O";
                                     break;
                             }
+                            foreach (var hopo in MIDIInfo.Guitar.HOPOoff)
+                            {
+                                if (hopo.MarkerBegin <= note.NoteStart && hopo.MarkerEnd > note.NoteStart)
+                                {
+                                    note.isHOPOoff = true;
+                                    break;
+                                }
+                            }
+                            foreach (var hopo in MIDIInfo.Guitar.HOPOon)
+                            {
+                                if (hopo.MarkerBegin <= note.NoteStart && hopo.MarkerEnd > note.NoteStart)
+                                {
+                                    note.isHOPOon = true;
+                                    note.IsForcedHOPOon = true;
+                                    break;
+                                }
+                            }
+                        }
+                                                
+                        // Step 1: Sort by tick time
+                        MIDIInfo.Guitar.ChartedNotes = MIDIInfo.Guitar.ChartedNotes.OrderBy(n => n.Ticks).ToList();
+
+                        // Step 2: Mark chords (same tick time)
+                        for (int z = 0; z < MIDIInfo.Guitar.ChartedNotes.Count;)
+                        {
+                            long tick = MIDIInfo.Guitar.ChartedNotes[z].Ticks;
+                            int count = 1;
+
+                            // Look ahead to count how many notes share the same tick
+                            while (z + count < MIDIInfo.Guitar.ChartedNotes.Count && MIDIInfo.Guitar.ChartedNotes[z + count].Ticks == tick)
+                                count++;
+
+                            // Mark as chord if more than one note at the same tick
+                            if (count > 1)
+                            {
+                                for (int j = 0; j < count; j++)
+                                {
+                                    MIDIInfo.Guitar.ChartedNotes[z + j].IsChord = true;
+                                    MIDIInfo.Guitar.ChartedNotes[z + j].isHOPOon = false; // Enforce: chords cannot be HOPO
+                                }
+                            }
+                            z += count;
+                        }
+
+                        // Step 3: Apply HOPO logic (skip chords and forced off)
+                        MIDINote lastPlayableNote = null;
+
+                        for (int n = 0; n < MIDIInfo.Guitar.ChartedNotes.Count; n++)
+                        {
+                            var curr = MIDIInfo.Guitar.ChartedNotes[n];
+
+                            // Skip if this note is part of a chord or explicitly forced off
+                            if (curr.IsChord || curr.isHOPOoff)
+                            {
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // If there's no valid previous note, can't be HOPO
+                            if (lastPlayableNote == null)
+                            {
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // Rule 1: If same note number as previous and not forced on, HOPO off
+                            if (curr.NoteNumber == lastPlayableNote.NoteNumber && !curr.IsForcedHOPOon)
+                            {
+                                curr.isHOPOon = false;
+                                lastPlayableNote = curr;
+                                continue;
+                            }
+
+                            // Rule 2: If this note is the start of a repeated note group → force HOPO off
+                            if (n + 1 < MIDIInfo.Guitar.ChartedNotes.Count)
+                            {
+                                var next = MIDIInfo.Guitar.ChartedNotes[n + 1];
+                                if (!next.IsChord && next.NoteNumber == curr.NoteNumber)
+                                {
+                                    curr.isHOPOon = false;
+                                    lastPlayableNote = curr;
+                                    continue;
+                                }
+                            }
+
+                            // Rule 3: Timing check
+                            long deltaTicks = curr.Ticks - lastPlayableNote.Ticks;
+                            if (deltaTicks <= HOPOThreshhold)
+                            {
+                                curr.isHOPOon = true;
+                            }
+
+                            lastPlayableNote = curr;
                         }
                     }
                     else if (trackname.Contains("KEYS") && !trackname.Contains("FNF") && !trackname.Contains("REAL") && !trackname.Contains("ANIM"))
@@ -607,7 +798,7 @@ namespace cPlayer
         }
 
         private void CheckMIDITrack(IList<MidiEvent> track, MIDITrack instrument, ICollection<int> valid_notes, out List<MIDINote> output, bool isDrums = false)
-        {
+        {            
             output = new List<MIDINote>();
             for (var z = 0; z < track.Count(); z++)
             {
@@ -621,7 +812,7 @@ namespace cPlayer
                     if (notes.CommandCode != MidiCommandCode.NoteOn) continue;
                     var note = (NoteOnEvent)notes;
                     if (note.Velocity <= 0) continue;
-                    if (!valid_notes.Contains(note.NoteNumber)) continue;
+                    if (!valid_notes.Contains(note.NoteNumber)) continue;                    
                     var time = GetRealtime(note.AbsoluteTime);
                     var length = GetRealtime(note.NoteLength);
                     var end = Math.Round(time + length, 5);
@@ -642,7 +833,8 @@ namespace cPlayer
                         NoteNumber = note.NoteNumber,
                         NoteName = note.NoteName,
                         isTom = isTom,
-                        hasOD = hasOD
+                        hasOD = hasOD,
+                        Ticks = notes.AbsoluteTime,
                     };
                     output.Add(n);
                 }
@@ -770,6 +962,8 @@ namespace cPlayer
         public List<SpecialMarker> Solos { get; set; }
         public List<SpecialMarker> Overdrive { get; set; }
         public List<SpecialMarker> Fills { get; set; }
+          public List<SpecialMarker> HOPOon { get; set; }
+        public List<SpecialMarker> HOPOoff { get; set; }
 
         public void Sort()
         {
@@ -777,7 +971,10 @@ namespace cPlayer
             Solos.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
             Overdrive.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
             Fills.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
+            HOPOoff.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));
+            HOPOon.Sort((a, b) => a.MarkerBegin.CompareTo(b.MarkerBegin));            
         }
+
         public void Initialize()
         {
             ChartedNotes = new List<MIDINote>();
@@ -786,6 +983,8 @@ namespace cPlayer
             Toms = new List<MIDINote>();
             Fills = new List<SpecialMarker>();
             Overdrive = new List<SpecialMarker>();
+            HOPOoff = new List<SpecialMarker>();
+            HOPOon = new List<SpecialMarker>();
         }
     }
 
@@ -929,6 +1128,13 @@ namespace cPlayer
         public Color NoteColor { get; set; }
         public bool isTom { get; set; }
         public bool hasOD { get; set; }
+        public bool isHOPOon { get; set; }
+        public bool IsForcedHOPOon { get; set; }
+        public bool isHOPOoff { get; set; }
+
+        public long Ticks { get; set; }
+
+        public bool IsChord { get; set; }
     }
 
     public class TempoEvent

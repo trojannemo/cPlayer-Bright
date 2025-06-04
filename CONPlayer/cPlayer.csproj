@@ -25,7 +25,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>86</ApplicationRevision>
+    <ApplicationRevision>87</ApplicationRevision>
     <ApplicationVersion>3.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -318,6 +318,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\note_orange.png" />
+    <None Include="Resources\note_green.png" />
+    <None Include="Resources\note_blue.png" />
+    <None Include="Resources\note_yellow.png" />
+    <None Include="Resources\note_red.png" />
+    <None Include="Resources\note_overdrive.png" />
+    <None Include="Resources\note_overdrive_hopo.png" />
+    <None Include="Resources\note_orange_hopo.png" />
+    <None Include="Resources\note_green_hopo.png" />
+    <None Include="Resources\note_blue_hopo.png" />
+    <None Include="Resources\note_yellow_hopo.png" />
+    <None Include="Resources\note_red_hopo.png" />
     <None Include="Resources\prokeyschord.png" />
     <None Include="Resources\frostedglasslyrics50.png" />
     <None Include="Resources\frostedglasslyrics25.png" />
@@ -325,10 +337,7 @@
     <None Include="Resources\frostedglass75.png" />
     <None Include="Resources\vocals_solo.png" />
     <None Include="Resources\hitbox_vocals.png" />
-    <None Include="Resources\note_yellow.png" />
-    <None Include="Resources\note_red.png" />
     <None Include="Resources\note_od.png" />
-    <None Include="Resources\note_green.png" />
     <None Include="Resources\nore_blue.png" />
     <None Include="Resources\hitbox.png" />
     <None Include="Resources\background_prokeys_solo.jpg" />
@@ -341,10 +350,8 @@
     <None Include="Resources\background_drums.jpg" />
     <None Include="Resources\background_bass_solo.jpg" />
     <None Include="Resources\background_bass.jpg" />
-    <None Include="Resources\note_orange.png" />
     <None Include="Resources\note_white_od.png" />
     <None Include="Resources\note_white.png" />
-    <None Include="Resources\note_blue.png" />
     <None Include="Resources\note_black_od.png" />
     <None Include="Resources\note_black.png" />
     <None Include="Resources\drums_cymbal_y.png" />
@@ -374,25 +381,12 @@
     <None Include="Resources\cowbella.png" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="AxWMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>aximp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
-    <COMReference Include="WMPLib">
-      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="LibVLCSharp">
+      <Version>3.9.3</Version>
+    </PackageReference>
+    <PackageReference Include="LibVLCSharp.WinForms">
+      <Version>3.9.3</Version>
+    </PackageReference>
     <PackageReference Include="NAudio.Core">
       <Version>2.2.1</Version>
     </PackageReference>

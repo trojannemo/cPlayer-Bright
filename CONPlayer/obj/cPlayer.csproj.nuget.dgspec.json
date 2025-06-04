@@ -1,0 +1,89 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\cPlayer.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\cPlayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\cPlayer.csproj",
+        "projectName": "cPlayer",
+        "projectPath": "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\cPlayer.csproj",
+        "packagesPath": "C:\\Users\\Yemil-PC\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Yemil-PC\\source\\repos\\cPlayerBright\\cPlayerBright\\CONPlayer\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
+        "fallbackFolders": [
+          "C:\\Program Files\\DevExpress 23.2\\Components\\Offline Packages",
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Yemil-PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 23.2.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net481"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\DevExpress 23.2\\Components\\System\\Components\\Packages": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net481": {
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net481": {
+          "dependencies": {
+            "LibVLCSharp": {
+              "target": "Package",
+              "version": "[3.9.3, )"
+            },
+            "LibVLCSharp.WinForms": {
+              "target": "Package",
+              "version": "[3.9.3, )"
+            },
+            "NAudio.Core": {
+              "target": "Package",
+              "version": "[2.2.1, )"
+            },
+            "NAudio.WinForms": {
+              "target": "Package",
+              "version": "[2.2.1, )"
+            },
+            "NAudio.WinMM": {
+              "target": "Package",
+              "version": "[2.2.1, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-arm64": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

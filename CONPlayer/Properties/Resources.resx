@@ -732,14 +732,8 @@
   <data name="hitbox_vocals" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hitbox_vocals.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="note_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\nore_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="note_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -755,5 +749,29 @@
   </data>
   <data name="prokeyschord" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\prokeyschord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_blue_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_green_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_green_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_overdrive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_orange_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_orange_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_overdrive_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_overdrive_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_red_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_red_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_yellow_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_yellow_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

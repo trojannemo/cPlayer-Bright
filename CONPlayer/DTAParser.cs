@@ -163,6 +163,10 @@ namespace cPlayer
                         {
                             song.Gender = line.Replace("/", "").Replace("<singer_gender>", "").Trim();
                         }
+                        else if (line.Contains("video_start_time =") || line.Contains("video_start_time="))
+                        {
+                            song.VideoStartTime = Convert.ToInt16(Tools.GetConfigString(line));
+                        }
                         else if (line.Contains("<guitar_intensity>") && line.Contains("</guitar_intensity>"))
                         {
                             song.GuitarDiff = Convert.ToInt16(line.Replace("/", "").Replace("<guitar_intensity>", "").Trim());
@@ -510,6 +514,10 @@ namespace cPlayer
                         else if (line.Contains("track=") || line.Contains("track ="))
                         {
                             song.TrackNumber = Convert.ToInt16(Tools.GetConfigString(line));
+                            if (song.TrackNumber > 100)
+                            {
+                                song.TrackNumber = 1; //for stupid values like 16,000
+                            }
                         }
                         else if (line.Contains("delay =") || line.Contains("delay="))
                         {
@@ -916,11 +924,11 @@ namespace cPlayer
                             {
                                 try
                                 {
-                                    song.HopoThreshold = Convert.ToInt16(Regex.Match(line, @"\d+").Value);
+                                    song.HOPOThreshold = Convert.ToInt16(Regex.Match(line, @"\d+").Value);
                                 }
                                 catch (Exception)
                                 {
-                                    song.HopoThreshold = 0;
+                                    song.HOPOThreshold = 170;
                                 }
                             }
                             else if (line.Contains("crowd_channels") && !didCrowd)
@@ -2702,13 +2710,13 @@ namespace cPlayer
         public int TuningCents { get; set; }
         public int AnimTempo { get; set; }
         public Decimal GuidePitch { get; set; }
-        public Int16 HopoThreshold { get; set; }
+        public Int16 HOPOThreshold { get; set; }
         public Int32 Length { get; set; }
         public Int32 PreviewStart { get; set; }
         public Int32 PreviewEnd { get; set; }
         public int DTAIndex { get; set; }
         public int PSDelay { get; set; }
-
+        public int VideoStartTime { get; set; }
         public bool Master { get; set; }
         public bool DoNotExport { get; set; }
         public bool RB3Version { get; set; }
@@ -2783,7 +2791,7 @@ namespace cPlayer
             ChannelsVocals = 0;
             ChannelsCrowd = 0;
             ChannelsTotal = 0;
-            HopoThreshold = 170;
+            HOPOThreshold = 170;
             MuteVolume = -96;
             MuteVolumeVocals = -12;
             TuningCents = 0;
@@ -2804,6 +2812,7 @@ namespace cPlayer
             CATemh = false;
             DTAIndex = 0;
             PSDelay = 0;
+            VideoStartTime = 0;
             ChannelsBassStart = 0;
             ChannelsDrumsStart = 0;
             ChannelsGuitarStart = 0;

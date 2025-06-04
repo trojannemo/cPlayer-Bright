@@ -19,8 +19,6 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.Misc;
 using Un4seen.Bass.AddOn.Opus;
-using WMPLib;
-using AxWMPLib;
 using NautilusFREE;
 using static cPlayer.YARGSongFileStream;
 using Un4seen.Bass.AddOn.Enc;
@@ -29,6 +27,8 @@ using NAudio.Wave;
 using cPlayer.StageKit;
 using SlimDX.XInput;
 using NAudio.Dsp;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WinForms;
 
 namespace cPlayer
 {
@@ -139,7 +139,9 @@ namespace cPlayer
         private bool ShowingNotFoundMessage;
         private readonly nTools nautilus;
         private SongData ActiveSongData;
-        private AxWindowsMediaPlayer MediaPlayer;
+        private LibVLC _libVLC;
+        private MediaPlayer _mediaPlayer;
+        private VideoView videoView;
         private string[] opusFiles;
         private string[] oggFiles;
         private string[] mp3Files;
@@ -198,6 +200,12 @@ namespace cPlayer
         private readonly Bitmap bmpBackgroundVocals;
         private readonly Bitmap bmpBackgroundLyrics;
         private readonly Bitmap bmpProKeysChordMarker;
+        private readonly Bitmap bmpBlueHopo;
+        private readonly Bitmap bmpGreenHopo;
+        private readonly Bitmap bmpYellowHopo;
+        private readonly Bitmap bmpRedHopo;
+        private readonly Bitmap bmpOrangeHopo;
+        private readonly Bitmap bmpODHopo;
         private const int HitboxVocalsX = 200;
         private WaveInEvent waveIn;
         private WaveOutEvent waveOut;
@@ -250,6 +258,7 @@ namespace cPlayer
         private int activeYellowLED = 0;
         private int activeRedLED = 0;
         private int activeGreenLED = 0;
+        private int currHOPOThreshold = 170;
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -277,16 +286,27 @@ namespace cPlayer
             m4aFiles = new string[20];
             RecentPlaylists = new string[5];
             PracticeSessions = new List<PracticeSection>();
-            MediaPlayer = new AxWindowsMediaPlayer();
-            MediaPlayer.CreateControl();
-            // Handle the MouseDown event to show the context menu
-            MediaPlayer.MouseDownEvent += (object sender, _WMPOCXEvents_MouseDownEvent e) =>
+            var options = new[]
             {
-                if (e.nButton == 2) // Right mouse button
-                {
-                    VisualsContextMenu.Show(Cursor.Position); // Show the context menu at the mouse position
-                }
+            "--vout=d3d11", // Ensure Direct3D 11 is used if available
+            "--no-audio", // Disable audio processing
+            "--no-sub-autodetect-file", // Skip subtitle loading
+            "--no-video-title-show" // Hide overlay text on videos
+        };
+
+            _libVLC = new LibVLC(options);
+            _mediaPlayer = new MediaPlayer(_libVLC);
+            _mediaPlayer.Volume = 0; //always muted                     
+
+            videoView = new VideoView
+            {
+                Width = 256,
+                Height = 256,
+                MediaPlayer = _mediaPlayer,
+                Dock = DockStyle.Fill
             };
+
+            this.Controls.Add(videoView);
             KaraokeOverlay = new KaraokeOverlayForm(this)
             {
                 StartPosition = FormStartPosition.Manual,
@@ -297,8 +317,7 @@ namespace cPlayer
             // Hook into relevant events to keep the overlay aligned
             this.Resize += (s, e) => UpdateOverlayPosition();
             this.Move += (s, e) => UpdateOverlayPosition();
-            MediaPlayer.Resize += (s, e) => UpdateOverlayPosition();
-
+            
             for (var i = 0; i < 5; i++)
             {
                 RecentPlaylists[i] = "";
@@ -319,6 +338,12 @@ namespace cPlayer
             bmpDrumsCymbalY = Resources.drums_cymbal_y;
             bmpDrumsCymbalG = Resources.drums_cymbal_g;
             bmpDrumsCymbalOD = Resources.drums_cymbal_od;
+            bmpGreenHopo = Resources.note_green_hopo;
+            bmpRedHopo = Resources.note_red_hopo;
+            bmpYellowHopo = Resources.note_yellow_hopo;
+            bmpBlueHopo = Resources.note_blue_hopo;
+            bmpOrangeHopo = Resources.note_orange_hopo;
+            bmpODHopo = Resources.note_overdrive_hopo;
             bmpNoteBlue = Resources.note_blue;
             bmpNoteGreen = Resources.note_green;
             bmpNoteYellow = Resources.note_yellow;
@@ -584,7 +609,7 @@ namespace cPlayer
         {
             reset = true;
             StopPlayback();
-            MediaPlayer.Visible = false;
+            videoView.Visible = false;
             picPreview.Image = Resources.noart3;
             picPreview.Cursor = Cursors.Default;
             lblSections.Invoke(new MethodInvoker(() => lblSections.Text = ""));
@@ -927,6 +952,7 @@ namespace cPlayer
                 try
                 {
                     newSong.BPM = 120;//default in case something fails below
+                    currHOPOThreshold = song.HOPOThreshold;
                     if (File.Exists(EDAT) && pS3.Checked)
                     {
                         Log("Decrypting EDAT file");
@@ -937,7 +963,7 @@ namespace cPlayer
                         hasNoMIDI = false;
                         Log("Reading MIDI file for contents");
                         MIDITools.Initialize(false);
-                        if (MIDITools.ReadMIDIFile(NextSongMIDI, false))
+                        if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold, false))
                         {
                             newSong.BPM = MIDITools.MIDIInfo.AverageBPM;
                             Log("Success - Average BPM: " + newSong.BPM);
@@ -1103,7 +1129,7 @@ namespace cPlayer
                     Log("MIDI file found");
                     Log("Reading MIDI file for contents");
                     MIDITools.Initialize(false);
-                    if (MIDITools.ReadMIDIFile(NextSongMIDI, false))
+                    if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold,false))
                     {
                         hasNoMIDI = false;
                         newSong.BPM = MIDITools.MIDIInfo.AverageBPM;
@@ -1336,6 +1362,7 @@ namespace cPlayer
 
                     Tools.DeleteFile(NextSongMIDI);
                     newsong.BPM = 120;//default in case something fails below
+                    currHOPOThreshold = song.HOPOThreshold;
                     xFile = xPackage.GetFile("songs/" + internalname + "/" + internalname + ".mid");
                     Log("Searching for MIDI file");
                     if (xFile != null)
@@ -1346,7 +1373,7 @@ namespace cPlayer
                         {
                             Log("Reading MIDI file for contents");
                             MIDITools.Initialize(false);
-                            if (MIDITools.ReadMIDIFile(NextSongMIDI, false))
+                            if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold, true))
                             {
                                 newsong.BPM = MIDITools.MIDIInfo.AverageBPM;
                                 Log("Success - Average BPM: " + newsong.BPM);
@@ -2717,10 +2744,10 @@ namespace cPlayer
                         channels[0] = 0;
                         channels[1] = 2;
                         channels[2] = 1;
-                        channels[3] = 4;
-                        channels[4] = 5;
-                        channels[5] = 6;
-                        channels[6] = 7;
+                        channels[3] = 6;
+                        channels[4] = 4;
+                        channels[5] = 7;
+                        channels[6] = 5;
                         channels[7] = 3;
                         break;
                     default:
@@ -2988,11 +3015,20 @@ namespace cPlayer
             Log("Shuffling songs");
             var random = new Random();
             int index;
-            do
+
+            if (lstPlaylist.Items.Count == 1)
             {
-                index = random.Next(0, lstPlaylist.Items.Count);
+                index = 0; // Only one item, pick it.
             }
-            while ((PlayingSong != null && index == PlayingSong.Index) || (lstPlaylist.Items[index].Tag.ToString() == "1" && !can_repeat));
+            else
+            {
+                do
+                {
+                    index = random.Next(0, lstPlaylist.Items.Count);
+                }
+                while ((PlayingSong != null && index == PlayingSong.Index) ||
+                       (lstPlaylist.Items[index].Tag.ToString() == "1" && !can_repeat));
+            }
             Log("Index: " + index);
             return index;
         }
@@ -3182,7 +3218,8 @@ namespace cPlayer
                 PlayingSong.Length = overrideSongLength; //to accomodate songs missing that info
             }
             lblDuration.Text = Parser.GetSongDuration(PlayingSong.Length.ToString(CultureInfo.InvariantCulture));
-            lblAuthor.Text = string.IsNullOrEmpty(PlayingSong.Charter.Trim()) ? "" : "Author: " + PlayingSong.Charter.Trim();
+            lblAuthor.Text = string.IsNullOrEmpty(PlayingSong.Charter.Trim()) ? "" : "Author: " + RemoveCloneHeroColor(PlayingSong.Charter);
+            lblAuthor.ForeColor = string.IsNullOrEmpty(PlayingSong.Charter.Trim()) ? Color.Black : GetCloneHeroColor(PlayingSong.Charter);
             toolTip1.SetToolTip(lblArtist, lblArtist.Text);
             toolTip1.SetToolTip(lblSong, lblSong.Text);
             toolTip1.SetToolTip(lblAlbum, lblAlbum.Text);
@@ -3225,7 +3262,7 @@ namespace cPlayer
             if (PlayingSong == null) return;
             Log("Preparing to draw MIDI file");
             MIDITools.Initialize(true);
-            if (!MIDITools.ReadMIDIFile(CurrentSongMIDI))
+            if (!MIDITools.ReadMIDIFile(CurrentSongMIDI, currHOPOThreshold, true))
             {
                 Log("Failed - can't read that MIDI file - can't draw that song");
                 ShowUpdate("Error reading MIDI file!");
@@ -4258,9 +4295,9 @@ namespace cPlayer
             PlaybackSeconds = PlaybackSeek;
             Log("Setting audio location based on user input: " + PlaybackSeconds + " seconds");
             UpdateTime(false, !PlaybackTimer.Enabled);
-            if (MediaPlayer.playState == WMPPlayState.wmppsPlaying || MediaPlayer.playState == WMPPlayState.wmppsPaused)
+            if (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused)
             {
-                MediaPlayer.Ctlcontrols.currentPosition = PlaybackSeconds;
+                _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
             }
         }
 
@@ -5199,7 +5236,7 @@ namespace cPlayer
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var version = GetAppVersion();
-            var message = AppName + " - The Rock Band Music Player\nVersion: " + version + "\n© TrojanNemo, 2014-2024\n\n";
+            var message = AppName + " - The Rock Band Music Player\nVersion: " + version + "\n© TrojanNemo, 2014-2025\n\n";
             var credits = Tools.ReadHelpFile("credits");
             MessageBox.Show(message + credits, "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Log("Displayed About message");
@@ -5500,8 +5537,8 @@ namespace cPlayer
             {
                 openSideWindow.Checked = true;
             }
-            MediaPlayer.Height = picVisuals.Height - GetHeightDiff();
-            MediaPlayer.Width = picVisuals.Width;
+            videoView.Height = picVisuals.Height - GetHeightDiff();
+            videoView.Width = picVisuals.Width;
             lblUpdates.Left = (openSideWindow.Checked ? picVisuals.Left + picVisuals.Width : panelPlaying.Left + panelPlaying.Width) - lblUpdates.Width;
             if (WindowState != FormWindowState.Minimized) return;
             Log("Minimized to system tray");
@@ -5955,7 +5992,7 @@ namespace cPlayer
         }
 
         private void PlaybackTimer_Tick(object sender, EventArgs e)
-        {
+        {            
             try
             {
                 if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
@@ -5992,6 +6029,7 @@ namespace cPlayer
                     }
                     else if (PlaybackSeconds * 1000 >= PlayingSong.Length && picShuffle.Tag.ToString() == "shuffle")
                     {
+                        StopPlayback();
                         DoShuffleSongs();
                         PlaybackTimer.Enabled = false;
                         return;
@@ -6043,6 +6081,56 @@ namespace cPlayer
             {
                 picNext_MouseClick(null, null);
                 PlaybackTimer.Enabled = false;
+            }
+        }
+
+        private string RemoveCloneHeroColor(string author)
+        {
+            try
+            {
+                int startIndex = author.IndexOf('>') + 1;
+                int endIndex = author.LastIndexOf('<');
+                return author.Substring(startIndex, endIndex - startIndex);
+            }
+            catch
+            {
+                try
+                {
+                    int startIndex = author.IndexOf('<');
+                    int endIndex = author.LastIndexOf('>') + 1;
+                    var color = author.Substring(startIndex, endIndex - startIndex);
+                    return author.Replace(color, "").Trim();
+                }
+                catch
+                {
+                    return author;
+                }
+            }
+        }
+
+        private Color GetCloneHeroColor(string author)
+        {
+            try
+            {
+                int colorStartIndex = author.IndexOf('=') + 1;
+                int colorEndIndex = author.IndexOf('>');
+                string colorValue = author.Substring(colorStartIndex, colorEndIndex - colorStartIndex);
+
+                Color color;
+                try
+                {
+                    color = ColorTranslator.FromHtml(colorValue); // Convert from hex
+                }
+                catch
+                {
+                    color = Color.Black; // Default to black if invalid
+                }
+
+                return color;
+            }
+            catch
+            {
+                return Color.Black;
             }
         }
 
@@ -6287,28 +6375,96 @@ namespace cPlayer
                 var posY = startingPosition + (ChartGoal * percent);
 
                 var noteLocation = 0;
-                var img = note.hasOD ? bmpNoteOD : bmpNoteGreen;
+                Bitmap img;
+                /*
+                if (note.isHOPOon && note.hasOD)
+                {
+                    img = bmpODHopo;
+                }
+                else
+                {
+                    img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpGreenHopo : bmpNoteGreen;
 
-                // Pre-determine image and position
-                if (note.NoteColor == ChartRed)
+                    // Pre-determine image and position
+                    if (note.NoteColor == ChartRed)
+                    {
+                        noteLocation = 1;
+                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpRedHopo : bmpNoteRed;
+                    }
+                    if (note.NoteColor == ChartYellow)
+                    {
+                        noteLocation = 2;
+                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpYellowHopo : bmpNoteYellow;
+                    }
+                    else if (note.NoteColor == ChartBlue)
+                    {
+                        noteLocation = 3;
+                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpBlueHopo : bmpNoteBlue;
+                    }
+                    else if (note.NoteColor == ChartOrange)
+                    {
+                        noteLocation = 4;
+                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpOrangeHopo : bmpNoteOrange;
+                    }
+                }   */
+
+                if (note.hasOD)
                 {
-                    noteLocation = 1;
-                    img = note.hasOD ? bmpNoteOD : bmpNoteRed;
+                    // Overdrive cases
+                    if (note.NoteColor == ChartRed)
+                    {
+                        noteLocation = 1;
+                        img = note.isHOPOon ? bmpODHopo : bmpNoteOD;
+                    }
+                    else if (note.NoteColor == ChartYellow)
+                    {
+                        noteLocation = 2;
+                        img = note.isHOPOon ? bmpODHopo : bmpNoteOD;
+                    }
+                    else if (note.NoteColor == ChartBlue)
+                    {
+                        noteLocation = 3;
+                        img = note.isHOPOon ? bmpODHopo : bmpNoteOD;
+                    }
+                    else if (note.NoteColor == ChartOrange)
+                    {
+                        noteLocation = 4;
+                        img = note.isHOPOon ? bmpODHopo : bmpNoteOD;
+                    }
+                    else // fallback (green)
+                    {
+                        noteLocation = 0;
+                        img = note.isHOPOon ? bmpODHopo : bmpNoteOD;
+                    }
                 }
-                if (note.NoteColor == ChartYellow)
+                else
                 {
-                    noteLocation = 2;
-                    img = note.hasOD ? bmpNoteOD : bmpNoteYellow;
-                }
-                else if (note.NoteColor == ChartBlue)
-                {
-                    noteLocation = 3;
-                    img = note.hasOD ? bmpNoteOD : bmpNoteBlue;
-                }
-                else if (note.NoteColor == ChartOrange)
-                {
-                    noteLocation = 4;
-                    img = note.hasOD ? bmpNoteOD : bmpNoteOrange;
+                    // Non-OD cases
+                    if (note.NoteColor == ChartRed)
+                    {
+                        noteLocation = 1;
+                        img = note.isHOPOon ? bmpRedHopo : bmpNoteRed;
+                    }
+                    else if (note.NoteColor == ChartYellow)
+                    {
+                        noteLocation = 2;
+                        img = note.isHOPOon ? bmpYellowHopo : bmpNoteYellow;
+                    }
+                    else if (note.NoteColor == ChartBlue)
+                    {
+                        noteLocation = 3;
+                        img = note.isHOPOon ? bmpBlueHopo : bmpNoteBlue;
+                    }
+                    else if (note.NoteColor == ChartOrange)
+                    {
+                        noteLocation = 4;
+                        img = note.isHOPOon ? bmpOrangeHopo : bmpNoteOrange;
+                    }
+                    else // fallback (green)
+                    {
+                        noteLocation = 0;
+                        img = note.isHOPOon ? bmpGreenHopo : bmpNoteGreen;
+                    }
                 }
 
                 // Calculate size and position
@@ -7043,7 +7199,7 @@ namespace cPlayer
         private void SetVideoPlayerPath(string ini)
         {
             Log("Video not yet loaded, trying to load");
-            MediaPlayer.URL = "";
+            _mediaPlayer.Media = null;
             var video_path = "";
             if (string.IsNullOrEmpty(ini) || !File.Exists(ini)) return;
             var sr = new StreamReader(ini);
@@ -7082,24 +7238,29 @@ namespace cPlayer
                 }
             }
             if (string.IsNullOrEmpty(video_path)) return;
-            MediaPlayer.URL = video_path;
+            var media = new Media(_libVLC, video_path, FromType.FromPath);
+            if (media == null) return;
+            _mediaPlayer.Media = media;
         }
 
         private void StartVideoPlayback()
         {
             if (PlayingSong == null) return;
-            if (string.IsNullOrEmpty(MediaPlayer.URL))
+            if (_mediaPlayer.Media == null)
             {
                 SetVideoPlayerPath(string.IsNullOrEmpty(sngPath) ? PlayingSong.Location : Application.StartupPath + "\\temp\\song.ini");
             }
-            if (string.IsNullOrEmpty(MediaPlayer.URL)) return;
+            if (_mediaPlayer.Media == null) return;
             Log("Starting video playback");
             VideoIsPlaying = true;
             ClearVisuals();
-            MediaPlayer.Visible = true;
-            MediaPlayer.BringToFront();
-            MediaPlayer.Ctlcontrols.play();
-            MediaPlayer.Ctlcontrols.currentPosition = PlaybackSeconds;
+            videoView.Visible = true;
+            videoView.BringToFront();
+            _mediaPlayer.Play();
+            if (_mediaPlayer.IsSeekable)
+            {
+                _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+            }            
         }
 
         public void SetPlayLocation(double time, bool seeking = false)
@@ -7113,10 +7274,10 @@ namespace cPlayer
             {
                 time = 0.0;
             }
-            if ((MediaPlayer.playState == WMPPlayState.wmppsPlaying || MediaPlayer.playState == WMPPlayState.wmppsPaused) && !seeking)
+            if (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused && !seeking)
             {
-                MediaPlayer.Ctlcontrols.currentPosition = time;
-            }
+                _mediaPlayer.Time = (long)(time * 1000) + Parser.Songs[0].VideoStartTime;
+            }           
             if ((opusFiles.Any() || oggFiles.Any() || wavFiles.Any() || mp3Files.Any()) && BassStreams.Count() > 1)
             {
                 foreach (var stream in BassStreams)
@@ -7163,9 +7324,9 @@ namespace cPlayer
                         Log("Error pausing playback: " + Bass.BASS_ErrorGetCode());
                         MessageBox.Show("Error pausing playback\n" + Bass.BASS_ErrorGetCode());
                     }
-                    if (MediaPlayer.playState == WMPPlayState.wmppsPlaying)
+                    if (_mediaPlayer.State == VLCState.Playing)
                     {
-                        MediaPlayer.Ctlcontrols.pause();
+                        _mediaPlayer.Pause();
                     }
                 }
                 else
@@ -7183,18 +7344,17 @@ namespace cPlayer
 
         private void StopVideoPlayback(bool stop = true)
         {
-            VideoIsPlaying = (MediaPlayer.playState == WMPPlayState.wmppsPlaying || MediaPlayer.playState == WMPPlayState.wmppsPaused) && displayBackgroundVideo.Checked;
+            VideoIsPlaying = (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused) && displayBackgroundVideo.Checked;
             Log("Stopping video playback");
             if (stop)
             {
-                MediaPlayer.Ctlcontrols.stop();
-                MediaPlayer.close();
+                _mediaPlayer.Stop();
             }
             else
             {
-                MediaPlayer.Ctlcontrols.pause();
+                _mediaPlayer.Pause();
             }
-            MediaPlayer.Visible = false;
+            videoView.Visible = false;
         }
 
         private void StopBASS()
@@ -7290,14 +7450,14 @@ namespace cPlayer
             picVisuals.Image = displayAlbumArt.Checked && File.Exists(CurrentSongArtBlurred) ? Tools.NemoLoadImage(CurrentSongArtBlurred) : null;
             lblSections.Parent = picVisuals;
             lblSections.Visible = showPracticeSections.Checked && MIDITools.PracticeSessions.Any() && !chartVertical.Checked;
-            lblSections.BackColor = yarg.Checked && displayBackgroundVideo.Checked && !string.IsNullOrEmpty(MediaPlayer.URL) ? Color.Black : LabelBackgroundColor;
+            lblSections.BackColor = yarg.Checked && displayBackgroundVideo.Checked && _mediaPlayer.Media != null ? Color.Black : LabelBackgroundColor;
             lblSections.Refresh();
 
-            MediaPlayer.Parent = picVisuals;
-            MediaPlayer.Top = lblSections.Visible ? lblSections.Height : 0;
-            MediaPlayer.Left = 0;
-            MediaPlayer.Height = picVisuals.Height - GetHeightDiff();
-            MediaPlayer.Width = picVisuals.Width;
+            videoView.Parent = picVisuals;
+            videoView.Top = lblSections.Visible ? lblSections.Height : 0;
+            videoView.Left = 0;
+            videoView.Height = picVisuals.Height - GetHeightDiff();
+            videoView.Width = picVisuals.Width;
             if (displayMIDIChartVisuals.Checked)
             {
                 PlaybackTimer.Interval = 16;
@@ -7778,12 +7938,6 @@ namespace cPlayer
             CenterToScreen();
             picRandom.Image = Resources.dice_trippy;
             UpdateRecentPlaylists("");
-            MediaPlayer.uiMode = "none";
-            MediaPlayer.settings.volume = 0;
-            MediaPlayer.windowlessVideo = true;
-            MediaPlayer.Ctlenabled = false;
-            MediaPlayer.enableContextMenu = false;
-            MediaPlayer.stretchToFit = true;
             UpdateDisplay(false);
             Application.DoEvents();
             Activate();
@@ -8754,7 +8908,7 @@ namespace cPlayer
         private void picVisuals_Paint(object sender, PaintEventArgs e)
         {
             if (!PlaybackTimer.Enabled || !openSideWindow.Checked || PlayingSong == null || WindowState == FormWindowState.Minimized
-                || (MediaPlayer.playState == WMPPlayState.wmppsPaused && displayBackgroundVideo.Checked) || VideoIsPlaying) return;
+                || (_mediaPlayer.State == VLCState.Paused && displayBackgroundVideo.Checked) || VideoIsPlaying) return;
             UpdateTextQuality(e.Graphics);
             if (displayAlbumArt.Checked)
             {
@@ -8928,21 +9082,13 @@ namespace cPlayer
             ((ToolStripMenuItem)sender).Checked = true;
             ChangeDisplay();
             UpdateDisplay(false);
-        }
-
-        private void MediaPlayer_ClickEvent(object sender, _WMPOCXEvents_ClickEvent e)
-        {
-            if (e.nButton == 2)
-            {
-                VisualsContextMenu.Show(MousePosition);
-            }
-        }
+        }              
 
         private void displayBackgroundVideo_Click(object sender, EventArgs e)
         {
             ChangeDisplay();
             UpdateDisplay(false);
-            if (displayBackgroundVideo.Checked && !string.IsNullOrEmpty(MediaPlayer.URL) && File.Exists(MediaPlayer.URL))
+            if (displayBackgroundVideo.Checked && _mediaPlayer.Media != null)
             {
                 StartVideoPlayback();
             }
@@ -9030,9 +9176,9 @@ namespace cPlayer
             {
                 Log("Resuming playback");
                 Bass.BASS_ChannelPlay(BassMixer, false);
-                if (MediaPlayer.playState == WMPPlayState.wmppsPaused)
+                if (_mediaPlayer.State == VLCState.Paused)
                 {
-                    MediaPlayer.Ctlcontrols.play();
+                    _mediaPlayer.Play();
                 }
                 UpdatePlaybackStuff();
             }

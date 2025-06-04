@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using AxWMPLib;
-using cPlayer.Properties;
 
 namespace cPlayer
 {
@@ -697,7 +693,7 @@ namespace cPlayer
             // microphoneToolStripMenuItem
             // 
             this.microphoneToolStripMenuItem.Name = "microphoneToolStripMenuItem";
-            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.microphoneToolStripMenuItem.Text = "Microphone";
             this.microphoneToolStripMenuItem.Click += new System.EventHandler(this.microphoneToolStripMenuItem_Click);
             // 
@@ -710,7 +706,7 @@ namespace cPlayer
             this.controller3,
             this.controller4});
             this.stageKitToolStripMenuItem.Name = "stageKitToolStripMenuItem";
-            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.stageKitToolStripMenuItem.Text = "Enable Stage Kit";
             this.stageKitToolStripMenuItem.CheckedChanged += new System.EventHandler(this.stageKitToolStripMenuItem_CheckedChanged);
             this.stageKitToolStripMenuItem.Click += new System.EventHandler(this.stageKitToolStripMenuItem_Click);
@@ -719,7 +715,7 @@ namespace cPlayer
             // 
             this.controller1.Enabled = false;
             this.controller1.Name = "controller1";
-            this.controller1.Size = new System.Drawing.Size(180, 22);
+            this.controller1.Size = new System.Drawing.Size(136, 22);
             this.controller1.Text = "Controller 1";
             this.controller1.Click += new System.EventHandler(this.controller1_Click);
             // 
@@ -727,7 +723,7 @@ namespace cPlayer
             // 
             this.controller2.Enabled = false;
             this.controller2.Name = "controller2";
-            this.controller2.Size = new System.Drawing.Size(180, 22);
+            this.controller2.Size = new System.Drawing.Size(136, 22);
             this.controller2.Text = "Controller 2";
             this.controller2.Click += new System.EventHandler(this.controller2_Click);
             // 
@@ -735,7 +731,7 @@ namespace cPlayer
             // 
             this.controller3.Enabled = false;
             this.controller3.Name = "controller3";
-            this.controller3.Size = new System.Drawing.Size(180, 22);
+            this.controller3.Size = new System.Drawing.Size(136, 22);
             this.controller3.Text = "Controller 3";
             this.controller3.Click += new System.EventHandler(this.controller3_Click);
             // 
@@ -743,7 +739,7 @@ namespace cPlayer
             // 
             this.controller4.Enabled = false;
             this.controller4.Name = "controller4";
-            this.controller4.Size = new System.Drawing.Size(180, 22);
+            this.controller4.Size = new System.Drawing.Size(136, 22);
             this.controller4.Text = "Controller 4";
             this.controller4.Click += new System.EventHandler(this.controller4_Click);
             // 

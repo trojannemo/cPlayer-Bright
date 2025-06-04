@@ -413,9 +413,29 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap note_blue_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_blue_hopo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap note_green {
             get {
                 object obj = ResourceManager.GetObject("note_green", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_green_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_green_hopo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -443,9 +463,39 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap note_orange_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_orange_hopo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_overdrive_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_overdrive_hopo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap note_red {
             get {
                 object obj = ResourceManager.GetObject("note_red", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_red_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_red_hopo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -476,6 +526,16 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap note_yellow {
             get {
                 object obj = ResourceManager.GetObject("note_yellow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap note_yellow_hopo {
+            get {
+                object obj = ResourceManager.GetObject("note_yellow_hopo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
