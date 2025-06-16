@@ -6376,38 +6376,7 @@ namespace cPlayer
 
                 var noteLocation = 0;
                 Bitmap img;
-                /*
-                if (note.isHOPOon && note.hasOD)
-                {
-                    img = bmpODHopo;
-                }
-                else
-                {
-                    img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpGreenHopo : bmpNoteGreen;
-
-                    // Pre-determine image and position
-                    if (note.NoteColor == ChartRed)
-                    {
-                        noteLocation = 1;
-                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpRedHopo : bmpNoteRed;
-                    }
-                    if (note.NoteColor == ChartYellow)
-                    {
-                        noteLocation = 2;
-                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpYellowHopo : bmpNoteYellow;
-                    }
-                    else if (note.NoteColor == ChartBlue)
-                    {
-                        noteLocation = 3;
-                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpBlueHopo : bmpNoteBlue;
-                    }
-                    else if (note.NoteColor == ChartOrange)
-                    {
-                        noteLocation = 4;
-                        img = note.hasOD ? bmpNoteOD : note.isHOPOon ? bmpOrangeHopo : bmpNoteOrange;
-                    }
-                }   */
-
+                
                 if (note.hasOD)
                 {
                     // Overdrive cases
@@ -7478,7 +7447,7 @@ namespace cPlayer
             {
                 return 4;
             }
-            if (displayMIDIChartVisuals.Checked && chartVertical.Checked)
+            if (displayMIDIChartVisuals.Checked && chartVertical.Checked && MIDITools.LyricsVocals.Lyrics.Any())
             {
                 return vocalsHeight + 4;
             }
@@ -7493,7 +7462,7 @@ namespace cPlayer
                 {
                     heightDiff += MIDITools.LyricsHarm3.Lyrics.Any() ? 60 : (MIDITools.LyricsHarm2.Lyrics.Any() ? 40 : 20);
                 }
-                else
+                else if (MIDITools.LyricsVocals.Lyrics.Any())
                 {
                     heightDiff += 20;
                 }
