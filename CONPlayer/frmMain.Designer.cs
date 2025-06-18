@@ -184,6 +184,7 @@ namespace cPlayer
             this.gifTmr = new System.Windows.Forms.Timer(this.components);
             this.picVisuals = new System.Windows.Forms.PictureBox();
             this.lblSections = new System.Windows.Forms.Label();
+            this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.VisualsContextMenu.SuspendLayout();
             this.panelPlaying.SuspendLayout();
@@ -867,7 +868,8 @@ namespace cPlayer
             this.displayKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectBackgroundColor,
             this.selectLyricColor,
-            this.selectHighlightColor});
+            this.selectHighlightColor,
+            this.restoreDefaultsToolStripMenuItem});
             this.displayKaraokeMode.ForeColor = System.Drawing.Color.Black;
             this.displayKaraokeMode.Name = "displayKaraokeMode";
             this.displayKaraokeMode.Size = new System.Drawing.Size(214, 22);
@@ -1770,6 +1772,13 @@ namespace cPlayer
             this.lblSections.UseMnemonic = false;
             this.lblSections.Visible = false;
             // 
+            // restoreDefaultsToolStripMenuItem
+            // 
+            this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
+            this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults";
+            this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AllowDrop = true;
@@ -1981,6 +1990,7 @@ namespace cPlayer
         private ToolStripMenuItem selectBackgroundColor;
         private ToolStripMenuItem selectLyricColor;
         private ToolStripMenuItem selectHighlightColor;
+        private ToolStripMenuItem restoreDefaultsToolStripMenuItem;
     }
 }
 

@@ -5223,6 +5223,7 @@ namespace cPlayer
                 selectBackgroundColor.Visible = displayKaraokeMode.Checked;
                 selectLyricColor.Visible = displayKaraokeMode.Checked;
                 selectHighlightColor.Visible = displayKaraokeMode.Checked;
+                restoreDefaultsToolStripMenuItem.Visible = displayKaraokeMode.Checked;
                 skipIntroOutroSilence.Checked = sr.ReadLine().Contains("True");
                 SilenceThreshold = float.Parse(Tools.GetConfigString(sr.ReadLine()));
                 FadeLength = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
@@ -9067,6 +9068,7 @@ namespace cPlayer
             selectBackgroundColor.Visible = displayKaraokeMode.Checked;
             selectLyricColor.Visible = displayKaraokeMode.Checked;
             selectHighlightColor.Visible = displayKaraokeMode.Checked;
+            restoreDefaultsToolStripMenuItem.Visible = displayKaraokeMode.Checked;
         }              
 
         private void displayBackgroundVideo_Click(object sender, EventArgs e)
@@ -9493,6 +9495,13 @@ namespace cPlayer
         private void selectHighlightColor_Click(object sender, EventArgs e)
         {
             KaraokeModeHighlight = GetColorFromPicker(KaraokeModeHighlight);
+        }
+
+        private void restoreDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KaraokeModeBackground = Color.White;
+            KaraokeModeLyric = Color.FromArgb(180, 180, 180);
+            KaraokeModeHighlight = Color.FromArgb(95, 209, 209);
         }
     }
 
