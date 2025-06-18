@@ -55,14 +55,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="cPlayer.exe" size="6838208">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="cPlayer.exe" size="6839744">
       <assemblyIdentity name="cPlayer" version="4.0.2.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AWzdGGehVap3Kq7gWFQAuQ1pjEWc64HNKaOyndpd/Zw=</dsig:DigestValue>
+        <dsig:DigestValue>Mq0Vdi8mzWVIqwni0zBl4LJnIvsEoZ2Q0o8M4rbxRco=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

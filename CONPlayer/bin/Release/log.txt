@@ -1,0 +1,3 @@
+//Log file for cPlayer (Bright Edition)
+//Created by cPlayer (Bright Edition) v4.0.2
+6/18/2025 12:25:56 AM	Initialized

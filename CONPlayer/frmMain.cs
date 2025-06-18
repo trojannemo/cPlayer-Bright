@@ -259,6 +259,9 @@ namespace cPlayer
         private int activeRedLED = 0;
         private int activeGreenLED = 0;
         private int currHOPOThreshold = 170;
+        private Color KaraokeModeBackground = Color.White;
+        private Color KaraokeModeLyric = Color.FromArgb(180, 180, 180);
+        private Color KaraokeModeHighlight = Color.FromArgb(95, 209, 209);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -5067,6 +5070,9 @@ namespace cPlayer
                 sw.WriteLine("SkipIntroOutroSilence=" + skipIntroOutroSilence.Checked);
                 sw.WriteLine("SilenceThreshold=" + SilenceThreshold);
                 sw.WriteLine("FadeInLength=" + FadeLength);
+                sw.WriteLine("KaraokeModeBackground=" + ColorTranslator.ToHtml(KaraokeModeBackground));
+                sw.WriteLine("KaraokeModeLyric=" + ColorTranslator.ToHtml(KaraokeModeLyric));
+                sw.WriteLine("KaraokeModeHighlight=" + ColorTranslator.ToHtml(KaraokeModeHighlight));
             }
         }
 
@@ -5214,9 +5220,15 @@ namespace cPlayer
                 doMIDIBWKeys = sr.ReadLine().Contains("True");
                 doMIDIHarm1onVocals = sr.ReadLine().Contains("True");
                 displayKaraokeMode.Checked = sr.ReadLine().Contains("True");
+                selectBackgroundColor.Visible = displayKaraokeMode.Checked;
+                selectLyricColor.Visible = displayKaraokeMode.Checked;
+                selectHighlightColor.Visible = displayKaraokeMode.Checked;
                 skipIntroOutroSilence.Checked = sr.ReadLine().Contains("True");
                 SilenceThreshold = float.Parse(Tools.GetConfigString(sr.ReadLine()));
                 FadeLength = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeBackground = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeLyric = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeHighlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
             }
             catch (Exception ex)
             {
@@ -5696,6 +5708,7 @@ namespace cPlayer
             Font lineFont;
             Size lineSize;
             int posX;
+            picVisuals.BackColor = KaraokeModeBackground;
             if (currentLine != null && !string.IsNullOrEmpty(currentLine.PhraseText))
             {
                 //draw entire current phrase on top
@@ -5703,14 +5716,14 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (picVisuals.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), Color.FromArgb(180, 180, 180), KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), KaraokeModeLyric, KaraokeBackgroundColor);
 
                 //draw portion of current phrase that's already been sung
                 var line2 = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
                 line2 = ProcessLine(line2, true);
                 if (!string.IsNullOrEmpty(line2))
                 {
-                    TextRenderer.DrawText(graphics, line2, lineFont, new Point(posX, currentLineTop), Color.FromArgb(95, 209, 209), KaraokeBackgroundColor);
+                    TextRenderer.DrawText(graphics, line2, lineFont, new Point(posX, currentLineTop), KaraokeModeHighlight, KaraokeBackgroundColor);
                 }
 
                 var lyricsList = lyrics.ToList();
@@ -5806,7 +5819,7 @@ namespace cPlayer
                         var posY = (picVisuals.Height - lineSize.Height) / 2;
 
                         // Draw the entire word in white
-                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), Color.FromArgb(180, 180, 180), KaraokeBackgroundColor);
+                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), KaraokeModeLyric, KaraokeBackgroundColor);
 
                         // Calculate progress for the sung portion
                         var timeElapsed = time - activeWord.WordStart;
@@ -5822,7 +5835,7 @@ namespace cPlayer
                         // Overlay the sung portion in blue
                         if (!string.IsNullOrEmpty(sungPortion))
                         {
-                            TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX, posY), Color.FromArgb(95, 209, 209), KaraokeBackgroundColor);
+                            TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX, posY), KaraokeModeHighlight, KaraokeBackgroundColor);
                         }
                     }
                 }
@@ -5834,7 +5847,7 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (picVisuals.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), Color.FromArgb(180, 180, 180), KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), KaraokeModeLyric, KaraokeBackgroundColor);
             }
 
             //draw waiting/countdown info
@@ -5845,13 +5858,13 @@ namespace cPlayer
                 if (difference < 5) return;
             }
             var middleText = "";
-            var textColor = Color.FromArgb(180, 180, 180);
+            var textColor = KaraokeModeLyric;
             if (currentLine == null && nextLine != null)
             {
                 var wait = nextLine.PhraseStart - time;
                 if (wait < 1.5) return;
                 middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
-                textColor = wait <= 5 ? Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
+                textColor = wait <= 5 ? KaraokeModeHighlight : KaraokeModeLyric;// Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
             }
             else if (currentLine == null)
             {
@@ -8871,7 +8884,7 @@ namespace cPlayer
         private void displayKaraokeMode_Click(object sender, EventArgs e)
         {
             picVisuals.BackColor = Color.White;
-            updateDisplayType(sender);
+            updateDisplayType(sender);            
         }
 
         private void picVisuals_Paint(object sender, PaintEventArgs e)
@@ -9051,6 +9064,9 @@ namespace cPlayer
             ((ToolStripMenuItem)sender).Checked = true;
             ChangeDisplay();
             UpdateDisplay(false);
+            selectBackgroundColor.Visible = displayKaraokeMode.Checked;
+            selectLyricColor.Visible = displayKaraokeMode.Checked;
+            selectHighlightColor.Visible = displayKaraokeMode.Checked;
         }              
 
         private void displayBackgroundVideo_Click(object sender, EventArgs e)
@@ -9451,6 +9467,32 @@ namespace cPlayer
                 UncheckAllStageKits();
                 stageKit = null;
             }
+        }
+
+        private void selectBackgroundColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeBackground = GetColorFromPicker(KaraokeModeBackground);
+        }
+
+        private Color GetColorFromPicker(Color color)
+        {
+            using (ColorDialog colorDialog = new ColorDialog())            {  
+                if (colorDialog.ShowDialog() == DialogResult.OK)
+                {
+                    return colorDialog.Color;
+                }
+                return color;
+            }
+        }
+
+        private void selectLyricColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeLyric = GetColorFromPicker(KaraokeModeLyric);
+        }
+
+        private void selectHighlightColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeHighlight = GetColorFromPicker(KaraokeModeHighlight);
         }
     }
 

@@ -102,6 +102,9 @@ namespace cPlayer
             this.displayAlbumArt = new System.Windows.Forms.ToolStripMenuItem();
             this.displayAudioSpectrum = new System.Windows.Forms.ToolStripMenuItem();
             this.displayKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectBackgroundColor = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectLyricColor = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectHighlightColor = new System.Windows.Forms.ToolStripMenuItem();
             this.displayMIDIChartVisuals = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
             this.styleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -818,7 +821,7 @@ namespace cPlayer
             this.toolStripMenuItem8,
             this.styleToolStripMenuItem});
             this.VisualsContextMenu.Name = "VisualsContextMenu";
-            this.VisualsContextMenu.Size = new System.Drawing.Size(215, 148);
+            this.VisualsContextMenu.Size = new System.Drawing.Size(215, 170);
             this.VisualsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.VisualsContextMenu_Opening);
             // 
             // displayBackgroundVideo
@@ -861,11 +864,39 @@ namespace cPlayer
             // displayKaraokeMode
             // 
             this.displayKaraokeMode.BackColor = System.Drawing.Color.White;
+            this.displayKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectBackgroundColor,
+            this.selectLyricColor,
+            this.selectHighlightColor});
             this.displayKaraokeMode.ForeColor = System.Drawing.Color.Black;
             this.displayKaraokeMode.Name = "displayKaraokeMode";
             this.displayKaraokeMode.Size = new System.Drawing.Size(214, 22);
             this.displayKaraokeMode.Text = "Display: Karaoke Mode";
             this.displayKaraokeMode.Click += new System.EventHandler(this.displayKaraokeMode_Click);
+            // 
+            // selectBackgroundColor
+            // 
+            this.selectBackgroundColor.Name = "selectBackgroundColor";
+            this.selectBackgroundColor.Size = new System.Drawing.Size(204, 22);
+            this.selectBackgroundColor.Text = "Select Background Color";
+            this.selectBackgroundColor.Visible = false;
+            this.selectBackgroundColor.Click += new System.EventHandler(this.selectBackgroundColor_Click);
+            // 
+            // selectLyricColor
+            // 
+            this.selectLyricColor.Name = "selectLyricColor";
+            this.selectLyricColor.Size = new System.Drawing.Size(204, 22);
+            this.selectLyricColor.Text = "Select Lyric Color";
+            this.selectLyricColor.Visible = false;
+            this.selectLyricColor.Click += new System.EventHandler(this.selectLyricColor_Click);
+            // 
+            // selectHighlightColor
+            // 
+            this.selectHighlightColor.Name = "selectHighlightColor";
+            this.selectHighlightColor.Size = new System.Drawing.Size(204, 22);
+            this.selectHighlightColor.Text = "Select Highlight Color";
+            this.selectHighlightColor.Visible = false;
+            this.selectHighlightColor.Click += new System.EventHandler(this.selectHighlightColor_Click);
             // 
             // displayMIDIChartVisuals
             // 
@@ -1947,6 +1978,9 @@ namespace cPlayer
         private ToolStripMenuItem controller2;
         private ToolStripMenuItem controller3;
         private ToolStripMenuItem controller4;
+        private ToolStripMenuItem selectBackgroundColor;
+        private ToolStripMenuItem selectLyricColor;
+        private ToolStripMenuItem selectHighlightColor;
     }
 }
 
