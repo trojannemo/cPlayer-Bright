@@ -4,7 +4,7 @@
   <description asmv2:iconFile="favicon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="cPlayer" version="4.0.3.0" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="cPlayer" version="4.1.0.0" language="neutral" processorArchitecture="x86" />
     <commandLine file="cPlayer.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -55,14 +55,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="cPlayer.exe" size="6841280">
-      <assemblyIdentity name="cPlayer" version="4.0.3.0" language="neutral" processorArchitecture="x86" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="cPlayer.exe" size="6889408">
+      <assemblyIdentity name="cPlayer" version="4.1.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>8e/v14VS7M2oECxiq+IE5u0kjfhKB698gLGjDsr31eA=</dsig:DigestValue>
+        <dsig:DigestValue>IHW2cABGs07hlqeSIjHvW2RjBraiTDb0yhqPm3nHITI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

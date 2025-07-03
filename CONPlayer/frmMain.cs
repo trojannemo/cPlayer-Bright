@@ -260,8 +260,15 @@ namespace cPlayer
         private int activeGreenLED = 0;
         private int currHOPOThreshold = 170;
         private Color KaraokeModeBackground = Color.White;
-        private Color KaraokeModeLyric = Color.FromArgb(180, 180, 180);
+        private Color KaraokeModeText = Color.FromArgb(180, 180, 180);
         private Color KaraokeModeHighlight = Color.FromArgb(95, 209, 209);
+        private Color KaraokeModeHarmonyText = Color.LightGray;
+        private Color KaraokeModeHarmonyHighlight = Color.HotPink;
+        private Color KaraokeModeHarmony2Text = Color.DarkGray;
+        private Color KaraokeModeHarmony2Highlight = Color.LimeGreen;
+        private Size picVisualsSize;
+        private Point picVisualsPosition;
+        private bool isFullScreen;
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
@@ -574,7 +581,7 @@ namespace cPlayer
             if (Text.Contains("*") && confirm)
             {
                 Log("There are unsaved changes. Confirm?");
-                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to do that?",
+                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to start a new playlist?",
                         AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 {
                     Log("No");
@@ -2564,7 +2571,7 @@ namespace cPlayer
             }
             else if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
-                var notify = "Playing: " + PlayingSong.Artist + " - " + PlayingSong.Name;
+                var notify = "Playing " + PlayingSong.Artist + " - " + PlayingSong.Name;
                 text = notify.Length > 63 ? notify.Substring(0, 63) : notify;
             }
             else if (PlaybackSeconds == 0 || PlayingSong == null)
@@ -2578,6 +2585,7 @@ namespace cPlayer
             }
             Log("Updating notification tray text: " + text);
             NotifyTray.Text = text;
+            Text = AppName + " - " + PlaylistName + " - " + text;
         }
 
         private void songLoader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -2611,7 +2619,7 @@ namespace cPlayer
             if (Text.Contains("*"))
             {
                 Log("Tried to close with unsaved changes - confirm?");
-                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to do that?",
+                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to close cPlayer?",
                     AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 {
                     Log("No");
@@ -4747,7 +4755,7 @@ namespace cPlayer
         {
             if (Text.Contains("*"))
             {
-                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to do that?",
+                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to lose those changes?",
                         AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             }
             var ofd = new OpenFileDialog
@@ -5071,8 +5079,12 @@ namespace cPlayer
                 sw.WriteLine("SilenceThreshold=" + SilenceThreshold);
                 sw.WriteLine("FadeInLength=" + FadeLength);
                 sw.WriteLine("KaraokeModeBackground=" + ColorTranslator.ToHtml(KaraokeModeBackground));
-                sw.WriteLine("KaraokeModeLyric=" + ColorTranslator.ToHtml(KaraokeModeLyric));
+                sw.WriteLine("KaraokeModeLyric=" + ColorTranslator.ToHtml(KaraokeModeText));
                 sw.WriteLine("KaraokeModeHighlight=" + ColorTranslator.ToHtml(KaraokeModeHighlight));
+                sw.WriteLine("KaraokeModeHarmony=" + ColorTranslator.ToHtml(KaraokeModeHarmonyText));
+                sw.WriteLine("KaraokeModeHarmonyHighlight=" + ColorTranslator.ToHtml(KaraokeModeHarmonyHighlight));
+                sw.WriteLine("KaraokeModeHarmony2=" + ColorTranslator.ToHtml(KaraokeModeHarmony2Text));
+                sw.WriteLine("KaraokeModeHarmony2Highlight=" + ColorTranslator.ToHtml(KaraokeModeHarmony2Highlight));
             }
         }
 
@@ -5228,8 +5240,10 @@ namespace cPlayer
                 SilenceThreshold = float.Parse(Tools.GetConfigString(sr.ReadLine()));
                 FadeLength = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
                 KaraokeModeBackground = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeLyric = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeText = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
                 KaraokeModeHighlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeHarmonyText = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
+                KaraokeModeHarmonyHighlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
             }
             catch (Exception ex)
             {
@@ -5549,6 +5563,8 @@ namespace cPlayer
             if (WindowState == FormWindowState.Maximized)
             {
                 openSideWindow.Checked = true;
+                picVisualsSize = picVisuals.Size;
+                picVisualsPosition = picVisuals.Location;
             }
             videoView.Height = picVisuals.Height - GetHeightDiff();
             videoView.Width = picVisuals.Width;
@@ -5675,6 +5691,366 @@ namespace cPlayer
             return (int)(picVisuals.Height * 0.95);
         }
 
+        public static (string line1, string line2) SplitLineForKaraoke(Graphics g, string fullText, Font font, int maxWidth)
+        {
+            var words = fullText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (words.Length == 0) return ("", "");
+
+            List<string> line1Words = new List<string>();
+            List<string> line2Words = new List<string>();
+
+            string testLine = "";
+            foreach (var word in words)
+            {
+                string tempLine = (testLine == "") ? word : testLine + " " + word;
+                var size = TextRenderer.MeasureText(g, tempLine, font);
+
+                if (size.Width <= maxWidth)
+                {
+                    testLine = tempLine;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            line1Words = testLine.Split(' ').ToList();
+            line2Words = words.Skip(line1Words.Count).ToList();
+
+            return (
+                string.Join(" ", line1Words),
+                string.Join(" ", line2Words)
+            );
+        }
+
+        private void DoClassicKaraoke(Graphics graphics, IList<LyricPhrase> phrasesLead, IEnumerable<Lyric> lyricsLead, IList<LyricPhrase> phrasesHarmony, IEnumerable<Lyric> lyricsHarmony, IList<LyricPhrase> phrasesHarmony2, IEnumerable<Lyric> lyricsHarmony2)
+        {
+            var time = GetCorrectedTime();
+            LyricPhrase currentLineLead = null;
+            LyricPhrase nextLineLead = null;
+            LyricPhrase lastLineLead = null;
+            //get active and next phrase, and store last used phrase
+            if (phrasesLead == null | phrasesLead.Count == 0)
+            {
+                phrasesLead = MIDITools.PhrasesVocals.Phrases;
+                lyricsLead = MIDITools.LyricsVocals.Lyrics;
+            }
+            for (var i = 0; i < phrasesLead.Count(); i++)
+            {
+                var phrase = phrasesLead[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineLead = phrasesLead[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineLead = phrasesLead[i];
+                    break;
+                }
+                currentLineLead = phrase;
+                if (i < phrasesLead.Count - 1)
+                {
+                    nextLineLead = phrasesLead[i + 1];
+                }
+                break;
+            }
+            LyricPhrase currentLineHarmony = null;
+            LyricPhrase nextLineHarmony = null;
+            LyricPhrase lastLineHarmony = null;
+            //get active and next phrase, and store last used phrase
+            for (var i = 0; i < phrasesHarmony.Count(); i++)
+            {
+                var phrase = phrasesHarmony[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineHarmony = phrasesHarmony[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineHarmony = phrasesHarmony[i];
+                    break;
+                }
+                currentLineHarmony = phrase;
+                if (i < phrasesHarmony.Count - 1)
+                {
+                    nextLineHarmony = phrasesHarmony[i + 1];
+                }
+                break;
+            }
+            LyricPhrase currentLineHarmony2 = null;
+            LyricPhrase nextLineHarmony2 = null;
+            LyricPhrase lastLineHarmony2 = null;
+            //get active and next phrase, and store last used phrase
+            for (var i = 0; i < phrasesHarmony2.Count(); i++)
+            {
+                var phrase = phrasesHarmony2[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineHarmony2 = phrasesHarmony2[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineHarmony2 = phrasesHarmony2[i];
+                    break;
+                }
+                currentLineHarmony2 = phrase;
+                if (i < phrasesHarmony2.Count - 1)
+                {
+                    nextLineHarmony2 = phrasesHarmony2[i + 1];
+                }
+                break;
+            }
+            var lineHeight = picVisuals.Height / 13;
+            var verticalOffset = lyricsHarmony == null | lyricsHarmony.Count() == 0 ? 3 : (lyricsHarmony2 == null | lyricsHarmony2.Count() == 0 ? 2 : 0);
+            var harm3Diff = phrasesHarmony2.Any() && lyricsHarmony2.Any() ? 0 : 2;  
+            var leadLineTop1 = (lineHeight * (1 + verticalOffset));
+            var leadLineTop2 = (lineHeight * (2 + verticalOffset + (verticalOffset > 0 ? 1 : 0)));
+            var harmonyLineTop1 = (lineHeight * (5 + harm3Diff));
+            var harmonyLineTop2 = (lineHeight * (6 + harm3Diff));
+            var harmony2LineTop1 = (lineHeight * 9);
+            var harmony2LineTop2 = (lineHeight * 10);
+
+            picVisuals.BackColor = KaraokeModeBackground;
+            var drewText = false;
+
+            if (currentLineLead == null && currentLineHarmony == null && currentLineHarmony2 == null && 
+                lastLineHarmony == null && lastLineHarmony2 == null && lastLineLead == null)
+            {
+                var title = "\"" + PlayingSong.Name + "\"";
+                var artist = PlayingSong.Artist;
+                var album = PlayingSong.Album;
+                var bpm = "BPM: " + Math.Round(PlayingSong.BPM, 0, MidpointRounding.AwayFromZero);
+                var parts = 1;
+                if (lyricsHarmony.Any())
+                {
+                    parts++;
+                }
+                if (lyricsHarmony2.Any())
+                {
+                    parts++;
+                }
+                var vocalParts = "Vocal Parts: " + parts;
+                var charter = PlayingSong.Charter.Replace("&", "&&");
+                if (!string.IsNullOrEmpty(charter))
+                {
+                    charter = "As charted by " + charter;
+                }
+
+                var infoFont = new Font("Arial", GetScaledFontSize(graphics, title, new Font("Arial", (float)16f), 72f));
+                var infoSize = TextRenderer.MeasureText(title, infoFont);
+                var infoX = (picVisuals.Width - infoSize.Width) / 2;
+                TextRenderer.DrawText(graphics, title, infoFont, new Point(infoX, lineHeight*3), KaraokeModeText, KaraokeBackgroundColor);
+
+                infoFont = new Font("Arial", GetScaledFontSize(graphics, artist, new Font("Arial", (float)16f), 60f));
+                infoSize = TextRenderer.MeasureText(artist, infoFont);
+                infoX = (picVisuals.Width - infoSize.Width) / 2;
+                TextRenderer.DrawText(graphics, artist, infoFont, new Point(infoX, lineHeight * 4), KaraokeModeText, KaraokeBackgroundColor);
+
+                infoFont = new Font("Arial", GetScaledFontSize(graphics, album, new Font("Arial", (float)16f), 48f));
+                infoSize = TextRenderer.MeasureText(album, infoFont);
+                infoX = (picVisuals.Width - infoSize.Width) / 2;
+                TextRenderer.DrawText(graphics, album, infoFont, new Point(infoX, lineHeight * 5), KaraokeModeText, KaraokeBackgroundColor);
+
+                infoFont = new Font("Arial", GetScaledFontSize(graphics, vocalParts, new Font("Arial", (float)16f), 32f));
+                infoSize = TextRenderer.MeasureText(vocalParts, infoFont);
+                infoX = (picVisuals.Width - infoSize.Width) / 2;
+                TextRenderer.DrawText(graphics, vocalParts, infoFont, new Point(infoX, lineHeight * 7), KaraokeModeText, KaraokeBackgroundColor);
+
+                //infoFont = new Font("Arial", GetScaledFontSize(graphics, bpm, new Font("Arial", (float)16f), 32f));
+                infoSize = TextRenderer.MeasureText(bpm, infoFont);
+                infoX = (picVisuals.Width - infoSize.Width) / 2;
+                TextRenderer.DrawText(graphics, bpm, infoFont, new Point(infoX, lineHeight * 8), KaraokeModeText, KaraokeBackgroundColor);
+
+                if (!string.IsNullOrEmpty(charter))
+                {
+                    //infoFont = new Font("Arial", GetScaledFontSize(graphics, charter, new Font("Arial", (float)16f), 32f));
+                    infoSize = TextRenderer.MeasureText(charter, infoFont);
+                    infoX = (picVisuals.Width - infoSize.Width) / 2;
+                    TextRenderer.DrawText(graphics, charter, infoFont, new Point(infoX, lineHeight * 9), KaraokeModeText, KaraokeBackgroundColor);
+                }                
+                return;
+            }
+
+            var baseFont = new Font("Arial", 24f);
+            var maxWidth = picVisuals.Width - 80;
+            if (currentLineLead != null && !string.IsNullOrEmpty(currentLineLead.PhraseText))
+            {                             
+                var processedLead = ProcessLine(currentLineLead.PhraseText, true);
+                var sungLead = lyricsLead.Where(lyr => !(lyr.LyricStart < currentLineLead.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
+                var processedSung = ProcessLine(sungLead, true);
+                var (line1, line2) = SplitLineForKaraoke(graphics, processedLead.Replace("‿", " "), new Font("Arial", 72f), maxWidth);
+                var (sung1, sung2) = SplitLineForKaraoke(graphics, processedSung.Replace("‿", " "), new Font("Arial", 72f), maxWidth);
+                if (sung1.Length > line1.Length)
+                {
+                    var origLine = sung1;
+                    sung1 = sung1.Substring(0, line1.Length);
+                    var extra = origLine.Substring(line1.Length);
+                    sung2 = extra.Trim() + sung2;
+                }
+
+                string widestLine = (line1.Length > line2.Length) ? line1 : line2;
+                float scaledFontSize = GetScaledFontSize(graphics, widestLine, baseFont, 72f);
+                var displayFont = new Font(baseFont.FontFamily, scaledFontSize);
+
+                Size size1 = TextRenderer.MeasureText(graphics, line1, displayFont);
+                Size size2 = TextRenderer.MeasureText(graphics, line2, displayFont);
+
+                int posX1 = (picVisuals.Width - size1.Width) / 2;
+                int posX2 = (picVisuals.Width - size2.Width) / 2;
+
+                TextRenderer.DrawText(graphics, line1, displayFont, new Point(posX1, leadLineTop1), KaraokeModeText, KaraokeBackgroundColor);
+                if (!string.IsNullOrEmpty(line2))
+                {
+                    TextRenderer.DrawText(graphics, line2, displayFont, new Point(posX2, leadLineTop2), KaraokeModeText, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung1))
+                {
+                    TextRenderer.DrawText(graphics, sung1, displayFont, new Point(posX1, leadLineTop1), KaraokeModeHighlight, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung2))
+                {
+                    TextRenderer.DrawText(graphics, sung2, displayFont, new Point(posX2, leadLineTop2), KaraokeModeHighlight, KaraokeBackgroundColor);
+                }
+                drewText = true;
+            }
+
+            if (currentLineHarmony != null && !string.IsNullOrEmpty(currentLineHarmony.PhraseText))
+            {
+                var processedHarmony = ProcessLine(currentLineHarmony.PhraseText, true);
+                var sungHarmony = lyricsHarmony.Where(lyr => !(lyr.LyricStart < currentLineHarmony.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
+                var processedSung = ProcessLine(sungHarmony, true);
+                var (line1, line2) = SplitLineForKaraoke(graphics, processedHarmony.Replace("‿", " "), new Font("Arial", 72f), maxWidth);                
+                var (sung1, sung2) = SplitLineForKaraoke(graphics, processedSung.Replace("‿", " "), new Font("Arial", 72f), maxWidth);
+                if (sung1.Length > line1.Length)
+                {
+                    var origLine = sung1;
+                    sung1 = sung1.Substring(0, line1.Length);
+                    var extra = origLine.Substring(line1.Length);
+                    sung2 = extra.Trim() + sung2;
+                }
+
+                string widestLine = (line1.Length > line2.Length) ? line1 : line2;
+                float scaledFontSize = GetScaledFontSize(graphics, widestLine, baseFont, 72f);
+                var displayFont = new Font(baseFont.FontFamily, scaledFontSize);
+
+                Size size1 = TextRenderer.MeasureText(graphics, line1, displayFont);
+                Size size2 = TextRenderer.MeasureText(graphics, line2, displayFont);
+
+                int posX1 = (picVisuals.Width - size1.Width) / 2;
+                int posX2 = (picVisuals.Width - size2.Width) / 2;
+
+                TextRenderer.DrawText(graphics, line1, displayFont, new Point(posX1, harmonyLineTop1), KaraokeModeHarmonyText, KaraokeBackgroundColor);
+                if (!string.IsNullOrEmpty(line2))
+                {
+                    TextRenderer.DrawText(graphics, line2, displayFont, new Point(posX2, harmonyLineTop2), KaraokeModeHarmonyText, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung1))
+                {
+                    TextRenderer.DrawText(graphics, sung1, displayFont, new Point(posX1, harmonyLineTop1), KaraokeModeHarmonyHighlight, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung2))
+                {
+                    TextRenderer.DrawText(graphics, sung2, displayFont, new Point(posX2, harmonyLineTop2), KaraokeModeHarmonyHighlight, KaraokeBackgroundColor);
+                }
+                drewText = true;
+            }
+            if (currentLineHarmony2 != null && !string.IsNullOrEmpty(currentLineHarmony2.PhraseText))
+            {
+                var processedHarmony2 = ProcessLine(currentLineHarmony2.PhraseText, true);
+                var sungHarmony2 = lyricsHarmony2.Where(lyr => !(lyr.LyricStart < currentLineHarmony2.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
+                var processedSung = ProcessLine(sungHarmony2, true);
+                var (line1, line2) = SplitLineForKaraoke(graphics, processedHarmony2.Replace("‿", " "), new Font("Arial", 72f), maxWidth);
+                var (sung1, sung2) = SplitLineForKaraoke(graphics, processedSung.Replace("‿", " "), new Font("Arial", 72f), maxWidth);
+                if (sung1.Length > line1.Length)
+                {
+                    var origLine = sung1;
+                    sung1 = sung1.Substring(0, line1.Length);
+                    var extra = origLine.Substring(line1.Length);
+                    sung2 = extra.Trim() + sung2;
+                }
+
+                string widestLine = (line1.Length > line2.Length) ? line1 : line2;
+                float scaledFontSize = GetScaledFontSize(graphics, widestLine, baseFont, 72f);
+                var displayFont = new Font(baseFont.FontFamily, scaledFontSize);
+
+                Size size1 = TextRenderer.MeasureText(graphics, line1, displayFont);
+                Size size2 = TextRenderer.MeasureText(graphics, line2, displayFont);
+
+                int posX1 = (picVisuals.Width - size1.Width) / 2;
+                int posX2 = (picVisuals.Width - size2.Width) / 2;
+
+                TextRenderer.DrawText(graphics, line1, displayFont, new Point(posX1, harmony2LineTop1), KaraokeModeHarmony2Text, KaraokeBackgroundColor);
+                if (!string.IsNullOrEmpty(line2))
+                {
+                    TextRenderer.DrawText(graphics, line2, displayFont, new Point(posX2, harmony2LineTop2), KaraokeModeHarmony2Text, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung1))
+                {
+                    TextRenderer.DrawText(graphics, sung1, displayFont, new Point(posX1, harmony2LineTop1), KaraokeModeHarmony2Highlight, KaraokeBackgroundColor);
+                }
+                if (!string.IsNullOrEmpty(sung2))
+                {
+                    TextRenderer.DrawText(graphics, sung2, displayFont, new Point(posX2, harmony2LineTop2), KaraokeModeHarmony2Highlight, KaraokeBackgroundColor);
+                }
+                drewText = true;
+            }
+
+            if (drewText) return;
+            //draw waiting/countdown info
+            if (nextLineLead == null && nextLineHarmony == null)
+            {
+                graphics.DrawImage(Resources.karaoke_outro, (picVisuals.Width - Resources.karaoke_outro.Width) / 2, (picVisuals.Height - Resources.karaoke_outro.Height) / 2, (int)(Resources.karaoke_outro.Width * 0.75), (int)(Resources.karaoke_outro.Height * 0.75));
+                //ending credits
+                /*var message = "[FIN]";
+                var font = new Font("Arial", GetScaledFontSize(graphics, message, new Font("Arial", (float)24f), 72f));
+                var size = TextRenderer.MeasureText(message, font);
+                var x = (picVisuals.Width - size.Width) / 2;
+                TextRenderer.DrawText(graphics, message, font, new Point(x, (picVisuals.Height - size.Height) / 2), KaraokeModeText, KaraokeBackgroundColor);
+                */
+                return;
+            }
+                        
+            if (lastLineHarmony == null && lastLineLead == null) return;
+            LyricPhrase nextStartingPhrase;
+            try
+            {
+                nextStartingPhrase = nextLineLead.PhraseStart < nextLineHarmony.PhraseStart ? nextLineLead : nextLineHarmony;
+            }
+            catch
+            {
+                return;
+            }
+            if (nextStartingPhrase == null) return;
+            var wait = nextStartingPhrase.PhraseStart - time;
+            double LastEnd;
+            double NextStart;
+            double gap;
+            try
+            {
+                LastEnd = new[] { lastLineLead?.PhraseEnd, lastLineHarmony?.PhraseEnd }.Where(x => x.HasValue).Max().Value;
+                NextStart = new[] { nextLineLead?.PhraseStart, nextLineHarmony?.PhraseStart }.Where(x => x.HasValue).Min().Value;
+                gap = NextStart - LastEnd;
+                if (gap < 5) return;
+            }
+            catch
+            {
+                return;
+            }            
+            const string loadingBar = "████████████████████████████████";            
+            var lineSize = TextRenderer.MeasureText(loadingBar, baseFont);
+            var posX = (picVisuals.Width - lineSize.Width) / 2;
+            TextRenderer.DrawText(graphics, loadingBar, baseFont, new Point(posX, (picVisuals.Height - lineSize.Height) / 2), KaraokeModeText, KaraokeBackgroundColor);
+            var scaledLoadingBar = loadingBar.Substring(0, loadingBar.Length - (int)(loadingBar.Length * (wait / gap)));
+            TextRenderer.DrawText(graphics, scaledLoadingBar, baseFont, new Point(posX, (picVisuals.Height - lineSize.Height) / 2), KaraokeModeHighlight, KaraokeBackgroundColor);
+        }
+
         private void DoKaraokeMode(Graphics graphics, IList<LyricPhrase> phrases, IEnumerable<Lyric> lyrics)
         {
             var time = GetCorrectedTime();
@@ -5717,7 +6093,7 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (picVisuals.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), KaraokeModeLyric, KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), KaraokeModeText, KaraokeBackgroundColor);
 
                 //draw portion of current phrase that's already been sung
                 var line2 = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
@@ -5820,7 +6196,7 @@ namespace cPlayer
                         var posY = (picVisuals.Height - lineSize.Height) / 2;
 
                         // Draw the entire word in white
-                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), KaraokeModeLyric, KaraokeBackgroundColor);
+                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), KaraokeModeText, KaraokeBackgroundColor);
 
                         // Calculate progress for the sung portion
                         var timeElapsed = time - activeWord.WordStart;
@@ -5848,7 +6224,7 @@ namespace cPlayer
                 lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
                 posX = (picVisuals.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), KaraokeModeLyric, KaraokeBackgroundColor);
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), KaraokeModeText, KaraokeBackgroundColor);
             }
 
             //draw waiting/countdown info
@@ -5859,13 +6235,13 @@ namespace cPlayer
                 if (difference < 5) return;
             }
             var middleText = "";
-            var textColor = KaraokeModeLyric;
+            var textColor = KaraokeModeText;
             if (currentLine == null && nextLine != null)
             {
                 var wait = nextLine.PhraseStart - time;
                 if (wait < 1.5) return;
                 middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
-                textColor = wait <= 5 ? KaraokeModeHighlight : KaraokeModeLyric;// Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
+                textColor = wait <= 5 ? KaraokeModeHighlight : KaraokeModeText;// Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
             }
             else if (currentLine == null)
             {
@@ -5930,7 +6306,7 @@ namespace cPlayer
             if (songLoader.IsBusy || batchSongLoader.IsBusy) return;
             if (Text.Contains("*"))
             {
-                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to do that?",
+                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to change console and lose those changes?",
                     AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 {
                     return;
@@ -8049,6 +8425,16 @@ namespace cPlayer
             toolStripMenuItem8.Visible = displayMIDIChartVisuals.Checked;
             displayAlbumArt.Enabled = PlayingSong == null || File.Exists(CurrentSongArtBlurred);
             displayMIDIChartVisuals.Enabled = !hasNoMIDI;
+            selectBackgroundColor.Visible = displayKaraokeMode.Checked;
+            selectLyricColor.Visible = displayKaraokeMode.Checked;
+            selectHighlightColor.Visible = displayKaraokeMode.Checked;
+            restoreDefaultsToolStripMenuItem.Visible = displayKaraokeMode.Checked;
+            toolStripMenuItem13.Visible = displayKaraokeMode.Checked;
+            toolStripMenuItem14.Visible = displayKaraokeMode.Checked;
+            selectHarmony3HighlightColor.Visible = displayKaraokeMode.Checked && classicKaraokeMode.Checked;
+            selectHarmony3TextColor.Visible = displayKaraokeMode.Checked && classicKaraokeMode.Checked;
+            selectHarmonyTextColor.Visible = displayKaraokeMode.Checked && classicKaraokeMode.Checked;
+            selectHarmonyHighlightColor.Visible = displayKaraokeMode.Checked && classicKaraokeMode.Checked;
         }
 
         private void txtSearch_KeyPress(object sender, KeyPressEventArgs e)
@@ -8266,7 +8652,7 @@ namespace cPlayer
             Log("Loading recent playlist #" + playlist + ": " + RecentPlaylists[playlist]);
             if (Text.Contains("*"))
             {
-                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to do that?",
+                if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to load another playlist and lose those changes?",
                         AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             }
             StartNew(false);
@@ -8525,7 +8911,16 @@ namespace cPlayer
 
         private void panelVisuals_DoubleClick(object sender, EventArgs e)
         {
-            WindowState = WindowState == FormWindowState.Maximized ? FormWindowState.Normal : FormWindowState.Maximized;
+            if (isFullScreen)
+            {
+                picVisuals.Location = picVisualsPosition;
+                picVisuals.Size = picVisualsSize;
+                isFullScreen = false;
+                return;
+            }
+            picVisuals.Location = new Point(0, 0);
+            picVisuals.Size = Screen.PrimaryScreen.WorkingArea.Size;
+            isFullScreen = true;
         }
 
         private void takeScreenshot_Click(object sender, EventArgs e)
@@ -8913,10 +9308,16 @@ namespace cPlayer
                 chart.Dispose();
                 return;
             }
-            if (displayKaraokeMode.Checked && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
+            if (displayKaraokeMode.Checked && cPlayerStyle.Checked && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
             {
                 KaraokeOverlay.Visible = false;
                 DoKaraokeMode(e.Graphics, MIDITools.PhrasesVocals.Phrases, MIDITools.LyricsVocals.Lyrics);
+                return;
+            }
+            if (displayKaraokeMode.Checked && classicKaraokeMode.Checked && ((MIDITools.PhrasesHarm1.Phrases.Any() && MIDITools.LyricsHarm1.Lyrics.Any()) || (MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())))
+            {
+                KaraokeOverlay.Visible = false;
+                DoClassicKaraoke(e.Graphics, MIDITools.PhrasesHarm1 != null ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases, MIDITools.LyricsHarm1 != null ? MIDITools.LyricsHarm1.Lyrics : MIDITools.LyricsVocals.Lyrics, MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics, MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics);
                 return;
             }
             if (displayMIDIChartVisuals.Checked && chartVertical.Checked)
@@ -9064,11 +9465,7 @@ namespace cPlayer
             displayKaraokeMode.Checked = false;
             ((ToolStripMenuItem)sender).Checked = true;
             ChangeDisplay();
-            UpdateDisplay(false);
-            selectBackgroundColor.Visible = displayKaraokeMode.Checked;
-            selectLyricColor.Visible = displayKaraokeMode.Checked;
-            selectHighlightColor.Visible = displayKaraokeMode.Checked;
-            restoreDefaultsToolStripMenuItem.Visible = displayKaraokeMode.Checked;
+            UpdateDisplay(false);            
         }              
 
         private void displayBackgroundVideo_Click(object sender, EventArgs e)
@@ -9462,7 +9859,7 @@ namespace cPlayer
 
         private void selectLyricColor_Click(object sender, EventArgs e)
         {
-            KaraokeModeLyric = GetColorFromPicker(KaraokeModeLyric);
+            KaraokeModeText = GetColorFromPicker(KaraokeModeText);
         }
 
         private void selectHighlightColor_Click(object sender, EventArgs e)
@@ -9472,9 +9869,13 @@ namespace cPlayer
 
         private void restoreDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            KaraokeModeBackground = Color.White;
-            KaraokeModeLyric = Color.FromArgb(180, 180, 180);
-            KaraokeModeHighlight = Color.FromArgb(95, 209, 209);
+            KaraokeModeBackground = cPlayerStyle.Checked ? Color.White : Color.Black;
+            KaraokeModeText = cPlayerStyle.Checked ? Color.FromArgb(180, 180, 180) : Color.White;
+            KaraokeModeHighlight = cPlayerStyle.Checked ? Color.FromArgb(95, 209, 209) : Color.DodgerBlue;
+            KaraokeModeHarmonyText = Color.LightGray;
+            KaraokeModeHarmonyHighlight = Color.HotPink;
+            KaraokeModeHarmony2Text = Color.DarkGray;
+            KaraokeModeHarmony2Highlight = Color.LimeGreen;
         }
 
         private void doRebuildPlaylist(bool doAudio)
@@ -9512,6 +9913,38 @@ namespace cPlayer
         private void rebuildPlaymetadataAudio_Click(object sender, EventArgs e)
         {
             doRebuildPlaylist(true);
+        }
+
+        private void classicKaraokeMode_Click(object sender, EventArgs e)
+        {
+            classicKaraokeMode.Checked = true;
+            cPlayerStyle.Checked = false;
+        }
+
+        private void cPlayerStyle_Click(object sender, EventArgs e)
+        {
+            cPlayerStyle.Checked = true;
+            classicKaraokeMode.Checked = false;
+        }
+
+        private void selectHarmonyTextColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeHarmonyText = GetColorFromPicker(KaraokeModeHarmonyText);
+        }
+
+        private void selectHarmonyHighlightColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeHarmonyHighlight = GetColorFromPicker(KaraokeModeHarmonyHighlight);
+        }
+
+        private void selectHarmony3TextColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeHarmony2Text = GetColorFromPicker(KaraokeModeHarmony2Text);
+        }
+
+        private void selectHarmony3HighlightColor_Click(object sender, EventArgs e)
+        {
+            KaraokeModeHarmony2Highlight = GetColorFromPicker(KaraokeModeHarmony2Highlight);
         }
     }
 

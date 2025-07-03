@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using cPlayer.x360;
 using NautilusFREE;
-using Un4seen.Bass.AddOn.Opus;
 using Un4seen.Bass;
 
 namespace cPlayer
