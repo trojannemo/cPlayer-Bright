@@ -6,6 +6,27 @@ For instructions on how to use, click on Help -> How to Use
 
 CHANGE LOG:
 
+DEVELOPMENT FOR DARK EDITION HAS ENDED AS OF v4.0.3 - I've poured too much time and energy into BRIGHT EDITION to keep them both updated while having different code bases
+CPLAYER BRIGHT EDITION IS NOW SIMPLY CPLAYER AND WILL BE THE ONLY VERSION WITH FUTURE DEVELOPMENT
+
+v5.0.0
+- Added Classic Karaoke Mode (right click on the display screen -> Display: Karaoke Mode -> Classic Karaoke) - supports up to three vocal parts - is a much closer approximation to classic karaoke look and behavior than the old mode which has now been renamed as cPlayer Karaoke - you can customize all colors to your liking or keep the defaults
+- Added Rock Band Karaoke Mode (right click on the display screen -> Display: Karaoke Mode -> Rock Band Karaoke) - simulates the Rock Band vocals experience as best as I can without having a proper game engine - thanks to StackOverflow0x for the idea
+- Added support for playback of Clone Hero .chart files - this is an early feature so some things might be broken - let me know
+- Added option to enlarge whatever is playing to full screen by double clicking on the display screen, double click again or press Escape to go back
+- Changed "Save" buttons to "Close" in the option screens to make it clear that was their function - thanks to StackOverflow0x for the suggestion
+- Changed all instances of "...do you want to do that?" to be more clear as to what the user was about to do - thanks to StackOverflow0x for the suggestion
+- Changed default behavior for Play button - now when you throw a song file at cPlayer and press play it will automatically default to the first file in your playlist if you have nothing selected, or it will play the selected song if you have one selected, this eliminates the need to double click on the playlist but that still works - thanks to StackOverflow0x for the suggestion
+- Fixed bug when rebuilding playlist metadata it would not calculate average BPM so that information would be lost from the playlist
+- Fixed GUI bug/design issue where Pro Keys/Keys and Harmonies/Vocals were mutually exclusive options in the MIDI options screen but it appeared as if they weren't - thanks to StackOverflow0x for the suggestion
+- Fixed audio bug that would happen with 7 channel songs where channels would not be distributed correctly - thanks to StackOverflow0x for pointing out the issue
+- Fixed broken playback of YARG .yargsong and Clone Hero .sng files
+- Fixed wonky playback of Fortnite Festival .fnf/.m4a files
+- Fixed broken Play Next feature
+- Many other under the hood fixes and improvements
+
+----------
+
 v4.0.3
 
 - Added option to select background color, lyric color and highlight color when using Karaoke Mode
