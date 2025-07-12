@@ -9418,7 +9418,7 @@ DoEndLogo:
 
         private void updater_DoWork(object sender, DoWorkEventArgs e)
         {
-            var path = Application.StartupPath + "\\bin\\update.txt";
+            var path = Application.StartupPath + "\\bin\\updatev5.txt";
             Tools.DeleteFile(path);
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;// (SecurityProtocolType)3072; //TLS 1.2 for .NET 4.0
             using (var client = new WebClient())
