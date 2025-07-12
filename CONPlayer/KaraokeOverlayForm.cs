@@ -65,13 +65,12 @@ namespace cPlayer
 
         private void DoKaraokeMode(Graphics graphics, IList<LyricPhrase> phrases, IEnumerable<Lyric> lyrics)
         {
-            var time = CorrectedTime;
+            var time = mainForm.GetCorrectedTime();
             LyricPhrase currentLine = null;
             LyricPhrase nextLine = null;
             LyricPhrase lastLine = null;
-            
-            // Get active and next phrases
-            for (var i = 0; i < phrases.Count; i++)
+            //get active and next phrase, and store last used phrase
+            for (var i = 0; i < phrases.Count(); i++)
             {
                 var phrase = phrases[i];
                 if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
@@ -92,168 +91,170 @@ namespace cPlayer
                 }
                 break;
             }
-
             var currentLineTop = mainForm.GetKaraokeCurrentLineTop();
             var nextLineTop = mainForm.GetKaraokeNextLineTop();
             string lineText;
             Font lineFont;
             Size lineSize;
             int posX;
-            int xOffset = 10;
-            int yOffset = 32;
-
-            // Current phrase logic
             if (currentLine != null && !string.IsNullOrEmpty(currentLine.PhraseText))
             {
-                lineText = mainForm.ProcessLine(currentLine.PhraseText, true);
+                //draw entire current phrase on top
+                lineText = mainForm.ProcessLine(currentLine.PhraseText, true).Replace("‿", " ");
                 lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
-                posX = (ClientSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.White, KaraokeBackgroundColor);
+                posX = (Width - lineSize.Width) / 2;
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), mainForm.KaraokeModeText, KaraokeBackgroundColor);
 
-                // Draw the sung portion
-                var sungText = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
-                sungText = mainForm.ProcessLine(sungText, true);
-                if (!string.IsNullOrEmpty(sungText))
+                //draw portion of current phrase that's already been sung
+                var line2 = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
+                line2 = mainForm.ProcessLine(line2, true).Replace("‿", " ");
+                if (!string.IsNullOrEmpty(line2))
                 {
-                    TextRenderer.DrawText(graphics, sungText, lineFont, new Point(posX + xOffset, currentLineTop + yOffset), Color.FromArgb(95,209,209), KaraokeBackgroundColor);
+                    TextRenderer.DrawText(graphics, line2, lineFont, new Point(posX, currentLineTop), mainForm.KaraokeModeHighlight, KaraokeBackgroundColor);
+                }
+
+                var lyricsList = lyrics.ToList();
+                var wordList = new List<ActiveWord>();
+                if (currentLine.PhraseStart <= time - 0.1)
+                {
+                    var word = "";
+                    double wordStart = 0, wordEnd = 0;
+                    var activeWord = new ActiveWord(word, wordStart, wordEnd);
+
+                    for (int i = 0; i < lyricsList.Count(); i++)
+                    {
+                        var lyric = lyricsList[i];
+
+                        // Skip lyrics outside the proper time
+                        if (lyric.LyricStart < currentLine.PhraseStart || lyric.LyricStart > currentLine.PhraseEnd)
+                        {
+                            continue;
+                        }
+                        if (string.IsNullOrEmpty(word))
+                        {
+                            wordStart = lyric.LyricStart;
+                        }
+                        if (lyric.LyricText.Contains("-")) //is a syllable
+                        {
+                            word += mainForm.ProcessLine(lyric.LyricText, true);
+                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+                            continue;
+                        }
+                        // Handle sustains
+                        else if (!string.IsNullOrEmpty(word) && lyric.LyricText.Contains("+"))
+                        {
+                            //word += "+";
+                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+
+                            // Extend for consecutive sustains
+                            for (var a = i + 1; a < lyricsList.Count; a++)
+                            {
+                                if (lyricsList[a].LyricText.Contains("+"))
+                                {
+                                    //word += "+"; // Append the sustain
+                                    wordEnd = lyricsList[a].LyricStart + lyricsList[a].LyricDuration;
+                                    i = a; // Update `i` to skip processed sustain notes
+                                }
+                                else
+                                {
+                                    break; // Exit sustain processing
+                                }
+                            }
+                            continue; // Continue to process the next lyric
+                        }
+                        else
+                        {
+                            // Append regular lyrics to the word
+                            word += mainForm.ProcessLine(lyric.LyricText, true).Replace("‿", " ");
+                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+
+                            //look ahead to double check next lyric(s) aren't + sustains
+                            for (var z = i + 1; z < lyricsList.Count - i - 1; z++)
+                            {
+                                if (lyricsList[z].LyricText.Contains("+"))
+                                {
+                                    //word += "+"; // Append the sustain
+                                    wordEnd = lyricsList[z].LyricStart + lyricsList[z].LyricDuration;
+                                    i = z;
+                                    continue;
+                                }
+                                else
+                                {
+                                    i = z - 1;
+                                    break;
+                                }
+                            }
+
+                            // Finalize the word if it’s not a middle syllable
+                            if (!string.IsNullOrEmpty(word))
+                            {
+                                wordList.Add(new ActiveWord(word.Trim(), wordStart, wordEnd));
+                                word = ""; // Reset the word
+                            }
+                        }
+                    }
+
+                    // Find the active word matching playback time
+                    activeWord = wordList.FirstOrDefault(w => w.WordStart <= time && w.WordEnd > time);
+
+                    if (activeWord != null && !string.IsNullOrEmpty(activeWord.Text))
+                    {
+                        activeWord.Text = activeWord.Text.Replace("‿", " ");
+
+                        // Measure the word size for centering
+                        lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, activeWord.Text, new Font("Tahoma", (float)12.0), 200));
+                        lineSize = TextRenderer.MeasureText(activeWord.Text, lineFont);
+                        posX = (Width - lineSize.Width) / 2;
+                        var posY = (Height - lineSize.Height) / 2;
+
+                        // Draw the entire word in white
+                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), mainForm.KaraokeModeText, KaraokeBackgroundColor);
+
+                        // Calculate progress for the sung portion
+                        var timeElapsed = time - activeWord.WordStart;
+                        var progress = mainForm.Clamp((float)(timeElapsed / (activeWord.WordEnd - activeWord.WordStart)), 0.0f, 1.0f);
+
+                        // Determine the portion of the word to highlight
+                        var numCharsToHighlight = (int)Math.Ceiling(progress * activeWord.Text.Length); // Ensure rounding up
+                        numCharsToHighlight = Math.Min(numCharsToHighlight, activeWord.Text.Length);
+
+                        // Extract the sung portion
+                        var sungPortion = activeWord.Text.Substring(0, numCharsToHighlight);
+
+                        // Overlay the sung portion in blue
+                        if (!string.IsNullOrEmpty(sungPortion))
+                        {
+                            TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX, posY), mainForm.KaraokeModeHighlight, KaraokeBackgroundColor);
+                        }
+                    }
                 }
             }
-
-            var lyricsList = lyrics.ToList();
-            var wordList = new List<ActiveWord>();
-            if (currentLine != null && currentLine.PhraseStart <= time - 0.1)
-            {
-                var word = "";
-                double wordStart = 0, wordEnd = 0;
-                var activeWord = new ActiveWord(word, wordStart, wordEnd);
-
-                for (int i = 0; i < lyricsList.Count(); i++)
-                {
-                    var lyric = lyricsList[i];
-
-                    // Skip lyrics outside the proper time
-                    if (lyric.LyricStart < currentLine.PhraseStart || lyric.LyricStart > currentLine.PhraseEnd)
-                    {
-                        continue;
-                    }
-                    if (string.IsNullOrEmpty(word))
-                    {
-                        wordStart = lyric.LyricStart;
-                    }
-                    if (lyric.LyricText.Contains("-")) //is a syllable
-                    {
-                        word += mainForm.ProcessLine(lyric.LyricText, true);
-                        wordEnd = lyric.LyricStart + lyric.LyricDuration;
-                        continue;
-                    }
-                    // Handle sustains
-                    else if (!string.IsNullOrEmpty(word) && lyric.LyricText.Contains("+"))
-                    {
-                        //word += "+";
-                        wordEnd = lyric.LyricStart + lyric.LyricDuration;
-
-                        // Extend for consecutive sustains
-                        for (var a = i + 1; a < lyricsList.Count; a++)
-                        {
-                            if (lyricsList[a].LyricText.Contains("+"))
-                            {
-                                //word += "+"; // Append the sustain
-                                wordEnd = lyricsList[a].LyricStart + lyricsList[a].LyricDuration;
-                                i = a; // Update `i` to skip processed sustain notes
-                            }
-                            else
-                            {
-                                break; // Exit sustain processing
-                            }
-                        }
-                        continue; // Continue to process the next lyric
-                    }
-                    else
-                    {
-                        // Append regular lyrics to the word
-                        word += mainForm.ProcessLine(lyric.LyricText, true);
-                        wordEnd = lyric.LyricStart + lyric.LyricDuration;
-
-                        //look ahead to double check next lyric(s) aren't + sustains
-                        for (var z = i + 1; z < lyricsList.Count - i - 1; z++)
-                        {
-                            if (lyricsList[z].LyricText.Contains("+"))
-                            {
-                                //word += "+"; // Append the sustain
-                                wordEnd = lyricsList[z].LyricStart + lyricsList[z].LyricDuration;
-                                i = z;
-                                continue;
-                            }
-                            else
-                            {
-                                i = z - 1;
-                                break;
-                            }
-                        }
-
-                        // Finalize the word if it’s not a middle syllable
-                        if (!string.IsNullOrEmpty(word))
-                        {
-                            wordList.Add(new ActiveWord(word.Trim(), wordStart, wordEnd));
-                            word = ""; // Reset the word
-                        }
-                    }
-                }
-
-                // Find the active word matching playback time
-                activeWord = wordList.FirstOrDefault(w => w.WordStart <= time && w.WordEnd > time);
-
-                if (activeWord != null && !string.IsNullOrEmpty(activeWord.Text))
-                {
-                    // Measure the word size for centering
-                    lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, activeWord.Text, new Font("Tahoma", (float)12.0), 200));
-                    lineSize = TextRenderer.MeasureText(activeWord.Text, lineFont);
-                    posX = (ClientSize.Width - lineSize.Width) / 2;
-                    var posY = (ClientSize.Height - lineSize.Height) / 2;
-
-                    // Draw the entire word in white
-                    TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX + xOffset, posY + yOffset), Color.White, KaraokeBackgroundColor);
-                    
-                    // Calculate progress for the sung portion
-                    var timeElapsed = time - activeWord.WordStart;
-                    var progress = mainForm.Clamp((float)(timeElapsed / (activeWord.WordEnd - activeWord.WordStart)), 0.0f, 1.0f);
-
-                    // Determine the portion of the word to highlight
-                    var numCharsToHighlight = (int)Math.Ceiling(progress * activeWord.Text.Length); // Ensure rounding up
-                    numCharsToHighlight = Math.Min(numCharsToHighlight, activeWord.Text.Length);
-
-                    // Extract the sung portion
-                    var sungPortion = activeWord.Text.Substring(0, numCharsToHighlight);
-
-                    // Overlay the sung portion in blue
-                    if (!string.IsNullOrEmpty(sungPortion))
-                    {
-                        TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX + xOffset, posY + yOffset), Color.FromArgb(95,209,209), KaraokeBackgroundColor);                        
-                    }
-                }
-            }
-
-            // Next phrase logic
             if (nextLine != null && !string.IsNullOrEmpty(nextLine.PhraseText))
             {
-                lineText = mainForm.ProcessLine(nextLine.PhraseText, true);
+                //draw entire next phrase on bottom
+                lineText = mainForm.ProcessLine(nextLine.PhraseText, true).Replace("‿", " ");
                 lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
                 lineSize = TextRenderer.MeasureText(lineText, lineFont);
-                posX = (ClientSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX + xOffset, nextLineTop - lineSize.Height + yOffset), Color.FromArgb(180,180,180), KaraokeBackgroundColor);
+                posX = (Width - lineSize.Width) / 2;
+                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), mainForm.KaraokeModeText, KaraokeBackgroundColor);
             }
 
+            //draw waiting/countdown info
+            if (currentLine != null && nextLine != null) return;
+            if (lastLine != null && nextLine != null)
+            {
+                var difference = nextLine.PhraseStart - lastLine.PhraseEnd;
+                if (difference < 5) return;
+            }
             var middleText = "";
-            var textColor = Color.FromArgb(180, 180, 180);
+            var textColor = mainForm.KaraokeModeText;
             if (currentLine == null && nextLine != null)
             {
                 var wait = nextLine.PhraseStart - time;
-                if (wait > 1.5)
-                {
-                    middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
-                    textColor = wait <= 5 ? Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);                    
-                }
+                if (wait < 1.5) return;
+                middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
+                textColor = wait <= 5 ? mainForm.KaraokeModeHighlight : mainForm.KaraokeModeText;// Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
             }
             else if (currentLine == null)
             {
@@ -261,8 +262,8 @@ namespace cPlayer
             }
             lineFont = new Font("Tahoma", mainForm.GetScaledFontSize(graphics, middleText, new Font("Tahoma", (float)12.0), 200));
             lineSize = TextRenderer.MeasureText(middleText, lineFont);
-            posX = (ClientSize.Width - lineSize.Width) / 2;
-            TextRenderer.DrawText(graphics, middleText, lineFont, new Point(posX + xOffset, ((ClientSize.Height - lineSize.Height) / 2) + yOffset), textColor, KaraokeBackgroundColor);
-        }    
+            posX = (Width - lineSize.Width) / 2;
+            TextRenderer.DrawText(graphics, middleText, lineFont, new Point(posX, (Height - lineSize.Height) / 2), textColor, KaraokeBackgroundColor);
+        }
     }
 }

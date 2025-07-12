@@ -8,6 +8,7 @@ using System.Drawing.Imaging;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Diagnostics;
+using cPlayer.x360;
 
 namespace cPlayer.x360
 {

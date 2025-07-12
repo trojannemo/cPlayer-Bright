@@ -962,7 +962,7 @@ namespace cPlayer
             {
                 MIDI = new MidiFile(midi_in, false);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 var folder = Path.GetDirectoryName(midi_in) ?? Environment.CurrentDirectory;
                 var startInfo = new ProcessStartInfo
@@ -995,7 +995,7 @@ namespace cPlayer
                     {
                         MIDI = new MidiFile(midi_out, false);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         MIDI = null;
                     }

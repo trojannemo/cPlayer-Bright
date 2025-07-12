@@ -71,8 +71,6 @@ D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlay
 D:\Documents\Visual Studio 2010\Projects\CONPlayer\CONPlayer\obj\x86\Debug\cPlayer.gifOverlay.resources
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\Resources\cowbellb.png
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\cPlayer.exe.config
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\cPlayer.exe.manifest
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\cPlayer.application
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\cPlayer.exe
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\cPlayer.pdb
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\LibVLCSharp.dll
@@ -95,7 +93,6 @@ C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\D
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\DevExpress.Sparkline.v23.2.Core.dll
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\DevExpress.Utils.v23.2.dll
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\DevExpress.XtraEditors.v23.2.dll
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\NAudio.dll
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\NautilusFREE.dll
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\SharpMp4Parser.dll
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\bin\Debug\SlimDX.dll
@@ -128,9 +125,8 @@ C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Deb
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.Volume.resources
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.csproj.GenerateResource.cache
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.csproj.CoreCompileInputs.cache
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.TrustInfo.xml
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.exe.manifest
-C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.application
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.csproj.Up2Date
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.exe
 C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.pdb
+C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Yemil-PC\source\repos\cPlayerBright\cPlayerBright\CONPlayer\obj\x86\Debug\cPlayer.exe.config

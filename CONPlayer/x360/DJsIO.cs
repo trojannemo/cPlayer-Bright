@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using cPlayer.x360;
 
 #region Extensions
 
@@ -49,7 +50,7 @@ namespace cPlayer.x360
     }
 }
 
-namespace cPlayer.x360.IO.SearchExtensions
+namespace X360.IO.SearchExtensions
 {
     /// <summary>
     /// Class to hold IO extensions
@@ -108,7 +109,7 @@ namespace cPlayer.x360.IO.SearchExtensions
     }
 }
 
-namespace cPlayer.x360.IO.ExtraExtensions
+namespace X360.IO.ExtraExtensions
 {
     /// <summary>
     /// Class to hold IO extensions

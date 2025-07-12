@@ -105,17 +105,20 @@ namespace cPlayer
             this.displayKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
             this.classicKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
             this.cPlayerStyle = new System.Windows.Forms.ToolStripMenuItem();
+            this.rockBandKaraoke = new System.Windows.Forms.ToolStripMenuItem();
+            this.animatedBackground = new System.Windows.Forms.ToolStripMenuItem();
+            this.staticBackground = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
             this.selectBackgroundColor = new System.Windows.Forms.ToolStripMenuItem();
             this.selectLyricColor = new System.Windows.Forms.ToolStripMenuItem();
             this.selectHighlightColor = new System.Windows.Forms.ToolStripMenuItem();
             this.selectHarmonyTextColor = new System.Windows.Forms.ToolStripMenuItem();
             this.selectHarmonyHighlightColor = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectHarmony3TextColor = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectHarmony3HighlightColor = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
             this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.displayMIDIChartVisuals = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
-            this.styleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chartVisualsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chartVertical = new System.Windows.Forms.ToolStripMenuItem();
             this.chartSnippet = new System.Windows.Forms.ToolStripMenuItem();
             this.chartFull = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,10 +193,10 @@ namespace cPlayer
             this.Uploader = new System.ComponentModel.BackgroundWorker();
             this.updater = new System.ComponentModel.BackgroundWorker();
             this.gifTmr = new System.Windows.Forms.Timer(this.components);
+            this.stageTimer = new System.Windows.Forms.Timer(this.components);
+            this.cursorTimer = new System.Windows.Forms.Timer(this.components);
             this.picVisuals = new System.Windows.Forms.PictureBox();
             this.lblSections = new System.Windows.Forms.Label();
-            this.selectHarmony3TextColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHarmony3HighlightColor = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.VisualsContextMenu.SuspendLayout();
             this.panelPlaying.SuspendLayout();
@@ -215,7 +218,6 @@ namespace cPlayer
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.White;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
@@ -700,6 +702,7 @@ namespace cPlayer
             this.openSideWindow.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
             this.openSideWindow.Size = new System.Drawing.Size(242, 22);
             this.openSideWindow.Text = "Open side window";
+            this.openSideWindow.Visible = false;
             this.openSideWindow.Click += new System.EventHandler(this.openSideWindow_Click);
             // 
             // equipmentToolStripMenuItem
@@ -707,6 +710,7 @@ namespace cPlayer
             this.equipmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.microphoneToolStripMenuItem,
             this.stageKitToolStripMenuItem});
+            this.equipmentToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.equipmentToolStripMenuItem.Name = "equipmentToolStripMenuItem";
             this.equipmentToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
             this.equipmentToolStripMenuItem.Text = "&Equipment";
@@ -835,11 +839,9 @@ namespace cPlayer
             this.displayAlbumArt,
             this.displayAudioSpectrum,
             this.displayKaraokeMode,
-            this.displayMIDIChartVisuals,
-            this.toolStripMenuItem8,
-            this.styleToolStripMenuItem});
+            this.chartVisualsToolStripMenuItem});
             this.VisualsContextMenu.Name = "VisualsContextMenu";
-            this.VisualsContextMenu.Size = new System.Drawing.Size(215, 170);
+            this.VisualsContextMenu.Size = new System.Drawing.Size(215, 142);
             this.VisualsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.VisualsContextMenu_Opening);
             // 
             // displayBackgroundVideo
@@ -885,6 +887,7 @@ namespace cPlayer
             this.displayKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.classicKaraokeMode,
             this.cPlayerStyle,
+            this.rockBandKaraoke,
             this.toolStripMenuItem13,
             this.selectBackgroundColor,
             this.selectLyricColor,
@@ -899,7 +902,6 @@ namespace cPlayer
             this.displayKaraokeMode.Name = "displayKaraokeMode";
             this.displayKaraokeMode.Size = new System.Drawing.Size(214, 22);
             this.displayKaraokeMode.Text = "Display: Karaoke Mode";
-            this.displayKaraokeMode.Click += new System.EventHandler(this.displayKaraokeMode_Click);
             // 
             // classicKaraokeMode
             // 
@@ -914,8 +916,34 @@ namespace cPlayer
             // 
             this.cPlayerStyle.Name = "cPlayerStyle";
             this.cPlayerStyle.Size = new System.Drawing.Size(254, 22);
-            this.cPlayerStyle.Text = "cPlayer Style";
-            this.cPlayerStyle.Click += new System.EventHandler(this.cPlayerStyle_Click);
+            this.cPlayerStyle.Text = "cPlayer Karaoke";
+            this.cPlayerStyle.Click += new System.EventHandler(this.cPlayertyle_Click);
+            // 
+            // rockBandKaraoke
+            // 
+            this.rockBandKaraoke.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.animatedBackground,
+            this.staticBackground});
+            this.rockBandKaraoke.Name = "rockBandKaraoke";
+            this.rockBandKaraoke.Size = new System.Drawing.Size(254, 22);
+            this.rockBandKaraoke.Text = "Rock Band Karaoke";
+            this.rockBandKaraoke.Click += new System.EventHandler(this.rockBandKaraoke_Click);
+            // 
+            // animatedBackground
+            // 
+            this.animatedBackground.Checked = true;
+            this.animatedBackground.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.animatedBackground.Name = "animatedBackground";
+            this.animatedBackground.Size = new System.Drawing.Size(193, 22);
+            this.animatedBackground.Text = "Animated Background";
+            this.animatedBackground.Click += new System.EventHandler(this.animatedBackground_Click);
+            // 
+            // staticBackground
+            // 
+            this.staticBackground.Name = "staticBackground";
+            this.staticBackground.Size = new System.Drawing.Size(193, 22);
+            this.staticBackground.Text = "Static Background";
+            this.staticBackground.Click += new System.EventHandler(this.staticBackground_Click);
             // 
             // toolStripMenuItem13
             // 
@@ -962,6 +990,22 @@ namespace cPlayer
             this.selectHarmonyHighlightColor.Visible = false;
             this.selectHarmonyHighlightColor.Click += new System.EventHandler(this.selectHarmonyHighlightColor_Click);
             // 
+            // selectHarmony3TextColor
+            // 
+            this.selectHarmony3TextColor.Name = "selectHarmony3TextColor";
+            this.selectHarmony3TextColor.Size = new System.Drawing.Size(254, 22);
+            this.selectHarmony3TextColor.Text = "Harmony 3 Text Color";
+            this.selectHarmony3TextColor.Visible = false;
+            this.selectHarmony3TextColor.Click += new System.EventHandler(this.selectHarmony3TextColor_Click);
+            // 
+            // selectHarmony3HighlightColor
+            // 
+            this.selectHarmony3HighlightColor.Name = "selectHarmony3HighlightColor";
+            this.selectHarmony3HighlightColor.Size = new System.Drawing.Size(254, 22);
+            this.selectHarmony3HighlightColor.Text = "Harmony 3 Highlight Color";
+            this.selectHarmony3HighlightColor.Visible = false;
+            this.selectHarmony3HighlightColor.Click += new System.EventHandler(this.selectHarmony3HighlightColor_Click);
+            // 
             // toolStripMenuItem14
             // 
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
@@ -974,33 +1018,17 @@ namespace cPlayer
             this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults";
             this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
             // 
-            // displayMIDIChartVisuals
+            // chartVisualsToolStripMenuItem
             // 
-            this.displayMIDIChartVisuals.BackColor = System.Drawing.Color.White;
-            this.displayMIDIChartVisuals.ForeColor = System.Drawing.Color.Black;
-            this.displayMIDIChartVisuals.Name = "displayMIDIChartVisuals";
-            this.displayMIDIChartVisuals.Size = new System.Drawing.Size(214, 22);
-            this.displayMIDIChartVisuals.Text = "Display: MIDI Chart Visuals";
-            this.displayMIDIChartVisuals.Click += new System.EventHandler(this.displayMIDIChartVisuals_Click);
-            // 
-            // toolStripMenuItem8
-            // 
-            this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(211, 6);
-            this.toolStripMenuItem8.Visible = false;
-            // 
-            // styleToolStripMenuItem
-            // 
-            this.styleToolStripMenuItem.BackColor = System.Drawing.Color.White;
-            this.styleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chartVisualsToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.chartVisualsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chartVertical,
             this.chartSnippet,
             this.chartFull});
-            this.styleToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
-            this.styleToolStripMenuItem.Name = "styleToolStripMenuItem";
-            this.styleToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.styleToolStripMenuItem.Text = "MIDI: Chart Style";
-            this.styleToolStripMenuItem.Visible = false;
+            this.chartVisualsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
+            this.chartVisualsToolStripMenuItem.Name = "chartVisualsToolStripMenuItem";
+            this.chartVisualsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.chartVisualsToolStripMenuItem.Text = "Display: MIDI Chart Visuals";
             // 
             // chartVertical
             // 
@@ -1009,7 +1037,7 @@ namespace cPlayer
             this.chartVertical.Name = "chartVertical";
             this.chartVertical.Size = new System.Drawing.Size(180, 22);
             this.chartVertical.Text = "Game Style";
-            this.chartVertical.Click += new System.EventHandler(this.UpdateVisualStyle);
+            this.chartVertical.Click += new System.EventHandler(this.chartVertical_Click);
             // 
             // chartSnippet
             // 
@@ -1018,7 +1046,7 @@ namespace cPlayer
             this.chartSnippet.Name = "chartSnippet";
             this.chartSnippet.Size = new System.Drawing.Size(180, 22);
             this.chartSnippet.Text = "MIDI Style";
-            this.chartSnippet.Click += new System.EventHandler(this.UpdateVisualStyle);
+            this.chartSnippet.Click += new System.EventHandler(this.chartSnippet_Click);
             // 
             // chartFull
             // 
@@ -1028,7 +1056,7 @@ namespace cPlayer
             this.chartFull.Size = new System.Drawing.Size(180, 22);
             this.chartFull.Text = "Chart: Full";
             this.chartFull.Visible = false;
-            this.chartFull.Click += new System.EventHandler(this.UpdateVisualStyle);
+            this.chartFull.Click += new System.EventHandler(this.chartFull_Click);
             // 
             // lblAuthor
             // 
@@ -1155,7 +1183,6 @@ namespace cPlayer
             // 
             this.picPlay.BackColor = System.Drawing.Color.Transparent;
             this.picPlay.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picPlay.Enabled = false;
             this.picPlay.Image = global::cPlayer.Properties.Resources.icon_play;
             this.picPlay.Location = new System.Drawing.Point(15, 126);
             this.picPlay.Name = "picPlay";
@@ -1804,16 +1831,26 @@ namespace cPlayer
             this.gifTmr.Interval = 16;
             this.gifTmr.Tick += new System.EventHandler(this.gifTmr_Tick);
             // 
+            // stageTimer
+            // 
+            this.stageTimer.Interval = 33;
+            this.stageTimer.Tick += new System.EventHandler(this.stageTimer_Tick);
+            // 
+            // cursorTimer
+            // 
+            this.cursorTimer.Interval = 1000;
+            this.cursorTimer.Tick += new System.EventHandler(this.cursorTimer_Tick);
+            // 
             // picVisuals
             // 
             this.picVisuals.AllowDrop = true;
             this.picVisuals.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.picVisuals.BackColor = System.Drawing.Color.White;
-            this.picVisuals.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.picVisuals.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.picVisuals.ContextMenuStrip = this.VisualsContextMenu;
             this.picVisuals.Controls.Add(this.lblSections);
+            this.picVisuals.Image = global::cPlayer.Properties.Resources.background;
             this.picVisuals.Location = new System.Drawing.Point(396, 27);
             this.picVisuals.Name = "picVisuals";
             this.picVisuals.Size = new System.Drawing.Size(590, 654);
@@ -1845,22 +1882,6 @@ namespace cPlayer
             this.lblSections.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSections.UseMnemonic = false;
             this.lblSections.Visible = false;
-            // 
-            // selectHarmony3TextColor
-            // 
-            this.selectHarmony3TextColor.Name = "selectHarmony3TextColor";
-            this.selectHarmony3TextColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmony3TextColor.Text = "Harmony 3 Text Color";
-            this.selectHarmony3TextColor.Visible = false;
-            this.selectHarmony3TextColor.Click += new System.EventHandler(this.selectHarmony3TextColor_Click);
-            // 
-            // selectHarmony3HighlightColor
-            // 
-            this.selectHarmony3HighlightColor.Name = "selectHarmony3HighlightColor";
-            this.selectHarmony3HighlightColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmony3HighlightColor.Text = "Harmony 3 Highlight Color";
-            this.selectHarmony3HighlightColor.Visible = false;
-            this.selectHarmony3HighlightColor.Click += new System.EventHandler(this.selectHarmony3HighlightColor_Click);
             // 
             // frmMain
             // 
@@ -1982,7 +2003,7 @@ namespace cPlayer
         private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.ContextMenuStrip VisualsContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem styleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem chartVisualsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem chartFull;
         private System.Windows.Forms.Label lblAuthor;
         private System.Windows.Forms.ToolStripMenuItem chartSnippet;
@@ -2025,8 +2046,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem recent5;
         private System.Windows.Forms.ToolStripMenuItem displayAlbumArt;
         private System.Windows.Forms.ToolStripMenuItem displayAudioSpectrum;
-        private System.Windows.Forms.ToolStripMenuItem displayMIDIChartVisuals;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem8;
         private System.Windows.Forms.ToolStripMenuItem yarg;
         //private AxWMPLib.AxWindowsMediaPlayer MediaPlayer;
         private System.Windows.Forms.ToolStripMenuItem takeScreenshot;
@@ -2083,6 +2102,11 @@ namespace cPlayer
         private ToolStripSeparator toolStripMenuItem14;
         private ToolStripMenuItem selectHarmony3TextColor;
         private ToolStripMenuItem selectHarmony3HighlightColor;
+        private ToolStripMenuItem rockBandKaraoke;
+        private Timer stageTimer;
+        private Timer cursorTimer;
+        private ToolStripMenuItem animatedBackground;
+        private ToolStripMenuItem staticBackground;
     }
 }
 

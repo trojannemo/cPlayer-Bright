@@ -6,6 +6,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using System.Drawing;
+using System.Globalization;
+using cPlayer.x360;
 
 namespace cPlayer.x360
 {
@@ -277,7 +279,7 @@ namespace cPlayer.x360
         }
 
         /// <summary>
-        /// Grabsthe path
+        /// Grabs the path
         /// </summary>
         /// <returns></returns>
         public string GetPath()
@@ -1248,7 +1250,7 @@ namespace cPlayer.x360
                 xLisc.Add(new STFSLicense(0, 0, 0, false));
             IDTransfer = TransferLock.AllowTransfer;
             xPackageImage = null;
-            xContentImage = xPackageImage;
+            xContentImage = null;
         }
 
         internal HeaderData(DJsIO xIOIn, PackageMagic MagicType) { read(xIOIn, MagicType); }
@@ -1318,7 +1320,7 @@ namespace cPlayer.x360
             try
             {
                 x.Position = 0;
-                x.Write("Modified Header Details by TrojanNemo for Customs Creators Collective" + Environment.NewLine);
+                x.Write("Modified Header Details by Nemo" + Environment.NewLine);
                 x.Write("Display Title: " + xTitles[0] + Environment.NewLine);
                 x.Write("Display Description: " + xDescriptions[0] + Environment.NewLine);
                 x.Write("Title ID: " + TitleID.ToString("X2") + Environment.NewLine);
@@ -1845,12 +1847,12 @@ namespace cPlayer.x360
                             if (!xDev)
                             {
                                 xRSAKeyz.Exponent = new byte[] { 0, 1, 0, 1 };
-                                xRSAKeyz.Modulus = null;
+                                xRSAKeyz.Modulus = cPlayer.Properties.Resources.XK1;
                             }
                             else
                             {
                                 xRSAKeyz.Exponent = new byte[] { 0, 0, 0, 3 };
-                                var xLK = new DJsIO(new byte[0], true);
+                                var xLK = new DJsIO(cPlayer.Properties.Resources.XK4, true);
                                 xRSAKeyz.Modulus = xLK.ReadBytes(0x100);
                                 xLK.Close();
                             }
@@ -2111,7 +2113,17 @@ namespace cPlayer.x360
             }
             return 0;
         }
-               
+
+        /// <summary>
+        /// For sorting folders by path
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="x2"></param>
+        /// <returns></returns>
+        static int sortpathct(CFolderEntry x1, CFolderEntry x2)
+        {
+            return x1.xthispath.xPathCount().CompareTo(x2.xthispath.xPathCount());
+        }
 
         /// <summary>
         /// Gets a name via hash string and Title ID
@@ -2407,7 +2419,150 @@ namespace cPlayer.x360
         /// <param name="xLocation"></param>
         public STFSPackage(string xLocation)
             : this(new DJsIO(xLocation, DJFileMode.Open, true)) { }
-                
+
+        /// <summary>
+        /// Create an STFS Package
+        /// </summary>
+        /// <param name="xSession"></param>
+        /// <param name="xSigning"></param>
+        /// <param name="xOutPath"></param>
+        public STFSPackage(CreateSTFS xSession, RSAParams xSigning, string xOutPath)
+        {
+            xActive = true;
+            if (!xSigning.Valid)
+                throw CryptoExcepts.ParamError;
+            if (xSession.xFileDirectory.Count == 0)
+                throw new Exception();
+            try
+            {
+                //AddToLog("Setting Package variables");
+                //new Thread(DLLIdentify.PrivilegeCheck).Start(Thread.CurrentThread);
+                xroot = new FolderEntry("", 0, 0xFFFF, 0xFFFF, this);
+                switch (xSession.HeaderData.ThisType)
+                {
+                    case PackageType.ThematicSkin:
+                        {
+                            var x1 = new DJsIO(true);
+                            var x2 = new DJsIO(true);
+                            x1.Write((int)xSession.ThemeSettings.StyleType);
+                            x1.Flush();
+                            x1.Close();
+                            if (!xSession.AddFile(x1.FileNameLong, "DashStyle"))
+                                throw STFSExcepts.ThemeError;
+                            x2.Write("SphereColor=" + ((byte)xSession.ThemeSettings.Sphere).ToString(CultureInfo.InvariantCulture).PadRight(2, '\0'));
+                            x2.Write(new byte[] { 0xD, 0xA });
+                            x2.Write("AvatarLightingDirectional=" +
+                                     xSession.ThemeSettings.AvatarLightingDirectional0.ToString("#0.0") + "," +
+                                     xSession.ThemeSettings.AvatarLightingDirectional1.ToString("#0.0000") + "," +
+                                     xSession.ThemeSettings.AvatarLightingDirectional2.ToString("#0.0") + ",0x" +
+                                     xSession.ThemeSettings.AvatarLightingDirectional3.ToString("X"));
+                            x2.Write(new byte[] { 0xD, 0xA });
+                            x2.Write("AvatarLightingAmbient=0x" + xSession.ThemeSettings.AvatarLightingAmbient.ToString("X"));
+                            x2.Write(new byte[] { 0xD, 0xA });
+                            x2.Flush();
+                            x2.Close();
+                            if (!xSession.AddFile(x2.FileNameLong, "parameters.ini"))
+                                throw STFSExcepts.ThemeError;
+                        }
+                        break;
+                    case PackageType.SocialTitle:
+                    case PackageType.OriginalXboxGame:
+                    case PackageType.HDDInstalledGame:
+                    case PackageType.GamesOnDemand:
+                        throw STFSExcepts.Game;
+                }
+                //xLog = LogIn;
+                xHeader = xSession.HeaderData;
+                xSTFSStruct = new STFSDescriptor(xSession.STFSType, 0);
+                xIO = new DJsIO(true);
+                var DirectoryBlockz = new List<BlockRecord>();
+                // switched2 = true;
+                uint xcurblock = 0;
+                for (ushort i = 0; i < xSession.GetDirectoryCount; i++)
+                {
+                    DirectoryBlockz.Add(new BlockRecord());
+                    DirectoryBlockz[DirectoryBlockz.Count - 1].ThisBlock = xcurblock++;
+                }
+                xFileBlocks = DirectoryBlockz.ToArray();
+                xWriteChain(xFileBlocks);
+                xSTFSStruct.xDirectoryBlockCount = (ushort)xFileBlocks.Length;
+                ushort xCurID = 0;
+                xSession.xFolderDirectory.Sort(sortpathct);
+                foreach (var x in xSession.xFolderDirectory)
+                {
+                    ushort pointer = 0xFFFF;
+                    if (x.xthispath.xPathCount() > 1)
+                        pointer = xGetParentFolder(x.Path).EntryID;
+                    xFolderDirectory.Add(new FolderEntry(x.Name, 0, xCurID++, pointer, this));
+                    xFolderDirectory[xFolderDirectory.Count - 1].xFixOffset();
+                }
+                //var debug = System.Windows.Forms.Application.StartupPath + "\\debug.txt";
+                foreach (var x in xSession.xFileDirectory)
+                {
+                    ushort pointer = 0xFFFF;
+                    if (x.xthispath.xPathCount() > 1)
+                        try
+                        {
+                            pointer = xGetParentFolder(x.Path).EntryID;
+                        }
+                        catch (Exception)
+                        {
+                            /*var sw = new StreamWriter(debug, true);
+                            sw.WriteLine(x.xthispath);
+                            sw.Close();
+                            continue;*/
+                        }
+                    xFileDirectory.Add(new FileEntry(x.Name, x.GetLength(), false, xCurID++, pointer, this));
+                    var xAlloc = new List<BlockRecord>();
+                    for (uint i = 0; i < x.BlockCount(); i++)
+                    {
+                        xAlloc.Add(new BlockRecord());
+                        xAlloc[xAlloc.Count - 1].ThisBlock = xcurblock++;
+                    }
+                    xFileDirectory[xFileDirectory.Count - 1].xBlockCount = (uint)xAlloc.Count;
+                    xFileDirectory[xFileDirectory.Count - 1].xStartBlock = xAlloc[0].ThisBlock;
+                    xFileDirectory[xFileDirectory.Count - 1].xPackage = this;
+                    xFileDirectory[xFileDirectory.Count - 1].xFixOffset();
+                    xWriteChain(xAlloc.ToArray());
+                }
+                //AddToLog("Writing Entry Table");
+                DJsIO xent;
+                if (!xEntriesToFile(out xent))
+                    throw new Exception();
+                xWriteTo(ref xent, xFileBlocks);
+                xent.Close();
+                VariousFunctions.DeleteFile(xent.FileNameLong);
+                //AddToLog("Writing Files");
+                uint curblck = xSession.GetDirectoryCount;
+                foreach (var z in xSession.xFileDirectory)
+                {
+                    var w = new List<BlockRecord>();
+                    var ct = z.BlockCount();
+                    for (uint y = 0; y < ct; y++)
+                    {
+                        w.Add(new BlockRecord());
+                        w[w.Count - 1].ThisBlock = curblck++;
+                    }
+                    DJsIO x = null;
+                    try
+                    {
+                        x = new DJsIO(z.FileLocale, DJFileMode.Open, true);
+                        xWriteTo(ref x, w.ToArray());
+                    }
+                    catch { }
+                    if (x != null)
+                        x.Dispose();
+                }
+                xWriteTables();
+                xWriteHeader(xSigning);
+                xIO.Close();
+                VariousFunctions.MoveFile(xIO.FileNameLong, xOutPath);
+                xIO = new DJsIO(xOutPath, DJFileMode.Open, true);
+                xActive = false;
+            }
+            catch (Exception) { xFileDirectory = null; xFolderDirectory = null; xIO.Dispose(); throw; }
+        }
+
         /// <summary>
         /// Function for partial classes, importing packages
         /// </summary>
@@ -2550,7 +2705,7 @@ namespace cPlayer.x360
                             var xRSAKeyz = new RSAParameters
                             {
                                 Exponent = new byte[] { 0, 0, 0, 3 },
-                                Modulus = new byte[] { 0, 0,}
+                                Modulus = cPlayer.Properties.Resources.XK6
                             };
                             xIO.Position = 4;
                             var xCert = xIO.ReadBytes(0xA8);
@@ -2866,6 +3021,45 @@ namespace cPlayer.x360
         }
 
         /// <summary>
+        /// Rebuilds the package using package creation
+        /// </summary>
+        /// <param name="xParams"></param>
+        /// <returns></returns>
+        public bool RebuildPackage(RSAParams xParams)
+        {
+            if (!ActiveCheck())
+                return false;
+            if (!xParams.Valid)
+                return (xActive = false);
+            var x = new CreateSTFS { HeaderData = xHeader, STFSType = xSTFSStruct.ThisType };
+            // Populate
+            foreach (var y in xFolderDirectory)
+                x.AddFolder(y.GetPath());
+            foreach (var y in xFileDirectory)
+            {
+                var io = y.xGetTempIO(true);
+                if (io == null || !io.Accessed) continue;
+                io.Close();
+                x.AddFile(io.FileNameLong, y.GetPath());
+            }
+            var xreturn = new STFSPackage(x, xParams, VariousFunctions.GetTempFileLocale());
+            if (xreturn.ParseSuccess)
+            {
+                xIO.Close();
+                xreturn.xIO.Close();
+                if (!VariousFunctions.MoveFile(xreturn.xIO.FileNameLong, xIO.FileNameLong))
+                    return (xActive = false);
+                xreturn.xIO = xIO;
+                SetSamePackage(ref xreturn);
+                xIO.OpenAgain();
+                return true;
+            }
+            xreturn.xIO.Close();
+            VariousFunctions.DeleteFile(xreturn.xIO.FileNameLong);
+            return (xActive = false);
+        }
+
+        /// <summary>
         /// Returns the name used for DLC names
         /// </summary>
         /// <returns></returns>
@@ -2935,6 +3129,4 @@ namespace cPlayer.x360
             return x.Any(z => z.ThisBlock == y.ThisBlock);
         }
     }
-
-
 }

@@ -32,7 +32,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -41,7 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
+    <Prefer32Bit>true</Prefer32Bit>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
@@ -67,7 +67,7 @@
     </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
@@ -96,9 +96,9 @@
     <Reference Include="DevExpress.Utils.v23.2, Version=23.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraEditors.v23.2, Version=23.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="NAudio, Version=1.7.2.19, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="NAudio.Midi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\bin\NAudio.dll</HintPath>
+      <HintPath>bin\Debug\NAudio.Midi.dll</HintPath>
     </Reference>
     <Reference Include="NautilusFREE, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -136,6 +136,7 @@
     <Compile Include="AudioSelector.Designer.cs">
       <DependentUpon>AudioSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChartToRockBandMidi.cs" />
     <Compile Include="DevIL.cs" />
     <Compile Include="FNFParser.cs" />
     <Compile Include="gifOverlay.cs">
@@ -221,6 +222,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="wii.cs" />
+    <Compile Include="x360\Create.cs" />
     <Compile Include="x360\Cryptography.cs" />
     <Compile Include="x360\DJsIO.cs" />
     <Compile Include="x360\Other.cs" />
@@ -293,6 +295,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\XK0.bin" />
+    <None Include="Resources\XK1.bin" />
+    <None Include="Resources\XK2.bin" />
+    <None Include="Resources\XK3.bin" />
+    <None Include="Resources\XK4.bin" />
+    <None Include="Resources\XK5.bin" />
+    <None Include="Resources\XK6.bin" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -318,6 +327,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\frostedglasslyrics85black.png" />
+    <None Include="Resources\frostedglasslyrics50white.png" />
+    <None Include="Resources\frostedglasslyrics50black.png" />
+    <None Include="Resources\frostedglasslyrics75.png" />
+    <None Include="Resources\stage.gif" />
+    <None Include="Resources\background2.png" />
+    <None Include="Resources\background.png" />
+    <None Include="Resources\fadeout3.png" />
+    <None Include="Resources\fadein3.png" />
+    <None Include="Resources\fadeout2.png" />
+    <None Include="Resources\fadein2.png" />
+    <None Include="Resources\fadeout.png" />
+    <None Include="Resources\fadein.png" />
+    <None Include="Resources\glow3.png" />
+    <None Include="Resources\glow2.png" />
+    <None Include="Resources\glow.png" />
+    <None Include="Resources\karaoke_bg.jpg" />
     <None Include="Resources\karaoke_outro.png" />
     <None Include="Resources\note_orange.png" />
     <None Include="Resources\note_green.png" />

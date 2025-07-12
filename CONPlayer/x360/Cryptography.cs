@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using System.Text;
+using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
+using cPlayer.x360;
 
 namespace cPlayer.x360
 {

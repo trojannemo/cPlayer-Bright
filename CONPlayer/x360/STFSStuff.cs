@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Diagnostics;
+using cPlayer.x360;
 
 namespace cPlayer.x360
 {
@@ -23,7 +24,50 @@ namespace cPlayer.x360
         /// </summary>
         Replace
     }
-    
+
+    /// <summary>
+    /// Xbox Languages
+    /// </summary>
+    public enum Languages : byte
+    {
+        /// <summary>
+        /// English
+        /// </summary>
+        English = 0,
+        /// <summary>
+        /// Japanese
+        /// </summary>
+        Japanese,
+        /// <summary>
+        /// German
+        /// </summary>
+        German,
+        /// <summary>
+        /// French
+        /// </summary>
+        French,
+        /// <summary>
+        /// Spanish
+        /// </summary>
+        Spanish,
+        /// <summary>
+        /// Itialian
+        /// </summary>
+        Italian,
+        /// <summary>
+        /// Korean
+        /// </summary>
+        Korean,
+        /// <summary>
+        /// Chinese
+        /// </summary>
+        Chinese,
+        /// <summary>
+        /// Portuguese 
+        /// </summary>
+        Portuguese
+    }
+
     internal enum HashStatus : byte { Unused = 0, Old, New, Reused }
 
     internal enum HashFlag : byte
@@ -259,6 +303,7 @@ namespace cPlayer.x360
             xKV.Position = 0x9B8 + xbase;
             xC = xKV.ReadBytes(0x1A8);
             // D is a constant
+            xK.D = cPlayer.Properties.Resources.XK0;
             xKV.Position = 0x28C + xbase;
             xK.Exponent = xKV.ReadBytes(4);
             xKV.Position = 0x298 + xbase;
@@ -295,6 +340,40 @@ namespace cPlayer.x360
                 throw STFSExcepts.IOAccess;
             XLoadCON(xKV);
             xKV.Close();
+        }
+
+        /// <summary>
+        /// Initializes a Strong Signed key type of Kit 360's
+        /// </summary>
+        /// <param name="xTypeIn"></param>
+        public RSAParams(StrongSigned xTypeIn)
+        {
+            DJsIO xReader;
+            switch (xTypeIn)
+            {
+                case StrongSigned.LIVE:
+                    xReader = new DJsIO(cPlayer.Properties.Resources.XK4, true);
+                    break;
+
+                case StrongSigned.PIRS:
+                    xReader = new DJsIO(cPlayer.Properties.Resources.XK5, true);
+                    break;
+
+                default:
+                    throw STFSExcepts.NotStrong;
+            }
+            xK.Exponent = new byte[] { 0, 0, 0, 3 };
+            xK.D = cPlayer.Properties.Resources.XK3;
+            xReader.Position = 0;
+            xK.Modulus = xReader.ReadBytes(0x100);
+            xK.P = xReader.ReadBytes(0x80);
+            xK.Q = xReader.ReadBytes(0x80);
+            xK.DP = xReader.ReadBytes(0x80);
+            xK.DQ = xReader.ReadBytes(0x80);
+            xK.InverseQ = xReader.ReadBytes(0x80);
+            xReader.Dispose();
+            xM = xTypeIn == StrongSigned.LIVE ? PackageMagic.LIVE : PackageMagic.PIRS;
+            xV = true;
         }
     }
 
@@ -352,50 +431,9 @@ namespace cPlayer.x360
         /// <summary>Certificate Digest RSA Signature</summary>
         Certificate
     }
-
     /// <summary>
-    /// Xbox Languages
+    /// Package transferring
     /// </summary>
-    public enum Languages : byte
-    {
-        /// <summary>
-        /// English
-        /// </summary>
-        English = 0,
-        /// <summary>
-        /// Japanese
-        /// </summary>
-        Japanese,
-        /// <summary>
-        /// German
-        /// </summary>
-        German,
-        /// <summary>
-        /// French
-        /// </summary>
-        French,
-        /// <summary>
-        /// Spanish
-        /// </summary>
-        Spanish,
-        /// <summary>
-        /// Itialian
-        /// </summary>
-        Italian,
-        /// <summary>
-        /// Korean
-        /// </summary>
-        Korean,
-        /// <summary>
-        /// Chinese
-        /// </summary>
-        Chinese,
-        /// <summary>
-        /// Portuguese 
-        /// </summary>
-        Portuguese
-    }
-
     public enum TransferLock : byte
     {
         /// <summary>No transferring</summary>

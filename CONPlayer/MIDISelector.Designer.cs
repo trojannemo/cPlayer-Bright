@@ -36,14 +36,10 @@ namespace cPlayer
             this.chkDrums = new System.Windows.Forms.CheckBox();
             this.chkBass = new System.Windows.Forms.CheckBox();
             this.chkGuitar = new System.Windows.Forms.CheckBox();
-            this.chkVocals = new System.Windows.Forms.CheckBox();
             this.btnAll = new System.Windows.Forms.Button();
             this.btnNone = new System.Windows.Forms.Button();
-            this.chkKeys = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnSave = new System.Windows.Forms.Button();
-            this.chkHarms = new System.Windows.Forms.CheckBox();
-            this.chkProKeys = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.chkHarmColorOnVocals = new System.Windows.Forms.CheckBox();
             this.chkBWKeys = new System.Windows.Forms.CheckBox();
@@ -54,15 +50,23 @@ namespace cPlayer
             this.cboWindow = new System.Windows.Forms.ComboBox();
             this.cboSizing = new System.Windows.Forms.ComboBox();
             this.chkNameTracks = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioProKeys = new System.Windows.Forms.RadioButton();
+            this.radioKeys = new System.Windows.Forms.RadioButton();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.radioHarms = new System.Windows.Forms.RadioButton();
+            this.radioVocals = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkDrums
             // 
             this.chkDrums.AutoSize = true;
             this.chkDrums.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkDrums.Location = new System.Drawing.Point(12, 23);
+            this.chkDrums.Location = new System.Drawing.Point(15, 23);
             this.chkDrums.Name = "chkDrums";
             this.chkDrums.Size = new System.Drawing.Size(56, 17);
             this.chkDrums.TabIndex = 0;
@@ -74,7 +78,7 @@ namespace cPlayer
             // 
             this.chkBass.AutoSize = true;
             this.chkBass.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkBass.Location = new System.Drawing.Point(109, 23);
+            this.chkBass.Location = new System.Drawing.Point(112, 23);
             this.chkBass.Name = "chkBass";
             this.chkBass.Size = new System.Drawing.Size(49, 17);
             this.chkBass.TabIndex = 1;
@@ -86,26 +90,13 @@ namespace cPlayer
             // 
             this.chkGuitar.AutoSize = true;
             this.chkGuitar.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkGuitar.Location = new System.Drawing.Point(198, 23);
+            this.chkGuitar.Location = new System.Drawing.Point(201, 23);
             this.chkGuitar.Name = "chkGuitar";
             this.chkGuitar.Size = new System.Drawing.Size(54, 17);
             this.chkGuitar.TabIndex = 2;
             this.chkGuitar.Text = "Guitar";
             this.chkGuitar.UseVisualStyleBackColor = true;
             this.chkGuitar.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkDrums_MouseUp);
-            // 
-            // chkVocals
-            // 
-            this.chkVocals.AutoSize = true;
-            this.chkVocals.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkVocals.Location = new System.Drawing.Point(194, 46);
-            this.chkVocals.Name = "chkVocals";
-            this.chkVocals.Size = new System.Drawing.Size(58, 17);
-            this.chkVocals.TabIndex = 3;
-            this.chkVocals.Text = "Vocals";
-            this.chkVocals.UseVisualStyleBackColor = true;
-            this.chkVocals.CheckedChanged += new System.EventHandler(this.chkVocals_CheckedChanged);
-            this.chkVocals.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkDrums_MouseUp);
             // 
             // btnAll
             // 
@@ -129,34 +120,19 @@ namespace cPlayer
             this.btnNone.UseVisualStyleBackColor = true;
             this.btnNone.Click += new System.EventHandler(this.btnNone_Click);
             // 
-            // chkKeys
-            // 
-            this.chkKeys.AutoSize = true;
-            this.chkKeys.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkKeys.Location = new System.Drawing.Point(83, 46);
-            this.chkKeys.Name = "chkKeys";
-            this.chkKeys.Size = new System.Drawing.Size(49, 17);
-            this.chkKeys.TabIndex = 4;
-            this.chkKeys.Text = "Keys";
-            this.chkKeys.UseVisualStyleBackColor = true;
-            this.chkKeys.CheckedChanged += new System.EventHandler(this.chkKeys_CheckedChanged);
-            this.chkKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkDrums_MouseUp);
-            // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox4);
+            this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.btnSave);
-            this.groupBox1.Controls.Add(this.chkHarms);
-            this.groupBox1.Controls.Add(this.chkProKeys);
-            this.groupBox1.Controls.Add(this.chkKeys);
             this.groupBox1.Controls.Add(this.chkDrums);
             this.groupBox1.Controls.Add(this.btnNone);
             this.groupBox1.Controls.Add(this.chkBass);
             this.groupBox1.Controls.Add(this.btnAll);
             this.groupBox1.Controls.Add(this.chkGuitar);
-            this.groupBox1.Controls.Add(this.chkVocals);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(258, 116);
+            this.groupBox1.Size = new System.Drawing.Size(269, 116);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "MIDI charts to display:";
@@ -164,39 +140,13 @@ namespace cPlayer
             // btnSave
             // 
             this.btnSave.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSave.Location = new System.Drawing.Point(183, 79);
+            this.btnSave.Location = new System.Drawing.Point(197, 79);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(60, 23);
             this.btnSave.TabIndex = 11;
             this.btnSave.Text = "Close";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // chkHarms
-            // 
-            this.chkHarms.AutoSize = true;
-            this.chkHarms.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkHarms.Location = new System.Drawing.Point(135, 46);
-            this.chkHarms.Name = "chkHarms";
-            this.chkHarms.Size = new System.Drawing.Size(56, 17);
-            this.chkHarms.TabIndex = 10;
-            this.chkHarms.Text = "Harms";
-            this.chkHarms.UseVisualStyleBackColor = true;
-            this.chkHarms.CheckedChanged += new System.EventHandler(this.chkHarms_CheckedChanged);
-            this.chkHarms.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkDrums_MouseUp);
-            // 
-            // chkProKeys
-            // 
-            this.chkProKeys.AutoSize = true;
-            this.chkProKeys.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkProKeys.Location = new System.Drawing.Point(12, 46);
-            this.chkProKeys.Name = "chkProKeys";
-            this.chkProKeys.Size = new System.Drawing.Size(68, 17);
-            this.chkProKeys.TabIndex = 9;
-            this.chkProKeys.Text = "Pro-Keys";
-            this.chkProKeys.UseVisualStyleBackColor = true;
-            this.chkProKeys.CheckedChanged += new System.EventHandler(this.chkProKeys_CheckedChanged);
-            this.chkProKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chkDrums_MouseUp);
             // 
             // groupBox2
             // 
@@ -211,7 +161,7 @@ namespace cPlayer
             this.groupBox2.Controls.Add(this.chkNameTracks);
             this.groupBox2.Location = new System.Drawing.Point(12, 139);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(258, 157);
+            this.groupBox2.Size = new System.Drawing.Size(269, 157);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Misc options:";
@@ -334,13 +284,85 @@ namespace cPlayer
             this.chkNameTracks.UseVisualStyleBackColor = true;
             this.chkNameTracks.CheckedChanged += new System.EventHandler(this.chkNameTracks_CheckedChanged);
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioKeys);
+            this.groupBox3.Controls.Add(this.radioProKeys);
+            this.groupBox3.Location = new System.Drawing.Point(6, 38);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(128, 34);
+            this.groupBox3.TabIndex = 12;
+            this.groupBox3.TabStop = false;
+            // 
+            // radioProKeys
+            // 
+            this.radioProKeys.AutoSize = true;
+            this.radioProKeys.Checked = true;
+            this.radioProKeys.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioProKeys.Location = new System.Drawing.Point(6, 11);
+            this.radioProKeys.Name = "radioProKeys";
+            this.radioProKeys.Size = new System.Drawing.Size(67, 17);
+            this.radioProKeys.TabIndex = 0;
+            this.radioProKeys.TabStop = true;
+            this.radioProKeys.Text = "Pro-Keys";
+            this.radioProKeys.UseVisualStyleBackColor = true;
+            this.radioProKeys.CheckedChanged += new System.EventHandler(this.radioProKeys_CheckedChanged);
+            // 
+            // radioKeys
+            // 
+            this.radioKeys.AutoSize = true;
+            this.radioKeys.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioKeys.Location = new System.Drawing.Point(78, 11);
+            this.radioKeys.Name = "radioKeys";
+            this.radioKeys.Size = new System.Drawing.Size(48, 17);
+            this.radioKeys.TabIndex = 1;
+            this.radioKeys.Text = "Keys";
+            this.radioKeys.UseVisualStyleBackColor = true;
+            this.radioKeys.CheckedChanged += new System.EventHandler(this.radioKeys_CheckedChanged);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.radioVocals);
+            this.groupBox4.Controls.Add(this.radioHarms);
+            this.groupBox4.Location = new System.Drawing.Point(139, 38);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(124, 34);
+            this.groupBox4.TabIndex = 12;
+            this.groupBox4.TabStop = false;
+            // 
+            // radioHarms
+            // 
+            this.radioHarms.AutoSize = true;
+            this.radioHarms.Checked = true;
+            this.radioHarms.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioHarms.Location = new System.Drawing.Point(6, 11);
+            this.radioHarms.Name = "radioHarms";
+            this.radioHarms.Size = new System.Drawing.Size(55, 17);
+            this.radioHarms.TabIndex = 1;
+            this.radioHarms.TabStop = true;
+            this.radioHarms.Text = "Harms";
+            this.radioHarms.UseVisualStyleBackColor = true;
+            this.radioHarms.CheckedChanged += new System.EventHandler(this.radioHarms_CheckedChanged);
+            // 
+            // radioVocals
+            // 
+            this.radioVocals.AutoSize = true;
+            this.radioVocals.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioVocals.Location = new System.Drawing.Point(66, 11);
+            this.radioVocals.Name = "radioVocals";
+            this.radioVocals.Size = new System.Drawing.Size(57, 17);
+            this.radioVocals.TabIndex = 2;
+            this.radioVocals.Text = "Vocals";
+            this.radioVocals.UseVisualStyleBackColor = true;
+            this.radioVocals.CheckedChanged += new System.EventHandler(this.radioVocals_CheckedChanged);
+            // 
             // MIDISelector
             // 
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(281, 304);
+            this.ClientSize = new System.Drawing.Size(292, 304);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.DoubleBuffered = true;
@@ -360,6 +382,10 @@ namespace cPlayer
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
 }
@@ -369,10 +395,8 @@ namespace cPlayer
         private System.Windows.Forms.CheckBox chkDrums;
         private System.Windows.Forms.CheckBox chkBass;
         private System.Windows.Forms.CheckBox chkGuitar;
-        private System.Windows.Forms.CheckBox chkVocals;
         private System.Windows.Forms.Button btnAll;
         private System.Windows.Forms.Button btnNone;
-        private System.Windows.Forms.CheckBox chkKeys;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox chkNameTracks;
@@ -382,10 +406,14 @@ namespace cPlayer
         private System.Windows.Forms.CheckBox chkNameProKeys;
         private System.Windows.Forms.CheckBox chkNameVocals;
         private System.Windows.Forms.CheckBox chkHighlightSolos;
-        private System.Windows.Forms.CheckBox chkHarms;
-        private System.Windows.Forms.CheckBox chkProKeys;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.CheckBox chkBWKeys;
         private System.Windows.Forms.CheckBox chkHarmColorOnVocals;
+        private GroupBox groupBox3;
+        private RadioButton radioKeys;
+        private RadioButton radioProKeys;
+        private GroupBox groupBox4;
+        private RadioButton radioVocals;
+        private RadioButton radioHarms;
     }
 }

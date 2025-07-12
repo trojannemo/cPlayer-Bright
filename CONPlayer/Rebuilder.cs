@@ -18,6 +18,7 @@ namespace cPlayer
         private readonly DTAParser Parser;
         private readonly bool doScanAudio;
         private readonly nTools nautilus;
+        private readonly MIDIStuff MIDITools;
 
         public Rebuilder(frmMain parent, List<Song> playlist, bool doAudio = false)
         {
@@ -26,6 +27,7 @@ namespace cPlayer
             ControlBox = false;
             Parser = new DTAParser();
             nautilus = new nTools();
+            MIDITools = new MIDIStuff();
             CurrentPlaylist = playlist;
             RebuiltPlaylist = new List<Song>();
             doScanAudio = doAudio;
@@ -52,6 +54,7 @@ namespace cPlayer
             foreach (var playlistSong in CurrentPlaylist)
             {
                 if (UserCanceled) return;
+                var bpm = 120.0; //default
                 count++;
                 lblCurrent.Invoke(new MethodInvoker(() => lblCurrent.Text = "Processing song " + count + " of " + CurrentPlaylist.Count));
                 lblCurrent.Invoke(new MethodInvoker(() => lblCurrent.Refresh()));
@@ -68,7 +71,26 @@ namespace cPlayer
                 {
                     var xPackage = new STFSPackage(playlistSong.Location);
                     if (!xPackage.ParseSuccess) continue;
-                    Parser.ReadDTA(xPackage);
+                    Parser.ReadDTA(xPackage);                    
+                    var internalname = Parser.Songs[0].InternalName;
+                    var xFile = xPackage.GetFile("songs/" + internalname + "/" + internalname + ".mid");
+                    if (xFile != null)
+                    {
+                        var tempPath = Path.GetTempFileName();
+                        if (xFile.ExtractToFile(tempPath))
+                        {
+                            MIDITools.Initialize(false);
+                            if (MIDITools.ReadMIDIFile(tempPath, 170, true))
+                            {
+                                bpm = MIDITools.MIDIInfo.AverageBPM;
+                            }
+                            else
+                            {
+                                bpm = 120.0;
+                            }
+                        }
+                        File.Delete(tempPath);
+                    }
                     xPackage.CloseIO();
                 }
                 else
@@ -86,13 +108,14 @@ namespace cPlayer
                             String.Equals(song.Name, playlistSong.Name, StringComparison.InvariantCultureIgnoreCase)) break;
                         if (song.InternalName == playlistSong.InternalName) break;
                     }
-                }
+                }              
+                
                 long audioLength = 0;
+                var dtaSong = Parser.Songs[index];
                 if (doScanAudio)
                 {
                     audioLength = GetAudioDuration(playlistSong.Location);
                 }
-                var dtaSong = Parser.Songs[index];
                 var newSong = new Song
                 {
                     Name = xParent.CleanArtistSong(dtaSong.Name),
@@ -100,6 +123,7 @@ namespace cPlayer
                     Location = playlistSong.Location,
                     Length = audioLength > 0 ? audioLength : (dtaSong.Length > 0 ? dtaSong.Length : playlistSong.Length),
                     InternalName = dtaSong.InternalName,
+                    BPM = bpm,
                     Album = dtaSong.Album,
                     Year = dtaSong.YearReleased,
                     Track = dtaSong.TrackNumber,

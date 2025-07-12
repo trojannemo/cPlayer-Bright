@@ -14,7 +14,7 @@ namespace cPlayer
         private int TicksPerQuarter;
         private List<TempoEvent> TempoEvents;
         private List<TimeSignature> TimeSignatures;
-        private MidiFile MIDIFile;
+        private MidiEventCollection MIDIFile;
         public MIDIChart MIDIInfo;
         public MIDIChart MIDI_Chart;
         private long LengthLong;
@@ -80,16 +80,24 @@ namespace cPlayer
             var Tools = new NemoTools();
             LengthLong = 0;
             MIDIFile = null;
-            MIDIFile = Tools.NemoLoadMIDI(midi);
+            if (Path.GetExtension(midi).Equals(".chart"))
+            {
+                MIDIFile = ChartToRockBandMidi.ConvertChartToMidi(midi);
+            }
+            else
+            {
+                MIDIFile = Tools.NemoLoadMIDI(midi).Events;
+            }
             if (MIDIFile == null) return false;                      
             try
             {
                 TicksPerQuarter = MIDIFile.DeltaTicksPerQuarterNote;
                 BuildTempoList();
                 BuildTimeSignatureList();
-                for (var i = 0; i < MIDIFile.Events.Tracks; i++)
+                var didFNFProVocals = false;
+                for (var i = 0; i < MIDIFile.Tracks; i++)
                 {
-                    var trackname = MIDIFile.Events[i][0].ToString();
+                    var trackname = MIDIFile[i][0].ToString();
                     if (trackname.Contains("DRUMS") && !trackname.Contains("FNF") && !trackname.Contains("BAND"))
                     {
                         if (trackname.Contains("PLASTIC")) //for Fortnite Festival
@@ -97,16 +105,16 @@ namespace cPlayer
                             MIDIInfo.Drums = new MIDITrack { Name = "Drums", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Drums.Initialize();
                         }
-                        GetDiscoFlips(MIDIFile.Events[i]);
-                        MIDIInfo.Drums.Toms = GetToms(MIDIFile.Events[i]);
-                        MIDIInfo.Drums.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
+                        GetDiscoFlips(MIDIFile[i]);
+                        MIDIInfo.Drums.Toms = GetToms(MIDIFile[i]);
+                        MIDIInfo.Drums.Overdrive = GetSpecialMarker(MIDIFile[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Drums, MIDIInfo.Drums.ValidNotes, out toadd, true);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Drums, MIDIInfo.Drums.ValidNotes, out toadd, true);
                         if (!output_info) continue;
                         MIDIInfo.Drums.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Drums.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Drums.ChartedNotes);
-                        MIDIInfo.Drums.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
-                        MIDIInfo.Drums.Fills = GetSpecialMarker(MIDIFile.Events[i], FILL_MARKER);
+                        MIDIInfo.Drums.Solos = GetInstrumentSolos(MIDIFile[i], SOLO_MARKER);
+                        MIDIInfo.Drums.Fills = GetSpecialMarker(MIDIFile[i], FILL_MARKER);
                         foreach (var note in MIDIInfo.Drums.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -145,15 +153,15 @@ namespace cPlayer
                             MIDIInfo.Bass = new MIDITrack { Name = "Bass", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Bass.Initialize();
                         }
-                        MIDIInfo.Bass.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);                        
-                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile.Events[i], HOPOoff);
-                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile.Events[i], HOPOon);
+                        MIDIInfo.Bass.Overdrive = GetSpecialMarker(MIDIFile[i], OD_MARKER);                        
+                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile[i], HOPOoff);
+                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile[i], HOPOon);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Bass, MIDIInfo.Bass.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Bass, MIDIInfo.Bass.ValidNotes, out toadd);
                         //if (!output_info) continue;
                         MIDIInfo.Bass.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Bass.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Bass.ChartedNotes);
-                        MIDIInfo.Bass.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
+                        MIDIInfo.Bass.Solos = GetInstrumentSolos(MIDIFile[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Bass.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -275,15 +283,15 @@ namespace cPlayer
                             MIDIInfo.Guitar = new MIDITrack { Name = "Guitar", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } };
                             MIDIInfo.Guitar.Initialize();  
                         }
-                        MIDIInfo.Guitar.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
-                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile.Events[i], HOPOoff);
-                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile.Events[i], HOPOon);
+                        MIDIInfo.Guitar.Overdrive = GetSpecialMarker(MIDIFile[i], OD_MARKER);
+                        MIDIInfo.Bass.HOPOoff = GetSpecialMarker(MIDIFile[i], HOPOoff);
+                        MIDIInfo.Bass.HOPOon = GetSpecialMarker(MIDIFile[i], HOPOon);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Guitar, MIDIInfo.Guitar.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Guitar, MIDIInfo.Guitar.ValidNotes, out toadd);
                         //if (!output_info) continue;
                         MIDIInfo.Guitar.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Guitar.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Guitar.ChartedNotes);
-                        MIDIInfo.Guitar.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
+                        MIDIInfo.Guitar.Solos = GetInstrumentSolos(MIDIFile[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Guitar.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -406,13 +414,13 @@ namespace cPlayer
                             MIDIInfo.Keys = new MIDITrack { Name = "Keys", ValidNotes = new List<int> { 100, 99, 98, 97, 96 } }; //not supported currently but future proofing
                             MIDIInfo.Keys.Initialize();
                         }
-                        MIDIInfo.Keys.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
+                        MIDIInfo.Keys.Overdrive = GetSpecialMarker(MIDIFile[i], OD_MARKER);
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Keys, MIDIInfo.Keys.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Keys, MIDIInfo.Keys.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Keys.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Keys.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Keys.ChartedNotes);
-                        MIDIInfo.Keys.Solos = GetInstrumentSolos(MIDIFile.Events[i], SOLO_MARKER);
+                        MIDIInfo.Keys.Solos = GetInstrumentSolos(MIDIFile[i], SOLO_MARKER);
                         foreach (var note in MIDIInfo.Keys.ChartedNotes)
                         {
                             switch (note.NoteNumber)
@@ -438,23 +446,27 @@ namespace cPlayer
                     else if (trackname.Contains("REAL_KEYS_X"))
                     {
                         List<MIDINote> toadd;
-                        MIDIInfo.ProKeys.Overdrive = GetSpecialMarker(MIDIFile.Events[i], OD_MARKER);
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.ProKeys, MIDIInfo.ProKeys.ValidNotes, out toadd);
+                        MIDIInfo.ProKeys.Overdrive = GetSpecialMarker(MIDIFile[i], OD_MARKER);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.ProKeys, MIDIInfo.ProKeys.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.ProKeys.ChartedNotes.AddRange(toadd);
                         MIDIInfo.ProKeys.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.ProKeys.ChartedNotes);
-                        MIDIInfo.ProKeys.Solos = GetInstrumentSolos(MIDIFile.Events[i], 115);
+                        MIDIInfo.ProKeys.Solos = GetInstrumentSolos(MIDIFile[i], 115);
                     }
-                    else if (trackname.Contains("VOCALS"))
+                    else if (trackname.Contains("VOCALS") && !trackname.Contains("FNF") && !didFNFProVocals)
                     {
+                        if (trackname.Contains("PRO VOCALS"))
+                        {
+                            didFNFProVocals = true;
+                        }
                         List<MIDINote> toAdd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Vocals, MIDIInfo.Vocals.ValidNotes, out toAdd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Vocals, MIDIInfo.Vocals.ValidNotes, out toAdd);
                         if (!output_info) continue;
                         MIDIInfo.Vocals.ChartedNotes.AddRange(toAdd);
                         MIDIInfo.Vocals.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Vocals.ChartedNotes);
-                        GetPhraseMarkers(MIDIFile.Events[i], InternalPhrasesVocals);
-                        GetInternalLyrics(MIDIFile.Events[i], 0, InternalPhrasesVocals);
-                        MIDIInfo.UsesCowbell = SongUsesCowbell(MIDIFile.Events[i]);
+                        GetPhraseMarkers(MIDIFile[i], InternalPhrasesVocals);
+                        GetInternalLyrics(MIDIFile[i], 0, InternalPhrasesVocals);
+                        MIDIInfo.UsesCowbell = SongUsesCowbell(MIDIFile[i]);
 
                         //only do this if we have exact match of lyrics and vocal notes
                         var ChartedNotesNoPercussion = new List<MIDINote>();
@@ -478,27 +490,27 @@ namespace cPlayer
                     else if (trackname.Contains("HARM1"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm1, MIDIInfo.Harm1.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Harm1, MIDIInfo.Harm1.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm1.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm1.ChartedNotes);
-                        GetPhraseMarkers(MIDIFile.Events[i], InternalPhrasesHarm1);
-                        GetInternalLyrics(MIDIFile.Events[i], 1, InternalPhrasesHarm1);
+                        GetPhraseMarkers(MIDIFile[i], InternalPhrasesHarm1);
+                        GetInternalLyrics(MIDIFile[i], 1, InternalPhrasesHarm1);
                     }
                     else if (trackname.Contains("HARM2"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm2, MIDIInfo.Harm2.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Harm2, MIDIInfo.Harm2.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm2.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm2.ChartedNotes, MIDIInfo.Harm1.NoteRange);
-                        GetPhraseMarkers(MIDIFile.Events[i], InternalPhrasesHarm2);
-                        GetInternalLyrics(MIDIFile.Events[i], 2, InternalPhrasesHarm2);
+                        GetPhraseMarkers(MIDIFile[i], InternalPhrasesHarm2);
+                        GetInternalLyrics(MIDIFile[i], 2, InternalPhrasesHarm2);
                     }
                     else if (trackname.Contains("HARM3"))
                     {
                         List<MIDINote> toadd;
-                        CheckMIDITrack(MIDIFile.Events[i], MIDIInfo.Harm3, MIDIInfo.Harm3.ValidNotes, out toadd);
+                        CheckMIDITrack(MIDIFile[i], MIDIInfo.Harm3, MIDIInfo.Harm3.ValidNotes, out toadd);
                         if (!output_info) continue;
                         MIDIInfo.Harm3.ChartedNotes.AddRange(toadd);
                         MIDIInfo.Harm1.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Harm3.ChartedNotes, MIDIInfo.Harm1.NoteRange);
@@ -513,11 +525,11 @@ namespace cPlayer
                         {
                             InternalPhrasesHarm3.Phrases.Add(phrase);
                         }
-                        GetInternalLyrics(MIDIFile.Events[i], 3, InternalPhrasesHarm3);
+                        GetInternalLyrics(MIDIFile[i], 3, InternalPhrasesHarm3);
                     }
                     else if (trackname.Contains("EVENTS") && output_info)
                     {
-                        foreach (var note in MIDIFile.Events[i])
+                        foreach (var note in MIDIFile[i])
                         {
                             switch (note.CommandCode)
                             {
@@ -860,59 +872,66 @@ namespace cPlayer
         }
 
         private void BuildTimeSignatureList()
-        {
+        {            
             TimeSignatures = new List<TimeSignature>();
-            foreach (var ev in MIDIFile.Events[0])
+            foreach (var ev in MIDIFile[0])
             {
                 if (ev.CommandCode != MidiCommandCode.MetaEvent) continue;
-                var signature = (MetaEvent)ev;
-                if (signature.MetaEventType != MetaEventType.TimeSignature) continue;
-                //Track the time signature change
-                var index1 = signature.ToString().IndexOf(" ", signature.ToString().IndexOf("TimeSignature", StringComparison.Ordinal), StringComparison.Ordinal) + 1;
-                var index2 = signature.ToString().IndexOf("/", StringComparison.Ordinal);
-                var numerator = Convert.ToInt16(signature.ToString().Substring(index1, index2 - index1));
-                //Track the time signature change
-                index1 = signature.ToString().IndexOf("/", StringComparison.Ordinal) + 1;
-                index2 = signature.ToString().IndexOf(" ", signature.ToString().IndexOf("/", StringComparison.Ordinal), StringComparison.Ordinal);
-                var denominator = Convert.ToInt16(signature.ToString().Substring(index1, index2 - index1));
-                var time_sig = new TimeSignature
+                var meta = ev as MetaEvent;
+                if (meta?.MetaEventType != MetaEventType.TimeSignature) continue;
+
+                var ts = meta as TimeSignatureEvent;
+                if (ts == null) continue;
+
+                // The actual denominator is 2 raised to the power of denominator exponent
+                int numerator = ts.Numerator;
+                int denominator = (int)Math.Pow(2, ts.Denominator);
+
+                var timeSig = new TimeSignature
                 {
                     AbsoluteTime = ev.AbsoluteTime,
                     Numerator = numerator,
                     Denominator = denominator
                 };
-                TimeSignatures.Add(time_sig);
+
+                TimeSignatures.Add(timeSig);
             }
         }
 
         private void BuildTempoList()
         {
-            //code provided by raynebc
-            //Build tempo list
-            var currentbpm = 120.00;
-            var realtime = 0.0;
-            var reldelta = 0;   //The number of delta ticks since the last tempo change
             TempoEvents = new List<TempoEvent>();
-            foreach (var ev in MIDIFile.Events[0])
+
+            double currentBpm = 120.0;
+            double realTimeMs = 0.0;
+            int relDeltaTicks = 0;
+
+            foreach (var ev in MIDIFile[0])
             {
-                reldelta += ev.DeltaTime;
+                relDeltaTicks += ev.DeltaTime;
+
                 if (ev.CommandCode != MidiCommandCode.MetaEvent) continue;
-                var tempo = (MetaEvent)ev;
-                if (tempo.MetaEventType != MetaEventType.SetTempo) continue;
-                var relativetime = (double)reldelta / TicksPerQuarter * (60000.0 / currentbpm);
-                var index1 = tempo.ToString().IndexOf("SetTempo", StringComparison.Ordinal) + 9;
-                var index2 = tempo.ToString().IndexOf("bpm", StringComparison.Ordinal);
-                var bpm = tempo.ToString().Substring(index1, index2 - index1);
-                currentbpm = Convert.ToDouble(bpm);   //As per the MIDI specification, until a tempo change is reached, 120BPM is assumed
-                realtime += relativetime;   //Add that to the ongoing current real time of the MIDI
-                reldelta = 0;
-                var tempo_event = new TempoEvent
+
+                var meta = ev as MetaEvent;
+                if (meta?.MetaEventType != MetaEventType.SetTempo) continue;
+
+                var tempoEvent = meta as NAudio.Midi.TempoEvent;
+                if (tempoEvent == null) continue;
+
+                // Convert ticks to ms using current tempo
+                double deltaMs = relDeltaTicks / (double)TicksPerQuarter * (60000.0 / currentBpm);
+                realTimeMs += deltaMs;
+
+                // Convert microseconds/quarter note to BPM
+                currentBpm = 60000000.0 / tempoEvent.MicrosecondsPerQuarterNote;
+                relDeltaTicks = 0;
+
+                TempoEvents.Add(new TempoEvent
                 {
-                    AbsoluteTime = tempo.AbsoluteTime,
-                    RealTime = realtime,
-                    BPM = currentbpm
-                };
-                TempoEvents.Add(tempo_event);
+                    AbsoluteTime = ev.AbsoluteTime,
+                    RealTime = realTimeMs,
+                    BPM = currentBpm
+                });
             }
         }  
 

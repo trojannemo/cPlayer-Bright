@@ -18,10 +18,10 @@ namespace cPlayer
             chkDrums.Checked = MainForm.doMIDIDrums;
             chkBass.Checked = MainForm.doMIDIBass;
             chkGuitar.Checked = MainForm.doMIDIGuitar;
-            chkVocals.Checked = MainForm.doMIDIVocals;
-            chkHarms.Checked = MainForm.doMIDIHarmonies;
-            chkKeys.Checked = MainForm.doMIDIKeys;
-            chkProKeys.Checked = MainForm.doMIDIProKeys;
+            radioVocals.Checked = MainForm.doMIDIVocals;
+            radioHarms.Checked = MainForm.doMIDIHarmonies;
+            radioKeys.Checked = MainForm.doMIDIKeys;
+            radioProKeys.Checked = MainForm.doMIDIProKeys;
             cboSizing.SelectedIndex = MainForm.NoteSizingType;
             chkNameTracks.Checked = MainForm.doMIDINameTracks;
             chkNameVocals.Checked = MainForm.doMIDINameVocals;
@@ -37,11 +37,11 @@ namespace cPlayer
             chkDrums.Checked = enabled;
             chkBass.Checked = enabled;
             chkGuitar.Checked = enabled;
-            chkHarms.Checked = enabled;
-            chkProKeys.Checked = enabled;
+            radioHarms.Checked = enabled;
+            radioProKeys.Checked = enabled;
             if (enabled) return;
-            chkKeys.Checked = false;
-            chkVocals.Checked = false;
+            radioKeys.Checked = false;
+            radioVocals.Checked = false;
         }
 
         private void btnAll_Click(object sender, EventArgs e)
@@ -62,10 +62,10 @@ namespace cPlayer
             MainForm.doMIDIDrums = chkDrums.Checked;
             MainForm.doMIDIBass = chkBass.Checked;
             MainForm.doMIDIGuitar = chkGuitar.Checked;
-            MainForm.doMIDIVocals = chkVocals.Checked;
-            MainForm.doMIDIHarmonies = chkHarms.Checked;
-            MainForm.doMIDIKeys = chkKeys.Checked;
-            MainForm.doMIDIProKeys = chkProKeys.Checked;
+            MainForm.doMIDIVocals = radioVocals.Checked;
+            MainForm.doMIDIHarmonies = radioHarms.Checked;
+            MainForm.doMIDIKeys = radioKeys.Checked;
+            MainForm.doMIDIProKeys = radioProKeys.Checked;
         }
 
         private void chkDrums_MouseUp(object sender, MouseEventArgs e)
@@ -116,31 +116,7 @@ namespace cPlayer
             {
                 Dispose();
             }
-        }
-
-        private void chkProKeys_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!chkProKeys.Checked) return;
-            chkKeys.Checked = false;
-        }
-
-        private void chkKeys_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!chkKeys.Checked) return;
-            chkProKeys.Checked = false;
-        }
-
-        private void chkHarms_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!chkHarms.Checked) return;
-            chkVocals.Checked = false;
-        }
-
-        private void chkVocals_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!chkVocals.Checked) return;
-            chkHarms.Checked = false;
-        }
+        }       
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -157,6 +133,26 @@ namespace cPlayer
         {
             MainForm.doMIDIHarm1onVocals = chkHarmColorOnVocals.Checked;
             MainForm.ClearNoteColors(true);
+        }
+
+        private void radioProKeys_CheckedChanged(object sender, EventArgs e)
+        {
+            MainForm.doMIDIProKeys = radioProKeys.Checked;
+        }
+
+        private void radioKeys_CheckedChanged(object sender, EventArgs e)
+        {
+            MainForm.doMIDIKeys = radioKeys.Checked;
+        }
+
+        private void radioHarms_CheckedChanged(object sender, EventArgs e)
+        {
+            MainForm.doMIDIHarmonies = radioHarms.Checked;
+        }
+
+        private void radioVocals_CheckedChanged(object sender, EventArgs e)
+        {
+            MainForm.doMIDIVocals = radioVocals.Checked;
         }
     }
 }

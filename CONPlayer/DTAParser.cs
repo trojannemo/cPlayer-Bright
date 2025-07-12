@@ -547,6 +547,10 @@ namespace cPlayer
                         {
                             song.VocalParts = Convert.ToInt16(Tools.GetConfigString(line));
                         }
+                        else if (line.Contains("shortname"))
+                        {
+                            song.ShortName = Tools.GetConfigString(line);
+                        }
                     }
                     catch (Exception ex)
                     { }
@@ -690,18 +694,7 @@ namespace cPlayer
                                 song.Master = line.Contains("1") || line.ToLowerInvariant().Contains("true");
                             }
                             else if (line.Contains("(tracks"))
-                            {
-                                /*for (var x = 0; x < entry.Count; x++)
-                                {
-                                    //if (line != null && line.Trim() != ")" && !line.Trim().Contains(")))"))
-                                    if (line == null || line.Trim() == ")" || line.Trim().Contains(")))"))
-                                    {
-                                        z--;
-                                        line = entry[z];
-                                        break;
-                                    }
-                                    
-                                }*/
+                            {                                
                                 while (line != null && line.Trim() != ")" && !line.Trim().Contains(")))"))
                                 {
                                     if (line.ToLowerInvariant().Contains("bass") && !didBass)
@@ -1279,53 +1272,6 @@ namespace cPlayer
             {
                 return -96;
             }
-        }
-
-        public bool IsNumericID(string line)
-        {
-            var s_id = GetSongID(line);
-            return int.TryParse(s_id, out int _id);
-            //only worry if it's not a numeric value, no longer need to check for all the below crazyness
-            /*//C3 unique numeric IDs are 10 digits
-            //Xbox DLC/RBN IDs are 7 digits
-            //Game IDs start at 1 and go to around 3000 (Green Day)
-            //if (!PS3 && s_id.Length != 10 && s_id.Length != 7) return false;
-
-            //PS3 DLC and on-disc songs have all kinds of weird IDs, be more lenient
-            if (s_id == "0") return true; //this is being replaced by on-disc upgrade, do not modify
-            if (s_id.Length > 4 && s_id.Length != 10 && s_id.Length != 7) return false; //valid ranges from 0 to 4 digit values
-
-            //when the game converts a string ID to numeric, they always start with either of these values
-            if (s_id.Length == 10)
-            {
-                if (s_id.Substring(0, 6) == "11844" || s_id.Substring(0, 6) == "10746") return false;
-            }
-
-            try
-            {
-                var n_id = Convert.ToInt32(s_id);
-                //valid C3 unique numeric ID range is 1000100001 to 2147399999
-                if (s_id.Length == 10)
-                {
-                    return (n_id >= 1000100001 && n_id <= 2147399999);
-                }
-                //valid Xbox DLC range starts at 100xxxx, old PS3 custom IDs start with 140xxxx, RBN range starts at 501xxxx
-                if (s_id.Length == 7)
-                {
-                    var prefix = s_id.Substring(0, 2);
-                    return prefix == "10" || prefix == "14" || prefix == "50";
-                }
-                //Game IDs start at 1 and go to around 3000 (Green Day)
-                if (s_id.Length < 5)
-                {
-                    return n_id != 0;
-                }
-                return false;
-            }
-            catch
-            {
-                return false;
-            }*/
         }
 
         /// <summary>
