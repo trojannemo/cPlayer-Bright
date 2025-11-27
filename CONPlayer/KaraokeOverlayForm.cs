@@ -107,7 +107,7 @@ namespace cPlayer
                 TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), mainForm.KaraokeModeText, KaraokeBackgroundColor);
 
                 //draw portion of current phrase that's already been sung
-                var line2 = lyrics.Where(lyr => !(lyr.LyricStart < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.LyricStart > time)).Aggregate("", (current, lyr) => current + " " + lyr.LyricText);
+                var line2 = lyrics.Where(lyr => !(lyr.Start < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.Start > time)).Aggregate("", (current, lyr) => current + " " + lyr.Text);
                 line2 = mainForm.ProcessLine(line2, true).Replace("‿", " ");
                 if (!string.IsNullOrEmpty(line2))
                 {
@@ -127,33 +127,33 @@ namespace cPlayer
                         var lyric = lyricsList[i];
 
                         // Skip lyrics outside the proper time
-                        if (lyric.LyricStart < currentLine.PhraseStart || lyric.LyricStart > currentLine.PhraseEnd)
+                        if (lyric.Start < currentLine.PhraseStart || lyric.Start > currentLine.PhraseEnd)
                         {
                             continue;
                         }
                         if (string.IsNullOrEmpty(word))
                         {
-                            wordStart = lyric.LyricStart;
+                            wordStart = lyric.Start;
                         }
-                        if (lyric.LyricText.Contains("-")) //is a syllable
+                        if (lyric.Text.Contains("-")) //is a syllable
                         {
-                            word += mainForm.ProcessLine(lyric.LyricText, true);
-                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+                            word += mainForm.ProcessLine(lyric.Text, true);
+                            wordEnd = lyric.Start + lyric.Duration;
                             continue;
                         }
                         // Handle sustains
-                        else if (!string.IsNullOrEmpty(word) && lyric.LyricText.Contains("+"))
+                        else if (!string.IsNullOrEmpty(word) && lyric.Text.Contains("+"))
                         {
                             //word += "+";
-                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+                            wordEnd = lyric.Start + lyric.Duration;
 
                             // Extend for consecutive sustains
                             for (var a = i + 1; a < lyricsList.Count; a++)
                             {
-                                if (lyricsList[a].LyricText.Contains("+"))
+                                if (lyricsList[a].Text.Contains("+"))
                                 {
                                     //word += "+"; // Append the sustain
-                                    wordEnd = lyricsList[a].LyricStart + lyricsList[a].LyricDuration;
+                                    wordEnd = lyricsList[a].Start + lyricsList[a].Duration;
                                     i = a; // Update `i` to skip processed sustain notes
                                 }
                                 else
@@ -166,16 +166,16 @@ namespace cPlayer
                         else
                         {
                             // Append regular lyrics to the word
-                            word += mainForm.ProcessLine(lyric.LyricText, true).Replace("‿", " ");
-                            wordEnd = lyric.LyricStart + lyric.LyricDuration;
+                            word += mainForm.ProcessLine(lyric.Text, true).Replace("‿", " ");
+                            wordEnd = lyric.Start + lyric.Duration;
 
                             //look ahead to double check next lyric(s) aren't + sustains
                             for (var z = i + 1; z < lyricsList.Count - i - 1; z++)
                             {
-                                if (lyricsList[z].LyricText.Contains("+"))
+                                if (lyricsList[z].Text.Contains("+"))
                                 {
                                     //word += "+"; // Append the sustain
-                                    wordEnd = lyricsList[z].LyricStart + lyricsList[z].LyricDuration;
+                                    wordEnd = lyricsList[z].Start + lyricsList[z].Duration;
                                     i = z;
                                     continue;
                                 }

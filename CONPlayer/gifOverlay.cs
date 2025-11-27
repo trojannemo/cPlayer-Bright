@@ -1,7 +1,6 @@
 ﻿using cPlayer.Properties;
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace cPlayer
@@ -31,10 +30,12 @@ namespace cPlayer
             UpdateStyles();
 
             // Configure the form
-            this.BackColor = Color.White;
-            this.TransparencyKey = Color.White;
+            this.BackColor = Color.Magenta;
+            this.TransparencyKey = Color.Magenta;
             this.FormBorderStyle = FormBorderStyle.None;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = true;
+            this.Text = "Loading...";
+            this.TopMost = true;
 
             // Set up a timer to update the animation
             animationTimer = new Timer();
@@ -48,6 +49,7 @@ namespace cPlayer
         public void Start()
         {
             if (IsDisposed) return;
+            this.TopMost = true;
             this.Visible = true;
             animationTimer.Start();
         }
@@ -55,6 +57,7 @@ namespace cPlayer
         public void Stop()
         {
             if (IsDisposed) return;
+            this.TopMost = false;
             this.Visible = false;
             animationTimer.Stop();
         }

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DevExpress.XtraPrinting.Native.Caching;
 using NAudio.Midi;
 
 namespace cPlayer
@@ -22,6 +23,10 @@ namespace cPlayer
         private LyricCollection InternalHarmonies1;
         private LyricCollection InternalHarmonies2;
         private LyricCollection InternalHarmonies3;
+        private List<MIDINote> InternalVocalNotes;
+        private List<MIDINote> InternalHarm1Notes;
+        private List<MIDINote> InternalHarm2Notes;
+        private List<MIDINote> InternalHarm3Notes;
         public LyricCollection LyricsVocals;
         public LyricCollection LyricsHarm1;
         public LyricCollection LyricsHarm2;
@@ -50,6 +55,10 @@ namespace cPlayer
             InternalPhrasesHarm1 = new PhraseCollection();
             InternalPhrasesHarm2 = new PhraseCollection();
             InternalPhrasesHarm3 = new PhraseCollection();
+            InternalVocalNotes = new List<MIDINote>();
+            InternalHarm1Notes = new List<MIDINote>();
+            InternalHarm2Notes = new List<MIDINote>();
+            InternalHarm3Notes = new List<MIDINote>();
             InternalPhrasesVocals.Initialize();
             InternalPhrasesHarm1.Initialize();
             InternalPhrasesHarm2.Initialize();
@@ -483,7 +492,7 @@ namespace cPlayer
 
                             for (int z = 0; z < ChartedNotesNoPercussion.Count; z++)
                             {
-                                InternalVocals.Lyrics[z].LyricDuration = ChartedNotesNoPercussion[z].NoteLength;
+                                InternalVocals.Lyrics[z].Duration = ChartedNotesNoPercussion[z].NoteLength;
                             }
                         }
                     }
@@ -759,7 +768,7 @@ namespace cPlayer
                                 index = i;
                             }
                             collection.Phrases[index].PhraseText = collection.Phrases[index].PhraseText + " " + lyric;
-                            var l = new Lyric {LyricText = lyric, LyricStart = time};
+                            var l = new Lyric { Text = lyric, Start = time, Ticks = vocal_event.AbsoluteTime };
                             switch (type)
                             {
                                 case 0:
@@ -777,8 +786,99 @@ namespace cPlayer
                             }
                         }
                         break;
+                    case MidiCommandCode.NoteOn:
+                        var note = (NoteOnEvent)notes;
+                        if (note.Velocity <= 0) continue;
+
+                        if (note.NoteNumber <= 84 && note.NoteNumber >= 36)
+                        {
+                            var n = new MIDINote()
+                            {
+                                NoteNumber = note.NoteNumber,
+                                NoteStart = GetRealtime(note.AbsoluteTime),
+                                Ticks = note.AbsoluteTime,
+                                NoteEnd = GetRealtime(note.AbsoluteTime + note.NoteLength)
+                            };
+                            switch (type)
+                            {
+                                case 1:
+                                    InternalHarm1Notes.Add(n);
+                                    break;
+                                case 2:
+                                    InternalHarm2Notes.Add(n);
+                                    break;
+                                case 3:
+                                    InternalHarm3Notes.Add(n);
+                                    break;
+                                default:
+                                    InternalVocalNotes.Add(n);
+                                    break;
+                            }
+                        }
+                        break;
                 }
             }
+
+            switch (type)
+            {
+                case 0:
+                default:
+                    foreach (var lyric in InternalVocals.Lyrics)
+                    {
+                        foreach (var note in InternalVocalNotes)
+                        {
+                            if (note.Ticks <= lyric.Ticks && note.Ticks >= lyric.Ticks)
+                            {
+                                lyric.End = note.NoteEnd;
+                                lyric.Duration = lyric.End - lyric.Start;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case 1:
+                    foreach (var lyric in InternalHarmonies1.Lyrics)
+                    {
+                        foreach (var note in InternalHarm1Notes)
+                        {
+                            if (note.Ticks <= lyric.Ticks && note.Ticks >= lyric.Ticks)
+                            {
+                                lyric.End = note.NoteEnd;
+                                lyric.Duration = lyric.End - lyric.Start;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    foreach (var lyric in InternalHarmonies2.Lyrics)
+                    {
+                        foreach (var note in InternalHarm2Notes)
+                        {
+                            if (note.Ticks <= lyric.Ticks && note.Ticks >= lyric.Ticks)
+                            {
+                                lyric.End = note.NoteEnd;
+                                lyric.Duration = lyric.End - lyric.Start;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case 3:
+                    foreach (var lyric in InternalHarmonies3.Lyrics)
+                    {
+                        foreach (var note in InternalHarm3Notes)
+                        {
+                            if (note.Ticks <= lyric.Ticks && note.Ticks >= lyric.Ticks)
+                            {
+                                lyric.End = note.NoteEnd;
+                                lyric.Duration = lyric.End - lyric.Start;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+            }            
         }
 
         private static string GetCleanMIDILyric(string raw_event)
@@ -1122,7 +1222,7 @@ namespace cPlayer
         public List<Lyric> Lyrics { get; set; }
         public void Sort()
         {
-            Lyrics.Sort((a,b) => a.LyricStart.CompareTo(b.LyricStart));
+            Lyrics.Sort((a,b) => a.Start.CompareTo(b.Start));
         }
         public void Initialize()
         {
@@ -1132,9 +1232,12 @@ namespace cPlayer
 
     public class Lyric
     {
-        public string LyricText { get; set; }
-        public double LyricStart { get; set; }
-        public double LyricDuration { get; set; }
+        public string Text { get; set; }
+        public double Start { get; set; }
+        public double Duration { get; set; }
+        public double End { get; set; }
+
+        public long Ticks { get; set; }
     }
 
     public class MIDINote
@@ -1154,6 +1257,8 @@ namespace cPlayer
         public long Ticks { get; set; }
 
         public bool IsChord { get; set; }
+
+        public bool SkTriggered { get; set; }
     }
 
     public class TempoEvent

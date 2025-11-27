@@ -35,7 +35,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -109,9 +109,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\bin\SharpMp4Parser.dll</HintPath>
     </Reference>
-    <Reference Include="SlimDX">
-      <HintPath>D:\My Documents\Visual Studio 2010\Projects\RokDrummer\RokDrummer\SlimDX.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -177,6 +174,12 @@
       <DependentUpon>MIDISelector.cs</DependentUpon>
     </Compile>
     <Compile Include="MIDIStuff.cs" />
+    <Compile Include="PopOutScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopOutScreen.Designer.cs">
+      <DependentUpon>PopOutScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Rebuilder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -238,6 +241,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="gifOverlay.resx">
       <DependentUpon>gifOverlay.cs</DependentUpon>
@@ -256,6 +260,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MIDISelector.resx">
       <DependentUpon>MIDISelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopOutScreen.resx">
+      <DependentUpon>PopOutScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -327,6 +334,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\karaoke_bg.png" />
     <None Include="Resources\frostedglasslyrics85black.png" />
     <None Include="Resources\frostedglasslyrics50white.png" />
     <None Include="Resources\frostedglasslyrics50black.png" />
@@ -422,6 +430,9 @@
     </PackageReference>
     <PackageReference Include="NAudio.WinMM">
       <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Vortice.XInput">
+      <Version>2.4.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
