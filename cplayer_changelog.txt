@@ -6,6 +6,21 @@ For instructions on how to use, click on Help -> How to Use
 
 CHANGE LOG:
 
+v5.1.0
+
+- Added Second Screen option so you can use cPlayer with multiple display set ups - one screen acts as the controller and the other one displays the charts (click and hold to drag, drag to the right screen, double click to maximize, double click again to minimize)
+- Now can choose to force displaying of PART VOCALS instead of harmonies on Classic Karaoke mode
+- Now can choose to force displaying of PART 1 and PART 2 harmonies only (ignoring PART 3) on Classic Karaoke mode
+- Now displays background image by default on Classic Karaoke mode - can be disabled and can also be rotated through 5 presets (you can replace with your own)
+- Now supports animated background for Classic Karaoke like how it was introduced with Rock Band Karaoke
+- Many other improvements to how Classic Karaoke works
+- Completely reworked how the Stage Kit is used - no more per instrument note-specific usage, which was resource intensive and not very fun anyways - now it's randomized but based on song BPM (this is still a work in progress)
+- Stage Kit now works outside of the Game Mode displays, should work no matter what mode you're in
+- Added option to enable/disable use of the Stage Kit LEDs, strobe light and fogger, so you can use what you want and not anything that you don't want
+- Eliminated SlimDX in favor of Vortice.XInput due to changes with recent Windows 11 updates breaking compatibility with X360 peripherals (the Stage Kit in this case)
+
+----------
+
 DEVELOPMENT FOR DARK EDITION HAS ENDED AS OF v4.0.3 - I've poured too much time and energy into BRIGHT EDITION to keep them both updated while having different code bases
 CPLAYER BRIGHT EDITION IS NOW SIMPLY CPLAYER AND WILL BE THE ONLY VERSION WITH FUTURE DEVELOPMENT
 
