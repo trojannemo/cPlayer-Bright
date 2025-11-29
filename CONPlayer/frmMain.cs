@@ -5768,7 +5768,7 @@ namespace cPlayer
         private bool doSoloVocals = false;
         private bool doHarm2 = false;
         private bool doHarm3 = true;
-        private double highlightDelay = 0.0;//1.5;
+        private double highlightDelay = 1.5;
         private double timeGap = 5.0;
         private bool doShowAnimatedNotes = true;
         private bool doEnableHighlightAnimation = true;
@@ -6592,6 +6592,15 @@ namespace cPlayer
             public float Width { get; set; }
         }
 
+        private string GetVisibleTextForSyllable(MergedSyllable s)
+        {
+            // Make this mirror the logic in ReconstructPhraseTextFromSyllables
+            // as closely as possible.
+            var raw = s.Lyric?.Trim() ?? string.Empty;
+            var clean = CleanSyllable(raw);
+            return clean.Replace("‿", " ");
+        }
+
         public void DrawSyllableAccurateLine(
             Graphics g,
             List<Lyric> syllablesForThisLine,
@@ -6608,20 +6617,17 @@ namespace cPlayer
             var merged = MergeSustainedSyllables(syllablesForThisLine);
 
             string displayText = ReconstructPhraseTextFromSyllables(merged);
-
+            
+            ApplyTextRenderingSettings(g);
+            
             SizeF visualSizeF = g.MeasureString(displayText, font);
-
-            //const TextFormatFlags FormatFlags = TextFormatFlags.NoPadding | TextFormatFlags.NoClipping;
-
-            // Measure using TextRenderer instead of g.MeasureString
-            //Size visualSizeF = TextRenderer.MeasureText(g, displayText, font, new Size(int.MaxValue, int.MaxValue), FormatFlags);
 
             int textWidth = (int)Math.Ceiling((double)visualSizeF.Width);
             int textHeight = (int)Math.Ceiling((double)visualSizeF.Height);
 
             int posX = (resolutionX - textWidth) / 2;
 
-            var pixelmap = BuildSyllablePixelMap(merged, font, g);
+            var pixelmap = BuildSyllablePixelMap(merged, font, g, displayText, textWidth);
 
             float highlightWidth = GetHighlightedPixelWidth(pixelmap, adjustedTime);
 
@@ -6660,16 +6666,24 @@ namespace cPlayer
                 Rectangle src = new Rectangle(0, 0, (int)highlightWidth, bmp.Height);
                 Rectangle dest = new Rectangle(posX, y, (int)highlightWidth, bmp.Height);
 
-                g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
+                if (src.Width > 0)
+                {
+                    g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
+                }
             }
         }
 
-        private void DrawTextWithStroke(Graphics g, string text, Font font, Point pos, Color fill, Color stroke, int strokeWidth)
+        private static void ApplyTextRenderingSettings(Graphics g)
         {
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+        }
+
+        private void DrawTextWithStroke(Graphics g, string text, Font font, Point pos, Color fill, Color stroke, int strokeWidth)
+        {
+            ApplyTextRenderingSettings(g);
 
             //disable for now - works but too resource intensive
             /*using (var strokeBrush = new SolidBrush(stroke))
@@ -6693,68 +6707,63 @@ namespace cPlayer
                 g.DrawString(text, font, fillBrush, pos);
             }            
         }
-
-        public void DrawSyllableAccurateLine1(
-            Graphics g,
-            List<Lyric> syllablesForThisLine,
+        
+        public List<MergedSyllable> BuildSyllablePixelMap(
+            List<MergedSyllable> syllables,
             Font font,
-            int resolutionX,
-            int y,
-            Color baseColor,
-            Color highlightColor,
-            double adjustedTime)
+            Graphics g,
+            string displayText,
+            float totalTextWidth)
         {
-            if (syllablesForThisLine.Count == 0)
-                return;
+            ApplyTextRenderingSettings(g);
 
-            var merged = MergeSustainedSyllables(syllablesForThisLine);
+            int searchIndex = 0;
+            float prevPrefixWidth = 0f;
 
-            //string displayText = string.Join(" ", merged.Select(m => m.Lyric));
-            //displayText = ProcessLine(displayText).Replace("‿", " ").Replace(" -", "-");
-            //string displayText = BuildRawLineText(merged);
-            string displayText = ReconstructPhraseTextFromSyllables(merged);
-
-            Size visualSize = TextRenderer.MeasureText(g, displayText, font);
-            int posX = (resolutionX - visualSize.Width) / 2;
-
-            var pixelmap = BuildSyllablePixelMap(merged, font, g);
-
-            float highlightWidth = GetHighlightedPixelWidth(pixelmap, adjustedTime);
-
-            // Draw base
-            TextRenderer.DrawText(g, displayText, font, new Point(posX, y),
-                baseColor, Color.Transparent);
-
-            // Draw highlight layer
-            using (Bitmap bmp = new Bitmap(visualSize.Width, visualSize.Height))
-            {
-                using (Graphics gBmp = Graphics.FromImage(bmp))
-                {
-                    gBmp.Clear(Color.Transparent);
-                    TextRenderer.DrawText(gBmp, displayText, font, new Point(0, 0),
-                        highlightColor, Color.Transparent);
-
-                    Rectangle src = new Rectangle(0, 0, (int)highlightWidth, bmp.Height);
-                    Rectangle dest = new Rectangle(posX, y, (int)highlightWidth, bmp.Height);
-
-                    g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
-                }
-            }
-        }
-
-        public List<MergedSyllable> BuildSyllablePixelMap(List<MergedSyllable> syllables, Font font, Graphics g)
-        {
             foreach (var syllable in syllables)
             {
-                string visibleText = syllable.Lyric.Replace("‿", " ");
-                if (string.IsNullOrWhiteSpace(visibleText) || visibleText == "+")
+                string visible = GetVisibleTextForSyllable(syllable);
+
+                if (string.IsNullOrWhiteSpace(visible))
                 {
-                    syllable.Width = 0;
+                    syllable.Width = 0f;
+                    continue;
                 }
-                else
+
+                // Find this syllable's visible text in the final display string,
+                // starting from where the last one left off.
+                int idx = displayText.IndexOf(visible, searchIndex, StringComparison.Ordinal);
+                if (idx < 0)
                 {
-                    Size size = TextRenderer.MeasureText(g, visibleText, font);
-                    syllable.Width = size.Width;
+                    // Fallback: if we can’t find it (weird cleaning / markers),
+                    // at least measure it in isolation so we don't crash.
+                    SizeF sizeFallback = g.MeasureString(visible, font);
+                    syllable.Width = sizeFallback.Width;
+                    continue;
+                }
+
+                int endIdx = idx + visible.Length;
+
+                // Measure prefix up to the end of this syllable in the final string
+                string prefixText = displayText.Substring(0, endIdx);
+                SizeF prefixSize = g.MeasureString(prefixText, font);
+                float prefixWidth = prefixSize.Width;
+
+                syllable.Width = prefixWidth - prevPrefixWidth;
+
+                prevPrefixWidth = prefixWidth;
+                searchIndex = endIdx;
+            }
+
+            // Optional but recommended: normalize widths so they sum exactly
+            // to the measured total text width.
+            float sumWidths = syllables.Sum(s => s.Width);
+            if (sumWidths > 0.1f && Math.Abs(sumWidths - totalTextWidth) > 0.5f)
+            {
+                float scale = totalTextWidth / sumWidths;
+                foreach (var s in syllables)
+                {
+                    s.Width *= scale;
                 }
             }
 
