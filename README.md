@@ -1,5 +1,7 @@
 # 🎵 cPlayer
 
+![cPlayer](https://nemosnautilus.com/cplayer/v400bright.jpg)
+
 ---
 
 ## About
