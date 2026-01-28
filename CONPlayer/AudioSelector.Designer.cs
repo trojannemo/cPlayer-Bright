@@ -192,9 +192,10 @@ namespace cPlayer
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AudioSelector";
+            this.Opacity = 0.95D;
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Audio tracks to play:";
+            this.Text = "Audio Tracks to Play:";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AudioSelector_FormClosing);
             this.Shown += new System.EventHandler(this.AudioSelector_Shown);

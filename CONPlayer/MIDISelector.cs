@@ -20,8 +20,10 @@ namespace cPlayer
             chkGuitar.Checked = MainForm.doMIDIGuitar;
             radioVocals.Checked = MainForm.doMIDIVocals;
             radioHarms.Checked = MainForm.doMIDIHarmonies;
+            radioNoVocals.Checked = MainForm.doMIDINoVocals;
             radioKeys.Checked = MainForm.doMIDIKeys;
             radioProKeys.Checked = MainForm.doMIDIProKeys;
+            radioNoKeys.Checked = MainForm.doMIDINoKeys;
             cboSizing.SelectedIndex = MainForm.NoteSizingType;
             chkNameTracks.Checked = MainForm.doMIDINameTracks;
             chkNameVocals.Checked = MainForm.doMIDINameVocals;
@@ -138,21 +140,15 @@ namespace cPlayer
         private void radioProKeys_CheckedChanged(object sender, EventArgs e)
         {
             MainForm.doMIDIProKeys = radioProKeys.Checked;
-        }
-
-        private void radioKeys_CheckedChanged(object sender, EventArgs e)
-        {
             MainForm.doMIDIKeys = radioKeys.Checked;
+            MainForm.doMIDINoKeys = radioNoKeys.Checked;
         }
 
         private void radioHarms_CheckedChanged(object sender, EventArgs e)
         {
             MainForm.doMIDIHarmonies = radioHarms.Checked;
-        }
-
-        private void radioVocals_CheckedChanged(object sender, EventArgs e)
-        {
             MainForm.doMIDIVocals = radioVocals.Checked;
-        }
+            MainForm.doMIDINoVocals = radioNoVocals.Checked;
+        }        
     }
 }

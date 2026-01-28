@@ -21,7 +21,29 @@ namespace cPlayer
     {
         public int TextureSize = 512; //default value
         public bool KeepDDS = false;
-        
+
+        public static unsafe partial class TheMethod3
+        {
+            private const string __DllName = "themethod3.dll";
+
+            static TheMethod3()
+            {
+                // Get the full path of the /bin/ directory
+                string binPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+
+                // Add the /bin/ directory to the DLL search path
+                SetDllDirectory(binPath);
+            }
+
+            [DllImport(__DllName, EntryPoint = "decrypt_mogg", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+            [return: MarshalAs(UnmanagedType.U1)]
+            public static extern bool decrypt_mogg(byte* data, uint len);
+
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            private static extern bool SetDllDirectory(string lpPathName);
+        }
+
         /// <summary>
         /// Will safely try to move, and if fails, copy/delete a file
         /// </summary>
@@ -836,6 +858,238 @@ namespace cPlayer
             {}
             catch (Exception)
             {}
+        }
+
+        /// <summary>
+        /// Computes background color by sampling
+        /// left/right edge strips of the blurred background image.
+        /// </summary>
+        public Color GetMoodBackgroundFromBlurred(Bitmap blurredBackground, Color uiBaseColor, int stripWidth)
+        {
+            if (blurredBackground == null) return uiBaseColor;
+
+            if (stripWidth < 1) stripWidth = 1;
+            if (stripWidth > blurredBackground.Width) stripWidth = blurredBackground.Width;
+
+            Color left = SampleStripColor(blurredBackground, 0, stripWidth);
+            Color right = SampleStripColor(blurredBackground, blurredBackground.Width - stripWidth, stripWidth);
+
+            Color raw = Lerp(left, right, 0.5);
+
+            return PastelizeToUi(raw, uiBaseColor);
+        }
+
+        private static Color SampleStripColor(Bitmap bmp, int xStart, int width)
+        {
+            if (bmp == null) return Color.AliceBlue;
+
+            // Clamp bounds
+            if (xStart < 0) xStart = 0;
+            if (xStart >= bmp.Width) xStart = bmp.Width - 1;
+
+            if (width < 1) width = 1;
+            if (xStart + width > bmp.Width) width = bmp.Width - xStart;
+
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+            // Ensure format for predictable 4-byte pixels
+            Bitmap work = bmp;
+            Bitmap converted = null;
+
+            // If it's not 32bppArgb, convert to avoid weird formats/stride logic
+            if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                converted = new Bitmap(bmp.Width, bmp.Height, PixelFormat.Format32bppArgb);
+                using (Graphics g = Graphics.FromImage(converted))
+                {
+                    g.DrawImageUnscaled(bmp, 0, 0);
+                }
+                work = converted;
+            }
+
+            BitmapData data = work.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            try
+            {
+                unsafe
+                {
+                    byte* scan0 = (byte*)data.Scan0;
+                    int stride = data.Stride;
+
+                    long rSum = 0, gSum = 0, bSum = 0;
+                    int count = 0;
+
+                    for (int y = 0; y < work.Height; y++)
+                    {
+                        byte* row = scan0 + (y * stride);
+
+                        for (int x = xStart; x < xStart + width; x++)
+                        {
+                            byte* px = row + (x * 4);
+                            byte b = px[0];
+                            byte g = px[1];
+                            byte r = px[2];
+                            byte a = px[3];
+
+                            if (a < 200) continue;
+
+                            // Luminance 0..255
+                            int lum = (int)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+                            // Reject extremes (tweakable)
+                            if (lum < 18 || lum > 242) continue;
+
+                            rSum += r;
+                            gSum += g;
+                            bSum += b;
+                            count++;
+                        }
+                    }
+
+                    if (count == 0)
+                    {
+                        // Fallback: if everything got filtered out, just use ui base
+                        return Color.AliceBlue;
+                    }
+
+                    int rr = (int)(rSum / count);
+                    int gg = (int)(gSum / count);
+                    int bb = (int)(bSum / count);
+
+                    return Color.FromArgb(255, ClampByte(rr), ClampByte(gg), ClampByte(bb));
+                }
+            }
+            finally
+            {
+                work.UnlockBits(data);
+                if (converted != null) converted.Dispose();
+            }
+        }
+
+        private static Color PastelizeToUi(Color theme, Color uiBase)
+        {
+            double h, s, l;
+            ToHsl(theme, out h, out s, out l);
+
+            // 1) Minimal UI blending now. Just a touch to keep it cohesive.
+            //    If we want even punchier: set baseInfluence to 0.05 or 0.0.
+            double baseInfluence = 0.10;
+            Color blended = Lerp(theme, uiBase, baseInfluence);
+
+            double bh, bs, bl;
+            ToHsl(blended, out bh, out bs, out bl);
+
+            // 2) Punch it:
+            // Raise saturation into a vivid-but-not-neon range
+            // (If covers are very colorful, we can bump the top end to 0.85)
+            bs = Clamp(bs * 1.35, 0.30, 0.75);
+
+            // Lower lightness into a "backdrop" range (not pastel anymore)
+            // This is what makes it feel closer to the art.
+            bl = Clamp(bl * 0.78, 0.28, 0.55);
+
+            // 3) Special-case monochrome covers: keep it neutral but not washed out
+            if (s < 0.06)
+            {
+                bs = 0.06;
+                bl = Clamp(bl, 0.30, 0.50);
+            }
+
+            return FromHsl(bh, bs, bl);
+        }
+
+        private static Color Lerp(Color a, Color b, double t)
+        {
+            t = Clamp(t, 0, 1);
+
+            int r = (int)Math.Round(a.R + (b.R - a.R) * t);
+            int g = (int)Math.Round(a.G + (b.G - a.G) * t);
+            int bb = (int)Math.Round(a.B + (b.B - a.B) * t);
+
+            return Color.FromArgb(255, ClampByte(r), ClampByte(g), ClampByte(bb));
+        }
+
+        // ---- HSL helpers ----
+
+        private static void ToHsl(Color c, out double h, out double s, out double l)
+        {
+            double r = c.R / 255.0;
+            double g = c.G / 255.0;
+            double b = c.B / 255.0;
+
+            double max = Math.Max(r, Math.Max(g, b));
+            double min = Math.Min(r, Math.Min(g, b));
+
+            h = 0.0;
+            l = (max + min) / 2.0;
+
+            double d = max - min;
+
+            if (d == 0.0)
+            {
+                s = 0.0;
+                h = 0.0;
+                return;
+            }
+
+            s = d / (1.0 - Math.Abs(2.0 * l - 1.0));
+
+            if (max == r)
+            {
+                h = ((g - b) / d) % 6.0;
+            }
+            else if (max == g)
+            {
+                h = ((b - r) / d) + 2.0;
+            }
+            else
+            {
+                h = ((r - g) / d) + 4.0;
+            }
+
+            h *= 60.0;
+            if (h < 0.0) h += 360.0;
+        }
+
+        private static Color FromHsl(double h, double s, double l)
+        {
+            // Normalize
+            h = (h % 360.0 + 360.0) % 360.0;
+            s = Clamp(s, 0, 1);
+            l = Clamp(l, 0, 1);
+
+            double c = (1.0 - Math.Abs(2.0 * l - 1.0)) * s;
+            double x = c * (1.0 - Math.Abs(((h / 60.0) % 2.0) - 1.0));
+            double m = l - (c / 2.0);
+
+            double r1, g1, b1;
+
+            if (h < 60.0) { r1 = c; g1 = x; b1 = 0; }
+            else if (h < 120.0) { r1 = x; g1 = c; b1 = 0; }
+            else if (h < 180.0) { r1 = 0; g1 = c; b1 = x; }
+            else if (h < 240.0) { r1 = 0; g1 = x; b1 = c; }
+            else if (h < 300.0) { r1 = x; g1 = 0; b1 = c; }
+            else { r1 = c; g1 = 0; b1 = x; }
+
+            int r = (int)Math.Round((r1 + m) * 255.0);
+            int g = (int)Math.Round((g1 + m) * 255.0);
+            int b = (int)Math.Round((b1 + m) * 255.0);
+
+            return Color.FromArgb(255, ClampByte(r), ClampByte(g), ClampByte(b));
+        }
+
+        private static double Clamp(double v, double min, double max)
+        {
+            if (v < min) return min;
+            if (v > max) return max;
+            return v;
+        }
+
+        private static int ClampByte(int v)
+        {
+            if (v < 0) return 0;
+            if (v > 255) return 255;
+            return v;
         }
 
         /// <summary>

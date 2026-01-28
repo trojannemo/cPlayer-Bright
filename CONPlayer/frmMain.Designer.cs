@@ -58,16 +58,18 @@ namespace cPlayer
             this.takeScreenshot = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripSeparator();
             this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fullSupportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xbox360 = new System.Windows.Forms.ToolStripMenuItem();
             this.pS3 = new System.Windows.Forms.ToolStripMenuItem();
             this.wii = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
-            this.yarg = new System.Windows.Forms.ToolStripMenuItem();
             this.fortNite = new System.Windows.Forms.ToolStripMenuItem();
+            this.yarg = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
+            this.limitedSupportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rb4PS4 = new System.Windows.Forms.ToolStripMenuItem();
             this.rockSmith = new System.Windows.Forms.ToolStripMenuItem();
             this.guitarHero = new System.Windows.Forms.ToolStripMenuItem();
             this.powerGig = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
             this.bandFuse = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.autoloadLastPlaylist = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,12 +83,13 @@ namespace cPlayer
             this.showPracticeSections = new System.Windows.Forms.ToolStripMenuItem();
             this.showMIDIVisuals = new System.Windows.Forms.ToolStripMenuItem();
             this.showLyrics = new System.Windows.Forms.ToolStripMenuItem();
+            this.awesomenessDetection = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem9 = new System.Windows.Forms.ToolStripSeparator();
             this.uploadScreenshots = new System.Windows.Forms.ToolStripMenuItem();
             this.openSideWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.enableSecondScreen = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeViewToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.equipmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.microphoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stageKitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.controller1 = new System.Windows.Forms.ToolStripMenuItem();
             this.controller2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,11 +99,18 @@ namespace cPlayer
             this.useLEDs = new System.Windows.Forms.ToolStripMenuItem();
             this.useStrobe = new System.Windows.Forms.ToolStripMenuItem();
             this.useFogger = new System.Windows.Forms.ToolStripMenuItem();
+            this.microphoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bluetoothAVOffset = new System.Windows.Forms.ToolStripMenuItem();
+            this.nautilusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setNautilusPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem12 = new System.Windows.Forms.ToolStripSeparator();
+            this.sendToVisualizer = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendToFileAnalyzer = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendToAudioAnalyzer = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendToCONExplorer = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.howToUseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForUpdates = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem11 = new System.Windows.Forms.ToolStripSeparator();
             this.viewChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.VisualsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -110,7 +120,9 @@ namespace cPlayer
             this.displayAudioSpectrum = new System.Windows.Forms.ToolStripMenuItem();
             this.displayKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
             this.classicKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
-            this.enableBackgroundImage = new System.Windows.Forms.ToolStripMenuItem();
+            this.solidColorBackground = new System.Windows.Forms.ToolStripMenuItem();
+            this.staticBackground2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.animatedBackground2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripSeparator();
             this.forceSoloVocals = new System.Windows.Forms.ToolStripMenuItem();
             this.forceTwoPartHarmonies = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,13 +139,20 @@ namespace cPlayer
             this.selectHarmony3TextColor = new System.Windows.Forms.ToolStripMenuItem();
             this.selectHarmony3HighlightColor = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
+            this.changeStageBackground = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
             this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chartVisualsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rBStyle = new System.Windows.Forms.ToolStripMenuItem();
+            this.useBackgroundVideos = new System.Windows.Forms.ToolStripMenuItem();
+            this.useBackgroundImages = new System.Windows.Forms.ToolStripMenuItem();
             this.chartVertical = new System.Windows.Forms.ToolStripMenuItem();
             this.chartSnippet = new System.Windows.Forms.ToolStripMenuItem();
             this.chartFull = new System.Windows.Forms.ToolStripMenuItem();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.panelPlaying = new System.Windows.Forms.Panel();
+            this.picSecondScreen = new System.Windows.Forms.PictureBox();
+            this.lblArtist = new System.Windows.Forms.Label();
             this.picShuffle = new System.Windows.Forms.PictureBox();
             this.picLoop = new System.Windows.Forms.PictureBox();
             this.picNext = new System.Windows.Forms.PictureBox();
@@ -151,9 +170,17 @@ namespace cPlayer
             this.lblGenre = new System.Windows.Forms.Label();
             this.lblAlbum = new System.Windows.Forms.Label();
             this.lblSong = new System.Windows.Forms.Label();
-            this.lblArtist = new System.Windows.Forms.Label();
             this.picPreview = new System.Windows.Forms.PictureBox();
             this.panelPlaylist = new System.Windows.Forms.Panel();
+            this.picOldies = new System.Windows.Forms.PictureBox();
+            this.pic1960s = new System.Windows.Forms.PictureBox();
+            this.pic1970s = new System.Windows.Forms.PictureBox();
+            this.pic1980s = new System.Windows.Forms.PictureBox();
+            this.pic1990s = new System.Windows.Forms.PictureBox();
+            this.pic2000s = new System.Windows.Forms.PictureBox();
+            this.pic2010s = new System.Windows.Forms.PictureBox();
+            this.pic2020s = new System.Windows.Forms.PictureBox();
+            this.picFavorites = new System.Windows.Forms.PictureBox();
             this.lstPlaylist = new System.Windows.Forms.ListView();
             this.colIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colSong = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -182,9 +209,7 @@ namespace cPlayer
             this.batchSongLoader = new System.ComponentModel.BackgroundWorker();
             this.songLoader = new System.ComponentModel.BackgroundWorker();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnClear = new System.Windows.Forms.Button();
-            this.btnSearch = new System.Windows.Forms.Button();
-            this.btnGoTo = new System.Windows.Forms.Button();
+            this.picSearch = new System.Windows.Forms.PictureBox();
             this.PlaybackTimer = new System.Windows.Forms.Timer(this.components);
             this.songPreparer = new System.ComponentModel.BackgroundWorker();
             this.songExtractor = new System.ComponentModel.BackgroundWorker();
@@ -195,7 +220,6 @@ namespace cPlayer
             this.nextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lblUpdates = new System.Windows.Forms.Label();
             this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.folderScanner = new System.ComponentModel.BackgroundWorker();
@@ -207,14 +231,15 @@ namespace cPlayer
             this.cursorTimer = new System.Windows.Forms.Timer(this.components);
             this.foggerTimer = new System.Windows.Forms.Timer(this.components);
             this.stageKitTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblClearSearch = new System.Windows.Forms.Label();
+            this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picVisuals = new System.Windows.Forms.PictureBox();
             this.lblSections = new System.Windows.Forms.Label();
-            this.changeStageBackground = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
-            this.animatedBackground2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.picFilters = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.VisualsContextMenu.SuspendLayout();
             this.panelPlaying.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSecondScreen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLoop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picNext)).BeginInit();
@@ -225,10 +250,21 @@ namespace cPlayer
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).BeginInit();
             this.panelPlaylist.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picOldies)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1960s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1970s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1980s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1990s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2000s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2010s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2020s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFavorites)).BeginInit();
             this.PlaylistContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSearch)).BeginInit();
             this.NotifyContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).BeginInit();
             this.picVisuals.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFilters)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -237,11 +273,13 @@ namespace cPlayer
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.optionsToolStripMenuItem,
+            this.changeViewToolStrip,
             this.equipmentToolStripMenuItem,
+            this.nautilusToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(994, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1573, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -393,7 +431,7 @@ namespace cPlayer
             this.renamePlaylist.ForeColor = System.Drawing.Color.Black;
             this.renamePlaylist.Name = "renamePlaylist";
             this.renamePlaylist.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.renamePlaylist.Size = new System.Drawing.Size(259, 22);
+            this.renamePlaylist.Size = new System.Drawing.Size(275, 22);
             this.renamePlaylist.Text = "Rename playlist";
             this.renamePlaylist.Click += new System.EventHandler(this.renamePlaylist_Click);
             // 
@@ -402,7 +440,7 @@ namespace cPlayer
             this.selectAndAddSongsManually.BackColor = System.Drawing.Color.White;
             this.selectAndAddSongsManually.ForeColor = System.Drawing.Color.Black;
             this.selectAndAddSongsManually.Name = "selectAndAddSongsManually";
-            this.selectAndAddSongsManually.Size = new System.Drawing.Size(259, 22);
+            this.selectAndAddSongsManually.Size = new System.Drawing.Size(275, 22);
             this.selectAndAddSongsManually.Text = "Select and add songs manually";
             this.selectAndAddSongsManually.Click += new System.EventHandler(this.selectAndAddSongsManually_Click);
             // 
@@ -411,7 +449,7 @@ namespace cPlayer
             this.scanForSongsAutomatically.BackColor = System.Drawing.Color.White;
             this.scanForSongsAutomatically.ForeColor = System.Drawing.Color.Black;
             this.scanForSongsAutomatically.Name = "scanForSongsAutomatically";
-            this.scanForSongsAutomatically.Size = new System.Drawing.Size(259, 22);
+            this.scanForSongsAutomatically.Size = new System.Drawing.Size(275, 22);
             this.scanForSongsAutomatically.Text = "Scan for songs automatically";
             this.scanForSongsAutomatically.Click += new System.EventHandler(this.scanForSongsAutomatically_Click);
             // 
@@ -420,21 +458,21 @@ namespace cPlayer
             this.rebuildPlaylistMetadata.BackColor = System.Drawing.Color.White;
             this.rebuildPlaylistMetadata.ForeColor = System.Drawing.Color.Black;
             this.rebuildPlaylistMetadata.Name = "rebuildPlaylistMetadata";
-            this.rebuildPlaylistMetadata.Size = new System.Drawing.Size(259, 22);
+            this.rebuildPlaylistMetadata.Size = new System.Drawing.Size(275, 22);
             this.rebuildPlaylistMetadata.Text = "Rebuild playlist (metadata only)";
             this.rebuildPlaylistMetadata.Click += new System.EventHandler(this.rebuildPlaylistMetadata_Click);
             // 
             // rebuildPlaylistMetadataAudio
             // 
             this.rebuildPlaylistMetadataAudio.Name = "rebuildPlaylistMetadataAudio";
-            this.rebuildPlaylistMetadataAudio.Size = new System.Drawing.Size(259, 22);
+            this.rebuildPlaylistMetadataAudio.Size = new System.Drawing.Size(275, 22);
             this.rebuildPlaylistMetadataAudio.Text = "Rebuild playlist (metadata + audio)";
             this.rebuildPlaylistMetadataAudio.Click += new System.EventHandler(this.rebuildPlaymetadataAudio_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(256, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(272, 6);
             // 
             // viewSongDetails
             // 
@@ -442,8 +480,8 @@ namespace cPlayer
             this.viewSongDetails.ForeColor = System.Drawing.Color.Black;
             this.viewSongDetails.Name = "viewSongDetails";
             this.viewSongDetails.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.viewSongDetails.Size = new System.Drawing.Size(259, 22);
-            this.viewSongDetails.Text = "View selected song details";
+            this.viewSongDetails.Size = new System.Drawing.Size(275, 22);
+            this.viewSongDetails.Text = "View active song details";
             this.viewSongDetails.Click += new System.EventHandler(this.viewSongDetails_Click);
             // 
             // takeScreenshot
@@ -452,34 +490,43 @@ namespace cPlayer
             this.takeScreenshot.ForeColor = System.Drawing.Color.Black;
             this.takeScreenshot.Name = "takeScreenshot";
             this.takeScreenshot.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.takeScreenshot.Size = new System.Drawing.Size(259, 22);
+            this.takeScreenshot.Size = new System.Drawing.Size(275, 22);
             this.takeScreenshot.Text = "Take screenshot of visuals";
             this.takeScreenshot.Click += new System.EventHandler(this.takeScreenshot_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(256, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(272, 6);
             // 
             // consoleToolStripMenuItem
             // 
             this.consoleToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.consoleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fullSupportToolStripMenuItem,
             this.xbox360,
             this.pS3,
             this.wii,
-            this.toolStripMenuItem5,
-            this.yarg,
             this.fortNite,
+            this.yarg,
+            this.toolStripMenuItem5,
+            this.limitedSupportToolStripMenuItem,
+            this.rb4PS4,
             this.rockSmith,
             this.guitarHero,
             this.powerGig,
-            this.toolStripMenuItem12,
             this.bandFuse});
             this.consoleToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
-            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(259, 22);
-            this.consoleToolStripMenuItem.Text = "Game console: Xbox 360";
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
+            this.consoleToolStripMenuItem.Text = "Game | Console: Rock Band | Xbox 360";
+            // 
+            // fullSupportToolStripMenuItem
+            // 
+            this.fullSupportToolStripMenuItem.Enabled = false;
+            this.fullSupportToolStripMenuItem.Name = "fullSupportToolStripMenuItem";
+            this.fullSupportToolStripMenuItem.Size = new System.Drawing.Size(485, 22);
+            this.fullSupportToolStripMenuItem.Text = "(Full Support)";
             // 
             // xbox360
             // 
@@ -488,8 +535,8 @@ namespace cPlayer
             this.xbox360.CheckState = System.Windows.Forms.CheckState.Checked;
             this.xbox360.ForeColor = System.Drawing.Color.Black;
             this.xbox360.Name = "xbox360";
-            this.xbox360.Size = new System.Drawing.Size(403, 22);
-            this.xbox360.Text = "Xbox 360 (CON | LIVE)";
+            this.xbox360.Size = new System.Drawing.Size(485, 22);
+            this.xbox360.Text = "Rock Band 1/2/3 | Xbox 360 (CON | LIVE)";
             this.xbox360.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // pS3
@@ -497,8 +544,8 @@ namespace cPlayer
             this.pS3.BackColor = System.Drawing.Color.White;
             this.pS3.ForeColor = System.Drawing.Color.Black;
             this.pS3.Name = "pS3";
-            this.pS3.Size = new System.Drawing.Size(403, 22);
-            this.pS3.Text = "PlayStation 3 (.pkg | songs.dta)";
+            this.pS3.Size = new System.Drawing.Size(485, 22);
+            this.pS3.Text = "Rock Band 1/2/3 | PlayStation 3 (.pkg | songs.dta)";
             this.pS3.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // wii
@@ -506,40 +553,54 @@ namespace cPlayer
             this.wii.BackColor = System.Drawing.Color.White;
             this.wii.ForeColor = System.Drawing.Color.Black;
             this.wii.Name = "wii";
-            this.wii.Size = new System.Drawing.Size(403, 22);
-            this.wii.Text = "Wii (songs.dta)";
+            this.wii.Size = new System.Drawing.Size(485, 22);
+            this.wii.Text = "Rock Band 1/2/3 | Wii (songs.dta)";
             this.wii.Click += new System.EventHandler(this.UpdateConsole);
-            // 
-            // toolStripMenuItem5
-            // 
-            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(400, 6);
-            // 
-            // yarg
-            // 
-            this.yarg.BackColor = System.Drawing.Color.White;
-            this.yarg.ForeColor = System.Drawing.Color.Black;
-            this.yarg.Name = "yarg";
-            this.yarg.Size = new System.Drawing.Size(403, 22);
-            this.yarg.Text = "PC: YARG / Clone Hero (songs.dta | .yargsong | song.ini | .sng )";
-            this.yarg.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // fortNite
             // 
             this.fortNite.BackColor = System.Drawing.Color.White;
             this.fortNite.ForeColor = System.Drawing.Color.Black;
             this.fortNite.Name = "fortNite";
-            this.fortNite.Size = new System.Drawing.Size(403, 22);
-            this.fortNite.Text = "PC: Fortnite Festival (.fnf | .m4a)";
+            this.fortNite.Size = new System.Drawing.Size(485, 22);
+            this.fortNite.Text = "Fortnite Festival | PC (.fnf | .m4a)";
             this.fortNite.Click += new System.EventHandler(this.UpdateConsole);
+            // 
+            // yarg
+            // 
+            this.yarg.BackColor = System.Drawing.Color.White;
+            this.yarg.ForeColor = System.Drawing.Color.Black;
+            this.yarg.Name = "yarg";
+            this.yarg.Size = new System.Drawing.Size(485, 22);
+            this.yarg.Text = "YARG / Clone Hero / Fret Smasher | PC (songs.dta | .yargsong | song.ini | .sng )";
+            this.yarg.Click += new System.EventHandler(this.UpdateConsole);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(482, 6);
+            // 
+            // limitedSupportToolStripMenuItem
+            // 
+            this.limitedSupportToolStripMenuItem.Enabled = false;
+            this.limitedSupportToolStripMenuItem.Name = "limitedSupportToolStripMenuItem";
+            this.limitedSupportToolStripMenuItem.Size = new System.Drawing.Size(485, 22);
+            this.limitedSupportToolStripMenuItem.Text = "(Limited Support)";
+            // 
+            // rb4PS4
+            // 
+            this.rb4PS4.Name = "rb4PS4";
+            this.rb4PS4.Size = new System.Drawing.Size(485, 22);
+            this.rb4PS4.Text = "Rock Band 4 | PlayStation 4 (*_ps4)";
+            this.rb4PS4.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // rockSmith
             // 
             this.rockSmith.BackColor = System.Drawing.Color.White;
             this.rockSmith.ForeColor = System.Drawing.Color.Black;
             this.rockSmith.Name = "rockSmith";
-            this.rockSmith.Size = new System.Drawing.Size(403, 22);
-            this.rockSmith.Text = "PC: Rocksmith 2014 (.psarc)";
+            this.rockSmith.Size = new System.Drawing.Size(485, 22);
+            this.rockSmith.Text = "Rocksmith 2014 | PC (.psarc)";
             this.rockSmith.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // guitarHero
@@ -547,8 +608,8 @@ namespace cPlayer
             this.guitarHero.BackColor = System.Drawing.Color.White;
             this.guitarHero.ForeColor = System.Drawing.Color.Black;
             this.guitarHero.Name = "guitarHero";
-            this.guitarHero.Size = new System.Drawing.Size(403, 22);
-            this.guitarHero.Text = "PC: GHWT:DE (.fsb.xen)";
+            this.guitarHero.Size = new System.Drawing.Size(485, 22);
+            this.guitarHero.Text = "Guitar Hero: World Tour: Definitive Edition | PC (.fsb.xen)";
             this.guitarHero.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // powerGig
@@ -556,22 +617,17 @@ namespace cPlayer
             this.powerGig.BackColor = System.Drawing.Color.White;
             this.powerGig.ForeColor = System.Drawing.Color.Black;
             this.powerGig.Name = "powerGig";
-            this.powerGig.Size = new System.Drawing.Size(403, 22);
-            this.powerGig.Text = "PC: Power Gig (.xml)";
+            this.powerGig.Size = new System.Drawing.Size(485, 22);
+            this.powerGig.Text = "Power Gig | PC (.xml)";
             this.powerGig.Click += new System.EventHandler(this.UpdateConsole);
-            // 
-            // toolStripMenuItem12
-            // 
-            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
-            this.toolStripMenuItem12.Size = new System.Drawing.Size(400, 6);
             // 
             // bandFuse
             // 
             this.bandFuse.BackColor = System.Drawing.Color.White;
             this.bandFuse.ForeColor = System.Drawing.Color.Black;
             this.bandFuse.Name = "bandFuse";
-            this.bandFuse.Size = new System.Drawing.Size(403, 22);
-            this.bandFuse.Text = "Xbox 360: BandFuse (LIVE)";
+            this.bandFuse.Size = new System.Drawing.Size(485, 22);
+            this.bandFuse.Text = "BandFuse | Xbox 360 (LIVE)";
             this.bandFuse.Click += new System.EventHandler(this.UpdateConsole);
             // 
             // optionsToolStripMenuItem
@@ -588,6 +644,7 @@ namespace cPlayer
             this.showPracticeSections,
             this.showMIDIVisuals,
             this.showLyrics,
+            this.awesomenessDetection,
             this.toolStripMenuItem9,
             this.uploadScreenshots,
             this.openSideWindow,
@@ -661,6 +718,7 @@ namespace cPlayer
             this.playBGVideos.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.playBGVideos.Size = new System.Drawing.Size(242, 22);
             this.playBGVideos.Text = "Play Background Videos";
+            this.playBGVideos.Visible = false;
             this.playBGVideos.Click += new System.EventHandler(this.playBGVideos_Click);
             // 
             // toolStripMenuItem3
@@ -671,9 +729,7 @@ namespace cPlayer
             // showPracticeSections
             // 
             this.showPracticeSections.BackColor = System.Drawing.Color.White;
-            this.showPracticeSections.Checked = true;
             this.showPracticeSections.CheckOnClick = true;
-            this.showPracticeSections.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showPracticeSections.ForeColor = System.Drawing.Color.Black;
             this.showPracticeSections.Name = "showPracticeSections";
             this.showPracticeSections.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
@@ -700,6 +756,14 @@ namespace cPlayer
             this.showLyrics.Size = new System.Drawing.Size(242, 22);
             this.showLyrics.Text = "Lyrics settings";
             this.showLyrics.Click += new System.EventHandler(this.showLyrics_Click);
+            // 
+            // awesomenessDetection
+            // 
+            this.awesomenessDetection.CheckOnClick = true;
+            this.awesomenessDetection.Name = "awesomenessDetection";
+            this.awesomenessDetection.Size = new System.Drawing.Size(242, 22);
+            this.awesomenessDetection.Text = "Awesomeness Detection";
+            this.awesomenessDetection.Click += new System.EventHandler(this.awesomenessDetection_Click);
             // 
             // toolStripMenuItem9
             // 
@@ -738,22 +802,23 @@ namespace cPlayer
             this.enableSecondScreen.Text = "Enable second screen";
             this.enableSecondScreen.Click += new System.EventHandler(this.enableSecondScreen_Click);
             // 
+            // changeViewToolStrip
+            // 
+            this.changeViewToolStrip.Name = "changeViewToolStrip";
+            this.changeViewToolStrip.Size = new System.Drawing.Size(102, 20);
+            this.changeViewToolStrip.Text = "Display Settings";
+            this.changeViewToolStrip.Click += new System.EventHandler(this.changeViewToolStrip_Click);
+            // 
             // equipmentToolStripMenuItem
             // 
             this.equipmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stageKitToolStripMenuItem,
             this.microphoneToolStripMenuItem,
-            this.stageKitToolStripMenuItem});
+            this.bluetoothAVOffset});
             this.equipmentToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.equipmentToolStripMenuItem.Name = "equipmentToolStripMenuItem";
             this.equipmentToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
             this.equipmentToolStripMenuItem.Text = "&Equipment";
-            // 
-            // microphoneToolStripMenuItem
-            // 
-            this.microphoneToolStripMenuItem.Name = "microphoneToolStripMenuItem";
-            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.microphoneToolStripMenuItem.Text = "Microphone";
-            this.microphoneToolStripMenuItem.Click += new System.EventHandler(this.microphoneToolStripMenuItem_Click);
             // 
             // stageKitToolStripMenuItem
             // 
@@ -768,7 +833,7 @@ namespace cPlayer
             this.useStrobe,
             this.useFogger});
             this.stageKitToolStripMenuItem.Name = "stageKitToolStripMenuItem";
-            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.stageKitToolStripMenuItem.Text = "Enable Stage Kit";
             this.stageKitToolStripMenuItem.CheckedChanged += new System.EventHandler(this.stageKitToolStripMenuItem_CheckedChanged);
             this.stageKitToolStripMenuItem.Click += new System.EventHandler(this.stageKitToolStripMenuItem_Click);
@@ -835,13 +900,83 @@ namespace cPlayer
             this.useFogger.Size = new System.Drawing.Size(136, 22);
             this.useFogger.Text = "Use fogger";
             // 
+            // microphoneToolStripMenuItem
+            // 
+            this.microphoneToolStripMenuItem.Name = "microphoneToolStripMenuItem";
+            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.microphoneToolStripMenuItem.Text = "Microphone Control";
+            this.microphoneToolStripMenuItem.Click += new System.EventHandler(this.microphoneToolStripMenuItem_Click);
+            // 
+            // bluetoothAVOffset
+            // 
+            this.bluetoothAVOffset.Name = "bluetoothAVOffset";
+            this.bluetoothAVOffset.Size = new System.Drawing.Size(182, 22);
+            this.bluetoothAVOffset.Text = "Bluetooth AV Offset";
+            this.bluetoothAVOffset.Click += new System.EventHandler(this.bluetoothAVOffset_Click);
+            // 
+            // nautilusToolStripMenuItem
+            // 
+            this.nautilusToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setNautilusPath,
+            this.toolStripMenuItem12,
+            this.sendToVisualizer,
+            this.sendToFileAnalyzer,
+            this.sendToAudioAnalyzer,
+            this.sendToCONExplorer});
+            this.nautilusToolStripMenuItem.Name = "nautilusToolStripMenuItem";
+            this.nautilusToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.nautilusToolStripMenuItem.Text = "Nautilus";
+            this.nautilusToolStripMenuItem.Visible = false;
+            // 
+            // setNautilusPath
+            // 
+            this.setNautilusPath.Name = "setNautilusPath";
+            this.setNautilusPath.Size = new System.Drawing.Size(197, 22);
+            this.setNautilusPath.Text = "Set Nautilus path...";
+            this.setNautilusPath.Click += new System.EventHandler(this.setNautilusPath_Click);
+            // 
+            // toolStripMenuItem12
+            // 
+            this.toolStripMenuItem12.Name = "toolStripMenuItem12";
+            this.toolStripMenuItem12.Size = new System.Drawing.Size(194, 6);
+            // 
+            // sendToVisualizer
+            // 
+            this.sendToVisualizer.Enabled = false;
+            this.sendToVisualizer.Name = "sendToVisualizer";
+            this.sendToVisualizer.Size = new System.Drawing.Size(197, 22);
+            this.sendToVisualizer.Text = "Send to Visualizer";
+            this.sendToVisualizer.Click += new System.EventHandler(this.sendToVisualizer_Click);
+            // 
+            // sendToFileAnalyzer
+            // 
+            this.sendToFileAnalyzer.Enabled = false;
+            this.sendToFileAnalyzer.Name = "sendToFileAnalyzer";
+            this.sendToFileAnalyzer.Size = new System.Drawing.Size(197, 22);
+            this.sendToFileAnalyzer.Text = "Send to File Analyzer";
+            this.sendToFileAnalyzer.Click += new System.EventHandler(this.sendToFileAnalyzer_Click);
+            // 
+            // sendToAudioAnalyzer
+            // 
+            this.sendToAudioAnalyzer.Enabled = false;
+            this.sendToAudioAnalyzer.Name = "sendToAudioAnalyzer";
+            this.sendToAudioAnalyzer.Size = new System.Drawing.Size(197, 22);
+            this.sendToAudioAnalyzer.Text = "Send to Audio Analyzer";
+            this.sendToAudioAnalyzer.Click += new System.EventHandler(this.sendToAudioAnalyzer_Click);
+            // 
+            // sendToCONExplorer
+            // 
+            this.sendToCONExplorer.Enabled = false;
+            this.sendToCONExplorer.Name = "sendToCONExplorer";
+            this.sendToCONExplorer.Size = new System.Drawing.Size(197, 22);
+            this.sendToCONExplorer.Text = "Send to CON Explorer";
+            this.sendToCONExplorer.Click += new System.EventHandler(this.sendToCONExplorer_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.howToUseToolStripMenuItem,
-            this.toolStripMenuItem10,
             this.checkForUpdates,
-            this.toolStripMenuItem11,
             this.viewChangeLog,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
@@ -854,38 +989,26 @@ namespace cPlayer
             this.howToUseToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.howToUseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.howToUseToolStripMenuItem.Name = "howToUseToolStripMenuItem";
-            this.howToUseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F1)));
-            this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.howToUseToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.howToUseToolStripMenuItem.Text = "How to Use";
             this.howToUseToolStripMenuItem.Click += new System.EventHandler(this.howToUseToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem10
-            // 
-            this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-            this.toolStripMenuItem10.Size = new System.Drawing.Size(200, 6);
             // 
             // checkForUpdates
             // 
             this.checkForUpdates.BackColor = System.Drawing.Color.White;
             this.checkForUpdates.ForeColor = System.Drawing.Color.Black;
             this.checkForUpdates.Name = "checkForUpdates";
-            this.checkForUpdates.Size = new System.Drawing.Size(203, 22);
-            this.checkForUpdates.Text = "Check for updates";
+            this.checkForUpdates.Size = new System.Drawing.Size(171, 22);
+            this.checkForUpdates.Text = "Check for Updates";
             this.checkForUpdates.Click += new System.EventHandler(this.checkForUpdates_Click);
-            // 
-            // toolStripMenuItem11
-            // 
-            this.toolStripMenuItem11.Name = "toolStripMenuItem11";
-            this.toolStripMenuItem11.Size = new System.Drawing.Size(200, 6);
             // 
             // viewChangeLog
             // 
             this.viewChangeLog.BackColor = System.Drawing.Color.White;
             this.viewChangeLog.ForeColor = System.Drawing.Color.Black;
             this.viewChangeLog.Name = "viewChangeLog";
-            this.viewChangeLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F1)));
-            this.viewChangeLog.Size = new System.Drawing.Size(203, 22);
-            this.viewChangeLog.Text = "View change log";
+            this.viewChangeLog.Size = new System.Drawing.Size(171, 22);
+            this.viewChangeLog.Text = "Change Log";
             this.viewChangeLog.Click += new System.EventHandler(this.viewChangeLog_Click);
             // 
             // aboutToolStripMenuItem
@@ -893,8 +1016,7 @@ namespace cPlayer
             this.aboutToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.aboutToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -908,7 +1030,7 @@ namespace cPlayer
             this.displayKaraokeMode,
             this.chartVisualsToolStripMenuItem});
             this.VisualsContextMenu.Name = "VisualsContextMenu";
-            this.VisualsContextMenu.Size = new System.Drawing.Size(215, 120);
+            this.VisualsContextMenu.Size = new System.Drawing.Size(205, 120);
             this.VisualsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.VisualsContextMenu_Opening);
             // 
             // displayBackgroundVideo
@@ -919,24 +1041,24 @@ namespace cPlayer
             this.displayBackgroundVideo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.displayBackgroundVideo.ForeColor = System.Drawing.Color.Black;
             this.displayBackgroundVideo.Name = "displayBackgroundVideo";
-            this.displayBackgroundVideo.Size = new System.Drawing.Size(214, 22);
+            this.displayBackgroundVideo.Size = new System.Drawing.Size(204, 22);
             this.displayBackgroundVideo.Text = "Play Background Videos";
-            this.displayBackgroundVideo.Click += new System.EventHandler(this.displayBackgroundVideo_Click);
+            this.displayBackgroundVideo.Visible = false;
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(211, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(201, 6);
+            this.toolStripMenuItem2.Visible = false;
             // 
             // displayAlbumArt
             // 
             this.displayAlbumArt.BackColor = System.Drawing.Color.White;
-            this.displayAlbumArt.Checked = true;
-            this.displayAlbumArt.CheckState = System.Windows.Forms.CheckState.Checked;
             this.displayAlbumArt.ForeColor = System.Drawing.Color.Black;
             this.displayAlbumArt.Name = "displayAlbumArt";
-            this.displayAlbumArt.Size = new System.Drawing.Size(214, 22);
+            this.displayAlbumArt.Size = new System.Drawing.Size(204, 22);
             this.displayAlbumArt.Text = "Display: Album Art";
+            this.displayAlbumArt.Visible = false;
             this.displayAlbumArt.Click += new System.EventHandler(this.displayAlbumArt_Click);
             // 
             // displayAudioSpectrum
@@ -944,8 +1066,9 @@ namespace cPlayer
             this.displayAudioSpectrum.BackColor = System.Drawing.Color.White;
             this.displayAudioSpectrum.ForeColor = System.Drawing.Color.Black;
             this.displayAudioSpectrum.Name = "displayAudioSpectrum";
-            this.displayAudioSpectrum.Size = new System.Drawing.Size(214, 22);
+            this.displayAudioSpectrum.Size = new System.Drawing.Size(204, 22);
             this.displayAudioSpectrum.Text = "Display: Audio Spectrum";
+            this.displayAudioSpectrum.Visible = false;
             this.displayAudioSpectrum.Click += new System.EventHandler(this.displayAudioSpectrum_Click);
             // 
             // displayKaraokeMode
@@ -969,15 +1092,15 @@ namespace cPlayer
             this.restoreDefaultsToolStripMenuItem});
             this.displayKaraokeMode.ForeColor = System.Drawing.Color.Black;
             this.displayKaraokeMode.Name = "displayKaraokeMode";
-            this.displayKaraokeMode.Size = new System.Drawing.Size(214, 22);
+            this.displayKaraokeMode.Size = new System.Drawing.Size(204, 22);
             this.displayKaraokeMode.Text = "Display: Karaoke Mode";
+            this.displayKaraokeMode.Visible = false;
             // 
             // classicKaraokeMode
             // 
-            this.classicKaraokeMode.Checked = true;
-            this.classicKaraokeMode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.classicKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.enableBackgroundImage,
+            this.solidColorBackground,
+            this.staticBackground2,
             this.animatedBackground2,
             this.toolStripMenuItem15,
             this.forceSoloVocals,
@@ -987,32 +1110,46 @@ namespace cPlayer
             this.classicKaraokeMode.Text = "Classic Karaoke";
             this.classicKaraokeMode.Click += new System.EventHandler(this.classicKaraokeMode_Click);
             // 
-            // enableBackgroundImage
+            // solidColorBackground
             // 
-            this.enableBackgroundImage.Checked = true;
-            this.enableBackgroundImage.CheckOnClick = true;
-            this.enableBackgroundImage.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.enableBackgroundImage.Name = "enableBackgroundImage";
-            this.enableBackgroundImage.Size = new System.Drawing.Size(199, 22);
-            this.enableBackgroundImage.Text = "Static Background";
-            this.enableBackgroundImage.Click += new System.EventHandler(this.enableBackgroundImage_Click);
+            this.solidColorBackground.Checked = true;
+            this.solidColorBackground.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.solidColorBackground.Name = "solidColorBackground";
+            this.solidColorBackground.Size = new System.Drawing.Size(199, 22);
+            this.solidColorBackground.Text = "Solid Color Background";
+            this.solidColorBackground.Click += new System.EventHandler(this.solidColorBackgroundToolStripMenuItem_Click);
+            // 
+            // staticBackground2
+            // 
+            this.staticBackground2.CheckOnClick = true;
+            this.staticBackground2.Name = "staticBackground2";
+            this.staticBackground2.Size = new System.Drawing.Size(199, 22);
+            this.staticBackground2.Text = "Static Background";
+            this.staticBackground2.Click += new System.EventHandler(this.enableBackgroundImage_Click);
+            // 
+            // animatedBackground2
+            // 
+            this.animatedBackground2.Name = "animatedBackground2";
+            this.animatedBackground2.Size = new System.Drawing.Size(199, 22);
+            this.animatedBackground2.Text = "Animated Background";
+            this.animatedBackground2.Click += new System.EventHandler(this.animatedBackground2_Click);
             // 
             // toolStripMenuItem15
             // 
             this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-            this.toolStripMenuItem15.Size = new System.Drawing.Size(203, 6);
+            this.toolStripMenuItem15.Size = new System.Drawing.Size(196, 6);
             // 
             // forceSoloVocals
             // 
             this.forceSoloVocals.Name = "forceSoloVocals";
-            this.forceSoloVocals.Size = new System.Drawing.Size(206, 22);
+            this.forceSoloVocals.Size = new System.Drawing.Size(199, 22);
             this.forceSoloVocals.Text = "Force Solo Vocals";
             this.forceSoloVocals.Click += new System.EventHandler(this.forceSoloVocals_Click);
             // 
             // forceTwoPartHarmonies
             // 
             this.forceTwoPartHarmonies.Name = "forceTwoPartHarmonies";
-            this.forceTwoPartHarmonies.Size = new System.Drawing.Size(206, 22);
+            this.forceTwoPartHarmonies.Size = new System.Drawing.Size(199, 22);
             this.forceTwoPartHarmonies.Text = "Force 2-Part Harmonies";
             this.forceTwoPartHarmonies.Click += new System.EventHandler(this.forceTwoPartHarmonies_Click);
             // 
@@ -1021,7 +1158,7 @@ namespace cPlayer
             this.cPlayerStyle.Name = "cPlayerStyle";
             this.cPlayerStyle.Size = new System.Drawing.Size(254, 22);
             this.cPlayerStyle.Text = "cPlayer Karaoke";
-            this.cPlayerStyle.Click += new System.EventHandler(this.cPlayertyle_Click);
+            this.cPlayerStyle.Click += new System.EventHandler(this.cPlayerStyle_Click);
             // 
             // rockBandKaraoke
             // 
@@ -1115,6 +1252,18 @@ namespace cPlayer
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
             this.toolStripMenuItem14.Size = new System.Drawing.Size(251, 6);
             // 
+            // changeStageBackground
+            // 
+            this.changeStageBackground.Name = "changeStageBackground";
+            this.changeStageBackground.Size = new System.Drawing.Size(254, 22);
+            this.changeStageBackground.Text = "Change Stage Background";
+            this.changeStageBackground.Click += new System.EventHandler(this.changeStageBackground_Click);
+            // 
+            // toolStripMenuItem16
+            // 
+            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
+            this.toolStripMenuItem16.Size = new System.Drawing.Size(251, 6);
+            // 
             // restoreDefaultsToolStripMenuItem
             // 
             this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
@@ -1125,22 +1274,52 @@ namespace cPlayer
             // chartVisualsToolStripMenuItem
             // 
             this.chartVisualsToolStripMenuItem.BackColor = System.Drawing.Color.White;
+            this.chartVisualsToolStripMenuItem.Checked = true;
+            this.chartVisualsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chartVisualsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rBStyle,
             this.chartVertical,
             this.chartSnippet,
             this.chartFull});
             this.chartVisualsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.chartVisualsToolStripMenuItem.Name = "chartVisualsToolStripMenuItem";
-            this.chartVisualsToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.chartVisualsToolStripMenuItem.Text = "Display: MIDI Chart Visuals";
+            this.chartVisualsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.chartVisualsToolStripMenuItem.Text = "Display: Chart Visuals";
+            this.chartVisualsToolStripMenuItem.Visible = false;
+            // 
+            // rBStyle
+            // 
+            this.rBStyle.Checked = true;
+            this.rBStyle.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.rBStyle.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useBackgroundVideos,
+            this.useBackgroundImages});
+            this.rBStyle.Name = "rBStyle";
+            this.rBStyle.Size = new System.Drawing.Size(140, 22);
+            this.rBStyle.Text = "RB Style";
+            this.rBStyle.Click += new System.EventHandler(this.rBStyle_Click);
+            // 
+            // useBackgroundVideos
+            // 
+            this.useBackgroundVideos.Checked = true;
+            this.useBackgroundVideos.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useBackgroundVideos.Name = "useBackgroundVideos";
+            this.useBackgroundVideos.Size = new System.Drawing.Size(201, 22);
+            this.useBackgroundVideos.Text = "Use Background Videos";
+            this.useBackgroundVideos.Click += new System.EventHandler(this.useBackgroundVideos_Click);
+            // 
+            // useBackgroundImages
+            // 
+            this.useBackgroundImages.Name = "useBackgroundImages";
+            this.useBackgroundImages.Size = new System.Drawing.Size(201, 22);
+            this.useBackgroundImages.Text = "Use Background Images";
+            this.useBackgroundImages.Click += new System.EventHandler(this.useBackgroundImages_Click);
             // 
             // chartVertical
             // 
-            this.chartVertical.Checked = true;
-            this.chartVertical.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chartVertical.Name = "chartVertical";
-            this.chartVertical.Size = new System.Drawing.Size(133, 22);
-            this.chartVertical.Text = "Game Style";
+            this.chartVertical.Size = new System.Drawing.Size(140, 22);
+            this.chartVertical.Text = "Vertical Style";
             this.chartVertical.Click += new System.EventHandler(this.chartVertical_Click);
             // 
             // chartSnippet
@@ -1148,16 +1327,17 @@ namespace cPlayer
             this.chartSnippet.BackColor = System.Drawing.Color.White;
             this.chartSnippet.ForeColor = System.Drawing.Color.Black;
             this.chartSnippet.Name = "chartSnippet";
-            this.chartSnippet.Size = new System.Drawing.Size(133, 22);
+            this.chartSnippet.Size = new System.Drawing.Size(140, 22);
             this.chartSnippet.Text = "MIDI Style";
             this.chartSnippet.Click += new System.EventHandler(this.chartSnippet_Click);
             // 
             // chartFull
             // 
             this.chartFull.BackColor = System.Drawing.Color.White;
+            this.chartFull.Enabled = false;
             this.chartFull.ForeColor = System.Drawing.Color.Black;
             this.chartFull.Name = "chartFull";
-            this.chartFull.Size = new System.Drawing.Size(133, 22);
+            this.chartFull.Size = new System.Drawing.Size(140, 22);
             this.chartFull.Text = "Chart: Full";
             this.chartFull.Visible = false;
             this.chartFull.Click += new System.EventHandler(this.chartFull_Click);
@@ -1176,7 +1356,9 @@ namespace cPlayer
             // panelPlaying
             // 
             this.panelPlaying.AllowDrop = true;
-            this.panelPlaying.BackColor = System.Drawing.Color.Transparent;
+            this.panelPlaying.BackColor = System.Drawing.Color.AliceBlue;
+            this.panelPlaying.Controls.Add(this.picSecondScreen);
+            this.panelPlaying.Controls.Add(this.lblArtist);
             this.panelPlaying.Controls.Add(this.picShuffle);
             this.panelPlaying.Controls.Add(this.picLoop);
             this.panelPlaying.Controls.Add(this.picNext);
@@ -1195,7 +1377,6 @@ namespace cPlayer
             this.panelPlaying.Controls.Add(this.lblGenre);
             this.panelPlaying.Controls.Add(this.lblAlbum);
             this.panelPlaying.Controls.Add(this.lblSong);
-            this.panelPlaying.Controls.Add(this.lblArtist);
             this.panelPlaying.Controls.Add(this.picPreview);
             this.panelPlaying.ForeColor = System.Drawing.Color.Black;
             this.panelPlaying.Location = new System.Drawing.Point(8, 27);
@@ -1205,12 +1386,38 @@ namespace cPlayer
             this.panelPlaying.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
             this.panelPlaying.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
             this.panelPlaying.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
-            this.panelPlaying.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.panelPlaying.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
+            // 
+            // picSecondScreen
+            // 
+            this.picSecondScreen.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picSecondScreen.Image = global::cPlayer.Properties.Resources.doublescreen_disabled;
+            this.picSecondScreen.Location = new System.Drawing.Point(343, 4);
+            this.picSecondScreen.Name = "picSecondScreen";
+            this.picSecondScreen.Size = new System.Drawing.Size(33, 26);
+            this.picSecondScreen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picSecondScreen.TabIndex = 57;
+            this.picSecondScreen.TabStop = false;
+            this.picSecondScreen.Tag = "disabled";
+            this.toolTip1.SetToolTip(this.picSecondScreen, "Click to enable second screen");
+            this.picSecondScreen.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picSecondScreen_MouseClick);
+            // 
+            // lblArtist
+            // 
+            this.lblArtist.AutoEllipsis = true;
+            this.lblArtist.BackColor = System.Drawing.Color.Transparent;
+            this.lblArtist.ForeColor = System.Drawing.Color.Black;
+            this.lblArtist.Location = new System.Drawing.Point(111, 17);
+            this.lblArtist.Name = "lblArtist";
+            this.lblArtist.Size = new System.Drawing.Size(261, 23);
+            this.lblArtist.TabIndex = 1;
+            this.lblArtist.Text = "Artist:";
+            this.lblArtist.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblArtist.UseMnemonic = false;
             // 
             // picShuffle
             // 
-            this.picShuffle.BackColor = System.Drawing.Color.Transparent;
+            this.picShuffle.BackColor = System.Drawing.Color.AliceBlue;
             this.picShuffle.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picShuffle.Image = global::cPlayer.Properties.Resources.icon_shuffle_disabled;
             this.picShuffle.Location = new System.Drawing.Point(265, 126);
@@ -1225,7 +1432,7 @@ namespace cPlayer
             // 
             // picLoop
             // 
-            this.picLoop.BackColor = System.Drawing.Color.Transparent;
+            this.picLoop.BackColor = System.Drawing.Color.AliceBlue;
             this.picLoop.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picLoop.Image = global::cPlayer.Properties.Resources.icon_loop_disabled1;
             this.picLoop.Location = new System.Drawing.Point(215, 126);
@@ -1240,7 +1447,7 @@ namespace cPlayer
             // 
             // picNext
             // 
-            this.picNext.BackColor = System.Drawing.Color.Transparent;
+            this.picNext.BackColor = System.Drawing.Color.AliceBlue;
             this.picNext.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picNext.Enabled = false;
             this.picNext.Image = global::cPlayer.Properties.Resources.icon_next;
@@ -1255,7 +1462,7 @@ namespace cPlayer
             // 
             // picPause
             // 
-            this.picPause.BackColor = System.Drawing.Color.Transparent;
+            this.picPause.BackColor = System.Drawing.Color.AliceBlue;
             this.picPause.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picPause.Enabled = false;
             this.picPause.Image = global::cPlayer.Properties.Resources.icon_pause;
@@ -1270,7 +1477,7 @@ namespace cPlayer
             // 
             // picStop
             // 
-            this.picStop.BackColor = System.Drawing.Color.Transparent;
+            this.picStop.BackColor = System.Drawing.Color.AliceBlue;
             this.picStop.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picStop.Enabled = false;
             this.picStop.Image = global::cPlayer.Properties.Resources.icon_stop;
@@ -1285,7 +1492,7 @@ namespace cPlayer
             // 
             // picPlay
             // 
-            this.picPlay.BackColor = System.Drawing.Color.Transparent;
+            this.picPlay.BackColor = System.Drawing.Color.AliceBlue;
             this.picPlay.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picPlay.Image = global::cPlayer.Properties.Resources.icon_play;
             this.picPlay.Location = new System.Drawing.Point(15, 126);
@@ -1299,12 +1506,12 @@ namespace cPlayer
             // 
             // picRandom
             // 
-            this.picRandom.BackColor = System.Drawing.Color.Transparent;
+            this.picRandom.BackColor = System.Drawing.Color.AliceBlue;
             this.picRandom.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.picRandom.Image = global::cPlayer.Properties.Resources.dice_trippy;
-            this.picRandom.Location = new System.Drawing.Point(332, 126);
+            this.picRandom.Image = global::cPlayer.Properties.Resources.pickrandom;
+            this.picRandom.Location = new System.Drawing.Point(325, 120);
             this.picRandom.Name = "picRandom";
-            this.picRandom.Size = new System.Drawing.Size(40, 40);
+            this.picRandom.Size = new System.Drawing.Size(50, 50);
             this.picRandom.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picRandom.TabIndex = 50;
             this.picRandom.TabStop = false;
@@ -1313,7 +1520,7 @@ namespace cPlayer
             // 
             // picVolume
             // 
-            this.picVolume.BackColor = System.Drawing.Color.Transparent;
+            this.picVolume.BackColor = System.Drawing.Color.AliceBlue;
             this.picVolume.Cursor = System.Windows.Forms.Cursors.Hand;
             this.picVolume.Image = global::cPlayer.Properties.Resources.icon_speaker;
             this.picVolume.Location = new System.Drawing.Point(330, 171);
@@ -1430,7 +1637,7 @@ namespace cPlayer
             this.lblSong.AutoEllipsis = true;
             this.lblSong.BackColor = System.Drawing.Color.Transparent;
             this.lblSong.ForeColor = System.Drawing.Color.Black;
-            this.lblSong.Location = new System.Drawing.Point(111, 40);
+            this.lblSong.Location = new System.Drawing.Point(111, 44);
             this.lblSong.Name = "lblSong";
             this.lblSong.Size = new System.Drawing.Size(261, 23);
             this.lblSong.TabIndex = 2;
@@ -1438,22 +1645,9 @@ namespace cPlayer
             this.lblSong.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblSong.UseMnemonic = false;
             // 
-            // lblArtist
-            // 
-            this.lblArtist.AutoEllipsis = true;
-            this.lblArtist.BackColor = System.Drawing.Color.Transparent;
-            this.lblArtist.ForeColor = System.Drawing.Color.Black;
-            this.lblArtist.Location = new System.Drawing.Point(111, 17);
-            this.lblArtist.Name = "lblArtist";
-            this.lblArtist.Size = new System.Drawing.Size(261, 23);
-            this.lblArtist.TabIndex = 1;
-            this.lblArtist.Text = "Artist:";
-            this.lblArtist.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblArtist.UseMnemonic = false;
-            // 
             // picPreview
             // 
-            this.picPreview.Image = global::cPlayer.Properties.Resources.noart3;
+            this.picPreview.Image = global::cPlayer.Properties.Resources.default_art;
             this.picPreview.Location = new System.Drawing.Point(1, 1);
             this.picPreview.Name = "picPreview";
             this.picPreview.Size = new System.Drawing.Size(100, 100);
@@ -1468,23 +1662,139 @@ namespace cPlayer
             this.panelPlaylist.AllowDrop = true;
             this.panelPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.panelPlaylist.BackColor = System.Drawing.Color.Transparent;
+            this.panelPlaylist.BackColor = System.Drawing.Color.AliceBlue;
+            this.panelPlaylist.Controls.Add(this.picOldies);
+            this.panelPlaylist.Controls.Add(this.pic1960s);
+            this.panelPlaylist.Controls.Add(this.pic1970s);
+            this.panelPlaylist.Controls.Add(this.pic1980s);
+            this.panelPlaylist.Controls.Add(this.pic1990s);
+            this.panelPlaylist.Controls.Add(this.pic2000s);
+            this.panelPlaylist.Controls.Add(this.pic2010s);
+            this.panelPlaylist.Controls.Add(this.pic2020s);
+            this.panelPlaylist.Controls.Add(this.picFavorites);
             this.panelPlaylist.Controls.Add(this.lstPlaylist);
             this.panelPlaylist.ForeColor = System.Drawing.Color.Black;
-            this.panelPlaylist.Location = new System.Drawing.Point(8, 256);
+            this.panelPlaylist.Location = new System.Drawing.Point(9, 282);
             this.panelPlaylist.Name = "panelPlaylist";
-            this.panelPlaylist.Size = new System.Drawing.Size(380, 399);
+            this.panelPlaylist.Size = new System.Drawing.Size(380, 679);
             this.panelPlaylist.TabIndex = 3;
             this.panelPlaylist.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
-            this.panelPlaylist.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.panelPlaylist.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
+            // 
+            // picOldies
+            // 
+            this.picOldies.Cursor = System.Windows.Forms.Cursors.Default;
+            this.picOldies.Image = global::cPlayer.Properties.Resources.oldies_enabled;
+            this.picOldies.Location = new System.Drawing.Point(264, 244);
+            this.picOldies.Name = "picOldies";
+            this.picOldies.Size = new System.Drawing.Size(100, 100);
+            this.picOldies.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picOldies.TabIndex = 9;
+            this.picOldies.TabStop = false;
+            this.picOldies.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picOldies_MouseClick);
+            // 
+            // pic1960s
+            // 
+            this.pic1960s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic1960s.Image = global::cPlayer.Properties.Resources._1960s_enabled;
+            this.pic1960s.Location = new System.Drawing.Point(140, 244);
+            this.pic1960s.Name = "pic1960s";
+            this.pic1960s.Size = new System.Drawing.Size(100, 100);
+            this.pic1960s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic1960s.TabIndex = 8;
+            this.pic1960s.TabStop = false;
+            this.pic1960s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic1960s_MouseClick);
+            // 
+            // pic1970s
+            // 
+            this.pic1970s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic1970s.Image = global::cPlayer.Properties.Resources._1970s_enabled;
+            this.pic1970s.Location = new System.Drawing.Point(16, 244);
+            this.pic1970s.Name = "pic1970s";
+            this.pic1970s.Size = new System.Drawing.Size(100, 100);
+            this.pic1970s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic1970s.TabIndex = 7;
+            this.pic1970s.TabStop = false;
+            this.pic1970s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic1970s_MouseClick);
+            // 
+            // pic1980s
+            // 
+            this.pic1980s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic1980s.Image = global::cPlayer.Properties.Resources._1980s_enabled;
+            this.pic1980s.Location = new System.Drawing.Point(264, 129);
+            this.pic1980s.Name = "pic1980s";
+            this.pic1980s.Size = new System.Drawing.Size(100, 100);
+            this.pic1980s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic1980s.TabIndex = 6;
+            this.pic1980s.TabStop = false;
+            this.pic1980s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic1980s_MouseClick);
+            // 
+            // pic1990s
+            // 
+            this.pic1990s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic1990s.Image = global::cPlayer.Properties.Resources._1990s_enabled;
+            this.pic1990s.Location = new System.Drawing.Point(140, 129);
+            this.pic1990s.Name = "pic1990s";
+            this.pic1990s.Size = new System.Drawing.Size(100, 100);
+            this.pic1990s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic1990s.TabIndex = 5;
+            this.pic1990s.TabStop = false;
+            this.pic1990s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic1990s_MouseClick);
+            // 
+            // pic2000s
+            // 
+            this.pic2000s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic2000s.Image = global::cPlayer.Properties.Resources._2000s_enabled;
+            this.pic2000s.Location = new System.Drawing.Point(16, 129);
+            this.pic2000s.Name = "pic2000s";
+            this.pic2000s.Size = new System.Drawing.Size(100, 100);
+            this.pic2000s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic2000s.TabIndex = 4;
+            this.pic2000s.TabStop = false;
+            this.pic2000s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic2000s_MouseClick);
+            // 
+            // pic2010s
+            // 
+            this.pic2010s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic2010s.Image = global::cPlayer.Properties.Resources._2010s_enabled;
+            this.pic2010s.Location = new System.Drawing.Point(264, 15);
+            this.pic2010s.Name = "pic2010s";
+            this.pic2010s.Size = new System.Drawing.Size(100, 100);
+            this.pic2010s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic2010s.TabIndex = 3;
+            this.pic2010s.TabStop = false;
+            this.pic2010s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic2010s_MouseClick);
+            // 
+            // pic2020s
+            // 
+            this.pic2020s.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pic2020s.Image = global::cPlayer.Properties.Resources._2020s_enabled;
+            this.pic2020s.Location = new System.Drawing.Point(140, 15);
+            this.pic2020s.Name = "pic2020s";
+            this.pic2020s.Size = new System.Drawing.Size(100, 100);
+            this.pic2020s.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic2020s.TabIndex = 2;
+            this.pic2020s.TabStop = false;
+            this.pic2020s.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pic2020s_MouseClick);
+            // 
+            // picFavorites
+            // 
+            this.picFavorites.Cursor = System.Windows.Forms.Cursors.Default;
+            this.picFavorites.Image = global::cPlayer.Properties.Resources.favorites_disabled;
+            this.picFavorites.Location = new System.Drawing.Point(16, 15);
+            this.picFavorites.Name = "picFavorites";
+            this.picFavorites.Size = new System.Drawing.Size(100, 100);
+            this.picFavorites.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picFavorites.TabIndex = 1;
+            this.picFavorites.TabStop = false;
+            this.picFavorites.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picFavorites_MouseClick);
             // 
             // lstPlaylist
             // 
             this.lstPlaylist.AllowDrop = true;
             this.lstPlaylist.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstPlaylist.BackColor = System.Drawing.Color.White;
+            this.lstPlaylist.BackColor = System.Drawing.Color.AliceBlue;
             this.lstPlaylist.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstPlaylist.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colIndex,
@@ -1495,9 +1805,9 @@ namespace cPlayer
             this.lstPlaylist.FullRowSelect = true;
             this.lstPlaylist.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstPlaylist.HideSelection = false;
-            this.lstPlaylist.Location = new System.Drawing.Point(4, 3);
+            this.lstPlaylist.Location = new System.Drawing.Point(4, 358);
             this.lstPlaylist.Name = "lstPlaylist";
-            this.lstPlaylist.Size = new System.Drawing.Size(372, 393);
+            this.lstPlaylist.Size = new System.Drawing.Size(372, 317);
             this.lstPlaylist.TabIndex = 0;
             this.lstPlaylist.UseCompatibleStateImageBehavior = false;
             this.lstPlaylist.View = System.Windows.Forms.View.Details;
@@ -1721,7 +2031,7 @@ namespace cPlayer
             this.returnToPlaylist.ForeColor = System.Drawing.Color.Black;
             this.returnToPlaylist.Name = "returnToPlaylist";
             this.returnToPlaylist.Size = new System.Drawing.Size(163, 22);
-            this.returnToPlaylist.Text = "Return to playlist";
+            this.returnToPlaylist.Text = "Restore Playlist";
             this.returnToPlaylist.Click += new System.EventHandler(this.returnToPlaylist_Click);
             // 
             // batchSongLoader
@@ -1738,51 +2048,22 @@ namespace cPlayer
             this.songLoader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.songLoader_DoWork);
             this.songLoader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.songLoader_RunWorkerCompleted);
             // 
-            // btnClear
+            // picSearch
             // 
-            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClear.ForeColor = System.Drawing.Color.Black;
-            this.btnClear.Location = new System.Drawing.Point(346, 661);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(42, 22);
-            this.btnClear.TabIndex = 6;
-            this.btnClear.Text = "Clear";
-            this.toolTip1.SetToolTip(this.btnClear, "Click to clear your search");
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSearch.ForeColor = System.Drawing.Color.Black;
-            this.btnSearch.Location = new System.Drawing.Point(298, 661);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(42, 22);
-            this.btnSearch.TabIndex = 7;
-            this.btnSearch.Text = "Filter";
-            this.toolTip1.SetToolTip(this.btnSearch, "Click to filter playlist by search term");
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
-            // 
-            // btnGoTo
-            // 
-            this.btnGoTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnGoTo.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGoTo.ForeColor = System.Drawing.Color.Black;
-            this.btnGoTo.Location = new System.Drawing.Point(244, 661);
-            this.btnGoTo.Name = "btnGoTo";
-            this.btnGoTo.Size = new System.Drawing.Size(48, 22);
-            this.btnGoTo.TabIndex = 8;
-            this.btnGoTo.Text = "Go To";
-            this.toolTip1.SetToolTip(this.btnGoTo, "Click to go to next search term");
-            this.btnGoTo.UseVisualStyleBackColor = true;
-            this.btnGoTo.Click += new System.EventHandler(this.btnGoTo_Click);
+            this.picSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picSearch.Image = global::cPlayer.Properties.Resources.search;
+            this.picSearch.Location = new System.Drawing.Point(279, 255);
+            this.picSearch.Name = "picSearch";
+            this.picSearch.Size = new System.Drawing.Size(21, 21);
+            this.picSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picSearch.TabIndex = 10;
+            this.picSearch.TabStop = false;
+            this.toolTip1.SetToolTip(this.picSearch, "Click to search playlist");
+            this.picSearch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picSearch_MouseClick);
             // 
             // PlaybackTimer
             // 
-            this.PlaybackTimer.Interval = 5;
+            this.PlaybackTimer.Interval = 16;
             this.PlaybackTimer.Tick += new System.EventHandler(this.PlaybackTimer_Tick);
             // 
             // songPreparer
@@ -1830,6 +2111,7 @@ namespace cPlayer
             this.playToolStripMenuItem.Name = "playToolStripMenuItem";
             this.playToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.playToolStripMenuItem.Text = "Play";
+            this.playToolStripMenuItem.Click += new System.EventHandler(this.playToolStripMenuItem_Click);
             // 
             // pauseToolStripMenuItem
             // 
@@ -1838,6 +2120,7 @@ namespace cPlayer
             this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
             this.pauseToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.pauseToolStripMenuItem.Text = "Pause";
+            this.pauseToolStripMenuItem.Click += new System.EventHandler(this.pauseToolStripMenuItem_Click);
             // 
             // nextToolStripMenuItem
             // 
@@ -1846,6 +2129,7 @@ namespace cPlayer
             this.nextToolStripMenuItem.Name = "nextToolStripMenuItem";
             this.nextToolStripMenuItem.Size = new System.Drawing.Size(88, 22);
             this.nextToolStripMenuItem.Text = "Next";
+            this.nextToolStripMenuItem.Click += new System.EventHandler(this.nextToolStripMenuItem_Click);
             // 
             // restoreToolStripMenuItem
             // 
@@ -1865,18 +2149,6 @@ namespace cPlayer
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // lblUpdates
-            // 
-            this.lblUpdates.AutoEllipsis = true;
-            this.lblUpdates.BackColor = System.Drawing.Color.White;
-            this.lblUpdates.ForeColor = System.Drawing.Color.Black;
-            this.lblUpdates.Location = new System.Drawing.Point(396, 0);
-            this.lblUpdates.Name = "lblUpdates";
-            this.lblUpdates.Size = new System.Drawing.Size(590, 23);
-            this.lblUpdates.TabIndex = 4;
-            this.lblUpdates.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblUpdates.UseCompatibleTextRendering = true;
-            // 
             // UpdateTimer
             // 
             this.UpdateTimer.Interval = 3000;
@@ -1884,16 +2156,15 @@ namespace cPlayer
             // 
             // txtSearch
             // 
-            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.BackColor = System.Drawing.Color.AliceBlue;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.ForeColor = System.Drawing.Color.Gray;
-            this.txtSearch.Location = new System.Drawing.Point(8, 662);
+            this.txtSearch.Location = new System.Drawing.Point(8, 255);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(230, 20);
+            this.txtSearch.Size = new System.Drawing.Size(265, 20);
             this.txtSearch.TabIndex = 5;
             this.txtSearch.TabStop = false;
-            this.txtSearch.Text = "Type to search playlist...";
+            this.txtSearch.Text = "Search...";
             this.txtSearch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.txtSearch_MouseClick);
             this.txtSearch.EnabledChanged += new System.EventHandler(this.txtSearch_EnabledChanged);
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
@@ -1933,7 +2204,6 @@ namespace cPlayer
             // 
             this.gifTmr.Enabled = true;
             this.gifTmr.Interval = 16;
-            this.gifTmr.Tick += new System.EventHandler(this.gifTmr_Tick);
             // 
             // stageTimer
             // 
@@ -1954,6 +2224,26 @@ namespace cPlayer
             // 
             this.stageKitTimer.Tick += new System.EventHandler(this.stageKitTimer_Tick);
             // 
+            // lblClearSearch
+            // 
+            this.lblClearSearch.AutoSize = true;
+            this.lblClearSearch.BackColor = System.Drawing.Color.Transparent;
+            this.lblClearSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblClearSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblClearSearch.ForeColor = System.Drawing.Color.Red;
+            this.lblClearSearch.Location = new System.Drawing.Point(255, 258);
+            this.lblClearSearch.Name = "lblClearSearch";
+            this.lblClearSearch.Size = new System.Drawing.Size(15, 13);
+            this.lblClearSearch.TabIndex = 9;
+            this.lblClearSearch.Text = "X";
+            this.lblClearSearch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lblClearSearch_MouseClick);
+            // 
+            // documentationToolStripMenuItem
+            // 
+            this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.documentationToolStripMenuItem.Text = "📘 Documentation";
+            // 
             // picVisuals
             // 
             this.picVisuals.AllowDrop = true;
@@ -1961,21 +2251,18 @@ namespace cPlayer
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picVisuals.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.picVisuals.ContextMenuStrip = this.VisualsContextMenu;
             this.picVisuals.Controls.Add(this.lblSections);
-            this.picVisuals.Image = global::cPlayer.Properties.Resources.background;
+            this.picVisuals.Image = global::cPlayer.Properties.Resources.logo;
             this.picVisuals.Location = new System.Drawing.Point(396, 27);
             this.picVisuals.Name = "picVisuals";
-            this.picVisuals.Size = new System.Drawing.Size(590, 654);
-            this.picVisuals.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picVisuals.Size = new System.Drawing.Size(1169, 934);
+            this.picVisuals.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picVisuals.TabIndex = 1;
             this.picVisuals.TabStop = false;
             this.picVisuals.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
             this.picVisuals.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
-            this.picVisuals.Paint += new System.Windows.Forms.PaintEventHandler(this.picVisuals_Paint);
             this.picVisuals.DoubleClick += new System.EventHandler(this.panelVisuals_DoubleClick);
             this.picVisuals.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
-            this.picVisuals.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.picVisuals.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             // 
             // lblSections
@@ -1989,43 +2276,35 @@ namespace cPlayer
             this.lblSections.Location = new System.Drawing.Point(0, 0);
             this.lblSections.Margin = new System.Windows.Forms.Padding(0);
             this.lblSections.Name = "lblSections";
-            this.lblSections.Size = new System.Drawing.Size(590, 20);
+            this.lblSections.Size = new System.Drawing.Size(1169, 20);
             this.lblSections.TabIndex = 2;
             this.lblSections.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSections.UseMnemonic = false;
             this.lblSections.Visible = false;
             // 
-            // changeStageBackground
+            // picFilters
             // 
-            this.changeStageBackground.Name = "changeStageBackground";
-            this.changeStageBackground.Size = new System.Drawing.Size(254, 22);
-            this.changeStageBackground.Text = "Change Stage Background";
-            this.changeStageBackground.Click += new System.EventHandler(this.changeStageBackground_Click);
-            // 
-            // toolStripMenuItem16
-            // 
-            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(251, 6);
-            // 
-            // animatedBackground2
-            // 
-            this.animatedBackground2.Name = "animatedBackground2";
-            this.animatedBackground2.Size = new System.Drawing.Size(199, 22);
-            this.animatedBackground2.Text = "Animated Background";
-            this.animatedBackground2.Click += new System.EventHandler(this.animatedBackground2_Click);
+            this.picFilters.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.picFilters.Image = global::cPlayer.Properties.Resources.filters;
+            this.picFilters.Location = new System.Drawing.Point(309, 255);
+            this.picFilters.Name = "picFilters";
+            this.picFilters.Size = new System.Drawing.Size(79, 21);
+            this.picFilters.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picFilters.TabIndex = 11;
+            this.picFilters.TabStop = false;
+            this.picFilters.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picGenres_MouseClick);
             // 
             // frmMain
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(994, 691);
+            this.BackColor = System.Drawing.Color.AliceBlue;
+            this.ClientSize = new System.Drawing.Size(1573, 971);
             this.Controls.Add(this.picVisuals);
-            this.Controls.Add(this.btnGoTo);
-            this.Controls.Add(this.btnSearch);
-            this.Controls.Add(this.btnClear);
+            this.Controls.Add(this.picFilters);
+            this.Controls.Add(this.picSearch);
+            this.Controls.Add(this.lblClearSearch);
             this.Controls.Add(this.txtSearch);
-            this.Controls.Add(this.lblUpdates);
             this.Controls.Add(this.panelPlaylist);
             this.Controls.Add(this.panelPlaying);
             this.Controls.Add(this.menuStrip1);
@@ -2040,11 +2319,12 @@ namespace cPlayer
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
+            this.LocationChanged += new System.EventHandler(this.frmMain_LocationChanged);
+            this.SizeChanged += new System.EventHandler(this.frmMain_SizeChanged);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstPlaylist_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
             this.Move += new System.EventHandler(this.frmMain_Move);
             this.Resize += new System.EventHandler(this.frmMain_Resize);
@@ -2052,6 +2332,7 @@ namespace cPlayer
             this.menuStrip1.PerformLayout();
             this.VisualsContextMenu.ResumeLayout(false);
             this.panelPlaying.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picSecondScreen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picLoop)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picNext)).EndInit();
@@ -2062,10 +2343,21 @@ namespace cPlayer
             ((System.ComponentModel.ISupportInitialize)(this.picVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picPreview)).EndInit();
             this.panelPlaylist.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picOldies)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1960s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1970s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1980s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic1990s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2000s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2010s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic2020s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFavorites)).EndInit();
             this.PlaylistContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picSearch)).EndInit();
             this.NotifyContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picVisuals)).EndInit();
             this.picVisuals.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picFilters)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2130,7 +2422,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem sortPlaylistByArtist;
         private System.Windows.Forms.ToolStripMenuItem sortPlaylistBySong;
         private System.Windows.Forms.ToolStripMenuItem sortPlaylistByDuration;
-        private System.Windows.Forms.Label lblUpdates;
         private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.ContextMenuStrip VisualsContextMenu;
@@ -2144,7 +2435,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem showLyrics;
         private System.ComponentModel.BackgroundWorker folderScanner;
         private System.Windows.Forms.ToolStripMenuItem openFileLocation;
-        private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem scanForSongsAutomatically;
@@ -2160,8 +2450,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem wii;
         private System.Windows.Forms.ToolStripMenuItem playBGVideos;
         private System.Windows.Forms.ToolStripMenuItem openSideWindow;
-        private System.Windows.Forms.Button btnSearch;
-        private System.Windows.Forms.Button btnGoTo;
         private System.Windows.Forms.ToolStripMenuItem showPracticeSections;
         private System.Windows.Forms.Label lblSections;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
@@ -2186,11 +2474,9 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem viewSongDetails;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem9;
         private System.Windows.Forms.ToolStripMenuItem uploadScreenshots;
-        private ToolStripSeparator toolStripMenuItem10;
         private BackgroundWorker updater;
         private ToolStripMenuItem checkForUpdates;
         private ToolStripMenuItem viewChangeLog;
-        private ToolStripSeparator toolStripMenuItem11;
         private ToolStripMenuItem sortPlaylistByModifiedDate;
         private ToolStripMenuItem displayKaraokeMode;
         private ToolStripMenuItem skipIntroOutroSilence;
@@ -2204,7 +2490,6 @@ namespace cPlayer
         private ToolStripSeparator toolStripMenuItem5;
         private ToolStripMenuItem bandFuse;
         private ToolStripMenuItem powerGig;
-        private ToolStripSeparator toolStripMenuItem12;
         private Timer gifTmr;
         private PictureBox picPlay;
         private PictureBox picStop;
@@ -2243,7 +2528,7 @@ namespace cPlayer
         private ToolStripMenuItem useStrobe;
         private ToolStripMenuItem useFogger;
         private Timer foggerTimer;
-        private ToolStripMenuItem enableBackgroundImage;
+        private ToolStripMenuItem staticBackground2;
         private ToolStripSeparator toolStripMenuItem15;
         private ToolStripMenuItem forceSoloVocals;
         private ToolStripMenuItem forceTwoPartHarmonies;
@@ -2253,6 +2538,37 @@ namespace cPlayer
         private ToolStripMenuItem changeStageBackground;
         private ToolStripSeparator toolStripMenuItem16;
         private ToolStripMenuItem animatedBackground2;
+        private Label lblClearSearch;
+        private PictureBox picFavorites;
+        private PictureBox picOldies;
+        private PictureBox pic1960s;
+        private PictureBox pic1970s;
+        private PictureBox pic1980s;
+        private PictureBox pic1990s;
+        private PictureBox pic2000s;
+        private PictureBox pic2010s;
+        private PictureBox pic2020s;
+        private PictureBox picSearch;
+        private PictureBox picFilters;
+        private ToolStripMenuItem solidColorBackground;
+        private PictureBox picSecondScreen;
+        private ToolStripMenuItem rBStyle;
+        private ToolStripMenuItem useBackgroundVideos;
+        private ToolStripMenuItem useBackgroundImages;
+        private ToolStripMenuItem fullSupportToolStripMenuItem;
+        private ToolStripMenuItem limitedSupportToolStripMenuItem;
+        private ToolStripMenuItem bluetoothAVOffset;
+        private ToolStripMenuItem nautilusToolStripMenuItem;
+        private ToolStripMenuItem setNautilusPath;
+        private ToolStripSeparator toolStripMenuItem12;
+        private ToolStripMenuItem sendToVisualizer;
+        private ToolStripMenuItem sendToFileAnalyzer;
+        private ToolStripMenuItem sendToAudioAnalyzer;
+        private ToolStripMenuItem sendToCONExplorer;
+        private ToolStripMenuItem changeViewToolStrip;
+        private ToolStripMenuItem documentationToolStripMenuItem;
+        private ToolStripMenuItem awesomenessDetection;
+        private ToolStripMenuItem rb4PS4;
     }
 }
 

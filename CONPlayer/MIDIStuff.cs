@@ -5,20 +5,19 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using DevExpress.XtraPrinting.Native.Caching;
 using NAudio.Midi;
 
 namespace cPlayer
 {
     class MIDIStuff
     {
-        private int TicksPerQuarter;
-        private List<TempoEvent> TempoEvents;
-        private List<TimeSignature> TimeSignatures;
+        public int TicksPerQuarter;
+        public List<TempoEvent> TempoEvents;
+        public List<TimeSignature> TimeSignatures;
         private MidiEventCollection MIDIFile;
         public MIDIChart MIDIInfo;
         public MIDIChart MIDI_Chart;
-        private long LengthLong;
+        public long LengthLong;
         private LyricCollection InternalVocals;
         private LyricCollection InternalHarmonies1;
         private LyricCollection InternalHarmonies2;
@@ -475,7 +474,7 @@ namespace cPlayer
                         MIDIInfo.Vocals.NoteRange = MIDIInfo.GetNoteVariety(MIDIInfo.Vocals.ChartedNotes);
                         GetPhraseMarkers(MIDIFile[i], InternalPhrasesVocals);
                         GetInternalLyrics(MIDIFile[i], 0, InternalPhrasesVocals);
-                        MIDIInfo.UsesCowbell = SongUsesCowbell(MIDIFile[i]);
+                        MIDIInfo.UsesPercussion = SongUsesPercussion(MIDIFile[i]);
 
                         //only do this if we have exact match of lyrics and vocal notes
                         var ChartedNotesNoPercussion = new List<MIDINote>();
@@ -660,9 +659,10 @@ namespace cPlayer
             return (from notes in track where notes.CommandCode == MidiCommandCode.NoteOn select (NoteOnEvent) notes into note where note.Velocity > 0 && note.NoteNumber == solo_note let time = GetRealtime(note.AbsoluteTime) let end = GetRealtime(note.AbsoluteTime + note.NoteLength) select new SpecialMarker {MarkerBegin = time, MarkerEnd = end}).ToList();
         }
 
-        private static bool SongUsesCowbell(IEnumerable<MidiEvent> track)
+        private static bool SongUsesPercussion(IEnumerable<MidiEvent> track)
         {
-            return track.Any(midiEvent => midiEvent.CommandCode == MidiCommandCode.MetaEvent && midiEvent.ToString().Contains("[cowbell"));
+            return track.Any(midiEvent => midiEvent.CommandCode == MidiCommandCode.MetaEvent && (midiEvent.ToString().Contains("[cowbell_") 
+            || midiEvent.ToString().Contains("[clap_") || midiEvent.ToString().Contains("[tambourine_")));
         }
 
         private void InternalsToPublics()
@@ -768,7 +768,7 @@ namespace cPlayer
                                 index = i;
                             }
                             collection.Phrases[index].PhraseText = collection.Phrases[index].PhraseText + " " + lyric;
-                            var l = new Lyric { Text = lyric, Start = time, Ticks = vocal_event.AbsoluteTime };
+                            var l = new Lyric { Text = lyric, Start = time, Ticks = vocal_event.AbsoluteTime, DisplayText = ProcessLine(lyric, true)};
                             switch (type)
                             {
                                 case 0:
@@ -908,6 +908,41 @@ namespace cPlayer
                 return "";
             }
         }
+        public string ProcessLine(string line, bool clean)
+        {
+            if (line == null) return "";
+            string newline;
+            if (clean)
+            {
+                newline = line.Replace("$", "");
+                newline = newline.Replace("%", "");
+                newline = newline.Replace("#", "");
+                newline = newline.Replace("^", "");
+                newline = newline.Replace("- + ", "");
+                newline = newline.Replace("+- ", "");
+                newline = newline.Replace("- ", "");
+                newline = newline.Replace(" + ", " ");
+                newline = newline.Replace(" +", "");
+                newline = newline.Replace("+ ", "");
+                newline = newline.Replace("+-", "");
+                newline = newline.Replace("=", "-");
+                newline = newline.Replace("§", "‿");
+                newline = newline.Replace("- ", "-").Trim();
+                if (newline.EndsWith("+", StringComparison.Ordinal))
+                {
+                    newline = newline.Substring(0, newline.Length - 1).Trim();
+                }
+                if (newline.EndsWith("-", StringComparison.Ordinal))
+                {
+                    newline = newline.Substring(0, newline.Length - 1);
+                }
+            }
+            else
+            {
+                newline = line;
+            }
+            return newline.Replace("/", "").Trim();
+        }
 
         private void CheckMIDITrack(IList<MidiEvent> track, MIDITrack instrument, ICollection<int> valid_notes, out List<MIDINote> output, bool isDrums = false)
         {            
@@ -955,7 +990,7 @@ namespace cPlayer
             }
         }
 
-        private double GetRealtime(long absdelta)
+        public double GetRealtime(long absdelta)
         {
             //code by raynebc
             var BPM = 120.0;   //As per the MIDI specification, until a tempo change is reached, 120BPM is assumed
@@ -1119,7 +1154,7 @@ namespace cPlayer
         public MIDITrack Harm2 { get; set; }
         public MIDITrack Harm3 { get; set; }
         public double AverageBPM { get; set; }
-        public bool UsesCowbell { get; set; }
+        public bool UsesPercussion { get; set; }
 
         public List<SpecialMarker> DiscoFlips; 
 
@@ -1146,7 +1181,7 @@ namespace cPlayer
             Harm3.Initialize();
             DiscoFlips = new List<SpecialMarker>();
             AverageBPM = 0.0;
-            UsesCowbell = false;
+            UsesPercussion = false;
         }
 
         public int GetTrackCount()
@@ -1236,8 +1271,8 @@ namespace cPlayer
         public double Start { get; set; }
         public double Duration { get; set; }
         public double End { get; set; }
-
         public long Ticks { get; set; }
+        public string DisplayText { get; set; }
     }
 
     public class MIDINote

@@ -58,7 +58,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.KeyPreview = true;
             this.Name = "SectionSelector";
-            this.Opacity = 0.9D;
+            this.Opacity = 0.95D;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Section Selector";

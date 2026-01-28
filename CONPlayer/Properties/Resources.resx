@@ -118,14 +118,104 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="frostedglasslyrics50black" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglasslyrics50black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_guitar" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_guitar.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="web" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\web.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_black_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_black_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_keysRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_keysRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frostedglasslyrics25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglasslyrics25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="playback" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\playback.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_prokeys_soloRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_prokeys_soloRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2000s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2000s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="gradient" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gradient.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_green_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_green_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="microphone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\microphone.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="oldies_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\oldies_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_b" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_b.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_white_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_white_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_prokeys_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_prokeys_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pickrandom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pickrandom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_y_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_y_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="vocalsbg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\vocalsbg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frostedglass25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglass25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="palette" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\palette.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="icon_stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="vol_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\vol_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="drums_cymbal_g_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_g_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dice-trippy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dice-trippy.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="note_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_guitar_soloRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_guitar_soloRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fadein3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fadein3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1990s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1990s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="hitbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hitbox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_loop_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_loop_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_loop_disabled1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_loop_disabled1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="hitbox_drums" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hitbox_drums.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="cowbellb" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -464,23 +554,230 @@
         z//dBvkiYXihwZiLzhU+9jOHnp9VzurnX2eQ/w/82JFAmquwFAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="icon_shuffle_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_shuffle_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="note_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_overdrive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_shuffle_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_shuffle_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="prokeyschord" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\prokeyschord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="favorites_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\favorites_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="favorites_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\favorites_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pianokeys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pianokeys.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="glow3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\glow3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_keys_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_keys_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_orange_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_orange_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frostedglass75dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglass75dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="needle_harm3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\needle_harm3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="quickstart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\quickstart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_y" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_y.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_guitarRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_guitarRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="hitbox_5lane" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hitbox_5lane.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="hitbox_vocals" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\hitbox_vocals.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="vol_bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\vol_bg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="vol_slider" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\vol_slider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="needle_harm1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\needle_harm1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="karaoke_outro" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\karaoke_outro.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_b_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_b_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="genres" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\genres.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="keyboard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\keyboard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="fadeout3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\fadeout3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_yellow_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_yellow_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_keys_soloRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_keys_soloRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon_speaker" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_speaker.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="loadingnew_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\loadingnew_small.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="_1970s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1970s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icon_loop_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_loop_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="splashscreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\splashscreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_white_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_white_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_red_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_red_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_black_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_black_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1960s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1960s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2020s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2020s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="needle_harm2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\needle_harm2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_orange_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_orange_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_yellow_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_yellow_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1980s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1980s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_white_od_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_white_od_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2000s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2000s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_orange" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_orange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="oldies_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\oldies_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="doublescreen_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\doublescreen_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frostedglass75" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglass75.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_green_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_green_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_blue_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frostedglass50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglass50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XK0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XK0.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="background_bass_soloRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_bass_soloRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2010s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2010s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1970s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1970s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="troubleshooting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\troubleshooting.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_prokeys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_prokeys.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_yellow_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_yellow_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_green_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_green_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1990s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1990s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="icon_next" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon_next.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XK6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XK6.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="note_blue_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_red_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_red_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="search" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XK2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XK2.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="background_bass" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_bass.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XK4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XK4.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="background_drumsRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_drumsRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2010s_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2010s_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_shuffle_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_shuffle_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="welcome" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\welcome.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_1960s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1960s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_bassRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_bassRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cowbella" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -658,175 +955,103 @@
         BvUJg8ooIf+TjUf+D4ynvshIJS+qAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="icon_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="vol_slider" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\vol_slider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icon_loop_disabled1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icon_loop_disabled1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="noart3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\noart3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="drums_cymbal_b" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\drums_cymbal_b.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="drums_cymbal_g" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\drums_cymbal_g.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="drums_cymbal_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\drums_cymbal_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="drums_cymbal_y" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\drums_cymbal_y.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_black_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_black_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_white" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_white_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_white_od.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_orange" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_orange.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_bass" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_bass.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_bass_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_bass_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_drums" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_drums.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_drums_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_drums_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_guitar" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_guitar.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_guitar_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_guitar_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_keys" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_keys.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_keys_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_keys_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_prokeys" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_prokeys.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background_prokeys_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_prokeys_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="hitbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hitbox.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="hitbox_vocals" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hitbox_vocals.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_yellow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_yellow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frostedglass50" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frostedglass50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frostedglasslyrics25" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frostedglasslyrics25.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="prokeyschord" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\prokeyschord.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_blue_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_blue_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_green_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_green_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_od" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_overdrive.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="note_orange_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_orange_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="note_red_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_red_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="note_overdrive_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\note_overdrive_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="note_red_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_red_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="doublescreen_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\doublescreen_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="note_yellow_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\note_yellow_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="note_black" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="karaoke_outro" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\karaoke_outro.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="background_guitar_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_guitar_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="fadein3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fadein3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="note_black_od_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_black_od_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="fadeout3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\fadeout3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="glow3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\glow3.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frostedglass75" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frostedglass75.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frostedglasslyrics50black" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frostedglasslyrics50black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="frostedglasslyrics50white" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\frostedglasslyrics50white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="textbg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\textbg.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="frostedglasslyrics75" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\frostedglasslyrics75.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="XK0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XK0.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="note_overdrive_hopo_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_overdrive_hopo_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="XK1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XK1.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="loadingnew_small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loadingnew_small.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="XK2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XK2.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="_1980s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1980s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_2020s_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2020s_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_shuffle_enabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon_shuffle_enabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_bass_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_bass_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_blue_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_blue_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="default_art" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\default_art.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_keys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_keys.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="XK3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XK3.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="XK4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XK4.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="background_drums_solo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_drums_solo.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="XK5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XK5.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="XK6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\XK6.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="background_drums" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_drums.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_g" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_g.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="frostedglasslyrics85black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\frostedglasslyrics85black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_orange_hopo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_orange_hopo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="monitor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\monitor.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="XK1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XK1.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="frostedglasslyrics50white" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\frostedglasslyrics50white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_prokeysRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_prokeysRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="background_drums_soloRB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\background_drums_soloRB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="drums_cymbal_od_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\drums_cymbal_od_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="note_overdrive_glow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\note_overdrive_glow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="filters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\filters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

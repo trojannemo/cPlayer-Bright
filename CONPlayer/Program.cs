@@ -23,6 +23,10 @@ namespace cPlayer
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            using (var splash = new frmSplash())
+            {
+                splash.ShowDialog(); // blocks until splash closes after fade out
+            }
             Application.Run(new frmMain());
         }
 

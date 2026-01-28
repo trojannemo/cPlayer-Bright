@@ -73,7 +73,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>new_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -96,6 +96,9 @@
     <Reference Include="DevExpress.Utils.v23.2, Version=23.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraEditors.v23.2, Version=23.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MidiCS">
+      <HintPath>bin\Debug\bin\MidiCS.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio.Midi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\NAudio.Midi.dll</HintPath>
@@ -133,28 +136,61 @@
     <Compile Include="AudioSelector.Designer.cs">
       <DependentUpon>AudioSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="BTAVSync.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BTAVSync.Designer.cs">
+      <DependentUpon>BTAVSync.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChangeLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangeLog.Designer.cs">
+      <DependentUpon>ChangeLog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChartToRockBandMidi.cs" />
     <Compile Include="DevIL.cs" />
     <Compile Include="FNFParser.cs" />
+    <Compile Include="frmGenres.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmGenres.Designer.cs">
+      <DependentUpon>frmGenres.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmHelpHub.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHelpHub.Designer.cs">
+      <DependentUpon>frmHelpHub.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmHover.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmHover.Designer.cs">
+      <DependentUpon>frmHover.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSettings.Designer.cs">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSplash.Designer.cs">
+      <DependentUpon>frmSplash.cs</DependentUpon>
+    </Compile>
     <Compile Include="gifOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="gifOverlay.Designer.cs">
       <DependentUpon>gifOverlay.cs</DependentUpon>
     </Compile>
-    <Compile Include="HelpForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HelpForm.designer.cs">
-      <DependentUpon>HelpForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="ImageHeaders.cs" />
-    <Compile Include="KaraokeOverlayForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="KaraokeOverlayForm.Designer.cs">
-      <DependentUpon>KaraokeOverlayForm.cs</DependentUpon>
-    </Compile>
+    <Compile Include="libForgeDTA.cs" />
+    <Compile Include="libForgeMidi.cs" />
+    <Compile Include="libForgeTexture.cs" />
     <Compile Include="LyricSelector.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,6 +210,9 @@
       <DependentUpon>MIDISelector.cs</DependentUpon>
     </Compile>
     <Compile Include="MIDIStuff.cs" />
+    <Compile Include="OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PopOutScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -191,6 +230,12 @@
     </Compile>
     <Compile Include="SectionSelector.Designer.cs">
       <DependentUpon>SectionSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SongDetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SongDetailsForm.Designer.cs">
+      <DependentUpon>SongDetailsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StageKit\GamePad.cs" />
     <Compile Include="StageKit\LedColor.cs" />
@@ -239,18 +284,33 @@
     <EmbeddedResource Include="AudioSelector.resx">
       <DependentUpon>AudioSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BTAVSync.resx">
+      <DependentUpon>BTAVSync.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChangeLog.resx">
+      <DependentUpon>ChangeLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmGenres.resx">
+      <DependentUpon>frmGenres.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHelpHub.resx">
+      <DependentUpon>frmHelpHub.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmHover.resx">
+      <DependentUpon>frmHover.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmSettings.resx">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSplash.resx">
+      <DependentUpon>frmSplash.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="gifOverlay.resx">
       <DependentUpon>gifOverlay.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HelpForm.resx">
-      <DependentUpon>HelpForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KaraokeOverlayForm.resx">
-      <DependentUpon>KaraokeOverlayForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LyricSelector.resx">
       <DependentUpon>LyricSelector.cs</DependentUpon>
@@ -279,6 +339,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SectionSelector.resx">
       <DependentUpon>SectionSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SongDetailsForm.resx">
+      <DependentUpon>SongDetailsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ToastNotification.resx">
       <DependentUpon>ToastNotification.cs</DependentUpon>
@@ -333,7 +396,87 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
+    <Content Include="new_icon.ico" />
+    <None Include="Resources\filters.png" />
+    <None Include="Resources\textbg.jpg" />
+    <None Include="Resources\frostedglass25.png" />
+    <None Include="Resources\needle_harm3.png" />
+    <None Include="Resources\needle_harm2.png" />
+    <None Include="Resources\needle_harm1.png" />
+    <None Include="Resources\hitbox_5lane.png" />
+    <None Include="Resources\hitbox_drums.png" />
+    <None Include="Resources\pianokeys.png" />
+    <None Include="Resources\welcome.png" />
+    <None Include="Resources\quickstart.png" />
+    <None Include="Resources\playback.png" />
+    <None Include="Resources\microphone.png" />
+    <None Include="Resources\monitor.png" />
+    <None Include="Resources\palette.png" />
+    <None Include="Resources\keyboard.png" />
+    <None Include="Resources\troubleshooting.png" />
+    <None Include="Resources\web.png" />
+    <None Include="Resources\splashscreen.png" />
+    <None Include="Resources\logo.png" />
+    <None Include="Resources\frostedglass75dark.png" />
+    <None Include="Resources\note_white_od_glow.png" />
+    <None Include="Resources\note_white_glow.png" />
+    <None Include="Resources\note_black_od_glow.png" />
+    <None Include="Resources\note_black_glow.png" />
+    <None Include="Resources\drums_cymbal_y_glow.png" />
+    <None Include="Resources\drums_cymbal_od_glow.png" />
+    <None Include="Resources\drums_cymbal_g_glow.png" />
+    <None Include="Resources\drums_cymbal_b_glow.png" />
+    <None Include="Resources\note_yellow_hopo_glow.png" />
+    <None Include="Resources\note_red_hopo_glow.png" />
+    <None Include="Resources\note_overdrive_hopo_glow.png" />
+    <None Include="Resources\note_orange_hopo_glow.png" />
+    <None Include="Resources\note_green_hopo_glow.png" />
+    <None Include="Resources\note_blue_hopo_glow.png" />
+    <None Include="Resources\note_yellow_glow.png" />
+    <None Include="Resources\note_red_glow.png" />
+    <None Include="Resources\note_overdrive_glow.png" />
+    <None Include="Resources\note_orange_glow.png" />
+    <None Include="Resources\note_green_glow.png" />
+    <None Include="Resources\note_blue_glow.png" />
+    <None Include="Resources\background_prokeysRB.png" />
+    <None Include="Resources\background_prokeys_soloRB.png" />
+    <None Include="Resources\background_keysRB.png" />
+    <None Include="Resources\background_keys_soloRB.png" />
+    <None Include="Resources\background_guitarRB.png" />
+    <None Include="Resources\background_guitar_soloRB.png" />
+    <None Include="Resources\background_drumsRB.png" />
+    <None Include="Resources\background_drums_soloRB.png" />
+    <None Include="Resources\background_bassRB.png" />
+    <None Include="Resources\background_bass_soloRB.png" />
+    <None Include="Resources\vocalsbg.png" />
+    <None Include="Resources\settings.png" />
+    <None Include="Resources\doublescreen_enabled.png" />
+    <None Include="Resources\doublescreen_disabled.png" />
+    <None Include="Resources\background_new.jpg" />
+    <None Include="Resources\default_art.png" />
+    <None Include="Resources\pickrandom.png" />
+    <None Include="Resources\gradient.png" />
+    <None Include="Resources\genres.png" />
+    <None Include="Resources\mystery.png" />
+    <None Include="Resources\search.png" />
+    <None Include="Resources\oldies_enabled.png" />
+    <None Include="Resources\oldies_disabled.png" />
+    <None Include="Resources\favorites_enabled.png" />
+    <None Include="Resources\favorites_disabled.png" />
+    <None Include="Resources\2020s_enabled.png" />
+    <None Include="Resources\2020s_disabled.png" />
+    <None Include="Resources\2010s_enabled.png" />
+    <None Include="Resources\2010s_disabled.png" />
+    <None Include="Resources\2000s_enabled.png" />
+    <None Include="Resources\2000s_disabled.png" />
+    <None Include="Resources\1990s_enabled.png" />
+    <None Include="Resources\1990s_disabled.png" />
+    <None Include="Resources\1980s_enabled.png" />
+    <None Include="Resources\1980s_disabled.png" />
+    <None Include="Resources\1970s_enabled.png" />
+    <None Include="Resources\1970s_disabled.png" />
+    <None Include="Resources\1960s_enabled.png" />
+    <None Include="Resources\1960s_disabled.png" />
     <None Include="Resources\karaoke_bg.png" />
     <None Include="Resources\frostedglasslyrics85black.png" />
     <None Include="Resources\frostedglasslyrics50white.png" />

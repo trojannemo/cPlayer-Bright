@@ -90,13 +90,11 @@ namespace cPlayer
             // radioKaraoke
             // 
             this.radioKaraoke.AutoSize = true;
-            this.radioKaraoke.Checked = true;
             this.radioKaraoke.Cursor = System.Windows.Forms.Cursors.Hand;
             this.radioKaraoke.Location = new System.Drawing.Point(68, 20);
             this.radioKaraoke.Name = "radioKaraoke";
             this.radioKaraoke.Size = new System.Drawing.Size(65, 17);
             this.radioKaraoke.TabIndex = 2;
-            this.radioKaraoke.TabStop = true;
             this.radioKaraoke.Text = "Karaoke";
             this.radioKaraoke.UseVisualStyleBackColor = true;
             this.radioKaraoke.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radioStatic_MouseUp);
@@ -104,11 +102,13 @@ namespace cPlayer
             // radioScrolling
             // 
             this.radioScrolling.AutoSize = true;
+            this.radioScrolling.Checked = true;
             this.radioScrolling.Cursor = System.Windows.Forms.Cursors.Hand;
             this.radioScrolling.Location = new System.Drawing.Point(139, 20);
             this.radioScrolling.Name = "radioScrolling";
             this.radioScrolling.Size = new System.Drawing.Size(65, 17);
             this.radioScrolling.TabIndex = 1;
+            this.radioScrolling.TabStop = true;
             this.radioScrolling.Text = "Scrolling";
             this.radioScrolling.UseVisualStyleBackColor = true;
             this.radioScrolling.MouseUp += new System.Windows.Forms.MouseEventHandler(this.radioStatic_MouseUp);
@@ -228,10 +228,11 @@ namespace cPlayer
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LyricSelector";
+            this.Opacity = 0.95D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Lyrics settings:";
+            this.Text = "Lyrics Settings";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LyricSelector_FormClosing);
             this.Shown += new System.EventHandler(this.LyricSelector_Shown);

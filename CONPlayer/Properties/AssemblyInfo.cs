@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("cPlayer")]
-[assembly: AssemblyDescription("Music player for Rock Band (and other game) songs")]
+[assembly: AssemblyDescription("Music player for Rock Band (and other rhythm game) songs")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("cPlayer - The Rock Band Music Player")]
-[assembly: AssemblyCopyright("Copyright © TrojanNemo, 2014-2025")]
+[assembly: AssemblyProduct("cPlayer - The Rhythm Game Music Player")]
+[assembly: AssemblyCopyright("Copyright © TrojanNemo, 2014-2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.1.1.0")]
-[assembly: AssemblyFileVersion("5.1.1.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.0.0")]

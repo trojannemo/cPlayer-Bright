@@ -1,0 +1,332 @@
+v6.0.0
+
+- Significant UI changes in my never-ending attempt to modernize cPlayer with my limited UX skills
+- Added RB Style visual display to show the game charts in a look similar to that of Rock Band (this is not a game engine!) - backgrounds can be remove/edited/supplemented in /res/backgrounds - must be .jpg or .png and I recommend 2000 pixels wide
+- Significantly improved the quality of video playback for Clone Hero and Phase Shift files that  contain a video file - the RB Style charts can be displayed over the video along with all three karaoke style displays
+- Added Favorites feature where cPlayer will now keep track of how often you play songs and if you click on the Favorites button it will show you your top 20 songs (assuming you've played at least 20 songs)
+- Added ability to filter by decades - click on the decade icon you'd like to filter your Playlist by and only songs from that decade will be displayed
+- Added ability to filter by genre - click on the Genres icon and select one or multiple genres and click Apply Filter to narrow your songs to only those containing the selected genres
+- Added stroke to the lyrics in Classic Karaoke mode for a more polished look
+- Added option to use solid color (with an elegant gradient) background for Classic Karaoke mode
+- Added lead-in indicator when there's a gap between phrases so the singer knows when to start singing in Classic Karaoke mode
+- Fixed behavior that would constantly change the background image on Classic Karaoke mode when pausing/resuming/changing audio tracks/etc - now only changes when the song changes
+- Improved Insta-Mix by adding genre families and allowing multiple songs from the same seed artist even if the genre is different (for artists that cross genres)
+- Significant improvements to the Active Song Details display - now it look better, and also allows you to copy the information and allows you to navigate to the song file wherever it is in your hard drive
+- Added option to select No Keys and No Vocals in the MIDI options - before you had to select either Keys or Pro Keys and Harmonies or Vocals - but couldn't opt for neither of them - now you can
+- Significantly improved performance for all display styles that show scrolling lyrics
+- Added option to display lyrics in static and karaoke mode for Rock Band style karaoke mode
+- Added Nautilus integration (limited to when using Rock Band / CON files for now) - can send to Visualizer and CON Explorer - will automatically be able to send to File Analyzer and Audio Analyzer after upcoming update to Nautilus
+- Fixed broken Play, Pause and Next buttons in the tray icon when cPlayer is minimized
+- Added tool to allow the user to add an AV offset value to compensate for Bluetooth headset lag - now can specify your Bluetooth latency and have it play in sync even with Bluetooth headphones - my Sony headphones have 250ms latency, but you can experiment up to 3000ms in real time to find the latency value that works for your equipment
+- Added splashscreen, removed old logo image, changed program icon
+- Many other random under-the-hood improvements
+
+----------
+
+v5.1.1
+
+- Improved highlighting behavior when using Classic Karaoke mode so it should no longer "go over" to the next syllable
+- Improved behavior so now next lyrics will appear up to 1.5 seconds earlier than you're supposed to sing them so you're not mumbling through the first word or two (this is dependent on the song)
+
+----------
+
+v5.1.0
+
+- Added Second Screen option so you can use cPlayer with multiple display set ups - one screen acts as the controller and the other one displays the charts (click and hold to drag, drag to the right screen, double click to maximize, double click again to minimize)
+- Now can choose to force displaying of PART VOCALS instead of harmonies on Classic Karaoke mode
+- Now can choose to force displaying of PART 1 and PART 2 harmonies only (ignoring PART 3) on Classic Karaoke mode
+- Now displays background image by default on Classic Karaoke mode - can be disabled and can also be rotated through 5 presets (you can replace with your own)
+- Now supports animated background for Classic Karaoke like how it was introduced with Rock Band Karaoke
+- Many other improvements to how Classic Karaoke works
+- Completely reworked how the Stage Kit is used - no more per instrument note-specific usage, which was resource intensive and not very fun anyways - now it's randomized but based on song BPM (this is still a work in progress)
+- Stage Kit now works outside of the Game Mode displays, should work no matter what mode you're in
+- Added option to enable/disable use of the Stage Kit LEDs, strobe light and fogger, so you can use what you want and not anything that you don't want
+- Eliminated SlimDX in favor of Vortice.XInput due to changes with recent Windows 11 updates breaking compatibility with X360 peripherals (the Stage Kit in this case)
+
+----------
+
+DEVELOPMENT FOR DARK EDITION HAS ENDED AS OF v4.0.3 - I've poured too much time and energy into BRIGHT EDITION to keep them both updated while having different code bases
+CPLAYER BRIGHT EDITION IS NOW SIMPLY CPLAYER AND WILL BE THE ONLY VERSION WITH FUTURE DEVELOPMENT
+
+v5.0.0
+- Added Classic Karaoke Mode (right click on the display screen -> Display: Karaoke Mode -> Classic Karaoke) - supports up to three vocal parts - is a much closer approximation to classic karaoke look and behavior than the old mode which has now been renamed as cPlayer Karaoke - you can customize all colors to your liking or keep the defaults
+- Added Rock Band Karaoke Mode (right click on the display screen -> Display: Karaoke Mode -> Rock Band Karaoke) - simulates the Rock Band vocals experience as best as I can without having a proper game engine - thanks to StackOverflow0x for the idea
+- Added support for playback of Clone Hero .chart files - this is an early feature so some things might be broken - let me know
+- Added option to enlarge whatever is playing to full screen by double clicking on the display screen, double click again or press Escape to go back
+- Changed "Save" buttons to "Close" in the option screens to make it clear that was their function - thanks to StackOverflow0x for the suggestion
+- Changed all instances of "...do you want to do that?" to be more clear as to what the user was about to do - thanks to StackOverflow0x for the suggestion
+- Changed default behavior for Play button - now when you throw a song file at cPlayer and press play it will automatically default to the first file in your playlist if you have nothing selected, or it will play the selected song if you have one selected, this eliminates the need to double click on the playlist but that still works - thanks to StackOverflow0x for the suggestion
+- Fixed bug when rebuilding playlist metadata it would not calculate average BPM so that information would be lost from the playlist
+- Fixed GUI bug/design issue where Pro Keys/Keys and Harmonies/Vocals were mutually exclusive options in the MIDI options screen but it appeared as if they weren't - thanks to StackOverflow0x for the suggestion
+- Fixed audio bug that would happen with 7 channel songs where channels would not be distributed correctly - thanks to StackOverflow0x for pointing out the issue
+- Fixed broken playback of YARG .yargsong and Clone Hero .sng files
+- Fixed wonky playback of Fortnite Festival .fnf/.m4a files
+- Fixed broken Play Next feature
+- Many other under the hood fixes and improvements
+
+----------
+
+v4.0.3
+
+- Added option to select background color, lyric color and highlight color when using Karaoke Mode
+- Added option to Rebuild Playlist (metadata + audio) which will not only scan and update the playlist metadata but will also scan the .mogg files and use the actual audio length for the duration - thereby fixing songs that do not have duration in their DTA files - this is a slow process but it seems to be accurate
+
+----------
+
+v4.0.2
+
+- Changed video player from WMP to VLC, more modern and should work on Linux via WINE
+- Fixed issue where the player would hang at the end of the song if there was only one song in your playlist and you had Shuffle Songs enabled
+- Added support for custom author name colors (mainly a Clone Hero thing)
+- Fixed reading of crazy track number values from bad Clone Hero .ini files
+- Fixed playback of songs with exactly eight channels where channels would be mixed up and you would not be able to isolate them correctly with multitrack songs
+- [BRIGHT EDITION ONLY] HOPOs are here! - when playing in Game Style mode, HOPOs will be displayed for BASS and GUITAR charts where appropriate
+- [BRIGHT EDITION ONLY] Fixed behavior where Game Mode instrument charts would leave empty vertical space to allow for non existing vocal tracks in instrumentals
+
+----------
+
+v4.0.1
+- Fixed broken compatibility with songs that use .ini metadata files introduced in the big v4.0.0 update
+- [BRIGHT EDITION ONLY] Fixed bug where on Game Style mode orange and green notes were flipped
+- [BRIGHT EDITION ONLY] Changed behavior of how play/pause/stop buttons work to eliminate bug where you would have to click on pause twice before it would pause
+
+----------
+
+v4.0.0
+BRIGHT EDITION IS HERE!
+I was told cPlayer could use a more modern UI and more recognizable buttons rather than rectangles that told you what they did. So I took this to heart and went to work. This is the outcome. I really like it and I hope you do too.
+For now Bright Edition and Dark Edition have feature parity with the exception of the one feature mentioned below, but I believe in the not-too-distant future I might just drop the Dark Edition and work exclusively on Bright Edition.
+Both editions have their own Github repositories, so anyone can clone the Dark Edition repo and keep working on it when I stop.
+
+(BRIGHT EDITION EXCLUSIVE) Added Game Style mode that displays the song's MIDI contents in a form inspired by Rock Band 3 - I do not have a 3D engine and this is not a YARG/Clone Hero competitor, this is simply a visualization tool, but I think this one is a major improvement over the 10-year old MIDI display mode (still there) - both modes are bottlenecked by WinForms limitations but i'm too far in to change platforms. I'll continue to work on streamlining and improving performance in the future.
+
+NEW FEATURES, BUG FIXES AND IMPROVEMENTS TO BOTH EDITIONS
+- Added limited Stage Kit support during playback of songs with MIDI files - enable Stage Kit on the Instruments menu, select the controller slot that your Stage Kit is occupying, click on the instrument name of the instrument that you want cPlayer to use to control the LEDs (all) and the strobe (drums only) - fogger is not currently integrated because I couldn't think of a use case for it, i'm open to ideas
+- Added microphone passthrough feature for a more genuine karaoke experience - your microphone must be recognized by Windows as a universal audio device - click on "My microphone isn't listed!" on the Microphone Control form for instructions on how to make your USB microphone work if it's not working right off the bat
+- Added support for Fortnite Festival files using the custom .fnf metadata format and the original .m4a audio - a little wonky for now but it "works"
+- Added support for YARG .yargsong format
+- Added support for playing back videos when using YARG's exCON format (video must be where the .mid and .mogg files are - see previous release notes for supported video file name and formats, also supported in the more command Clone Hero/YARG folder structure)
+- Changed Karaoke Mode behavior so when it shows you one whole word at a time, it colors it progressively as the word is being sung, similarly to how it also colors the current phrase being sung
+- Added support for playing Karaoke Mode lyrics over video if the song has both a video file present and Vocals charted
+- Added ability to display unpitched vocals properly
+- Fixed compatibility issue with RB4-to-RB2 special DTAs files that would lead to the songs not loading or loading with wrong data
+- Fixed behavior when scanning for CON files it would encounter a file with permission restrictions and it would fail the entire scan instead of skipping the problem file
+- Fixed behavior when scanning a folder and there are no target files found, cPlayer would get stuck on loading and you couldn't do anything or exit the program
+- Many other bug fixes and significant code improvements as I was going through integrating the above
+
+----------
+
+NOTE: CPLAYER HAS MIGRATED FROM NET FRAMEWORK 4.0 TO 4.8.1. ALSO ALL AUDIO PROCESSING DEPENDENCIES WERE UPDATED TO MOST RECENT (BASS, BASS.NET, BASS ADD-ONS)
+NOTHING SHOULD CHANGE FOR YOU BUT IF YOU NOTICE ANYTHING WEIRD OR BROKEN PLEASE LET ME KNOW ASAP
+
+v3.0.0
+- Added support for YARG songs (songs.dta format with .mogg or .yarg_mogg audio files, as well as song.ini format)
+- Added support for new Clone Hero SNG file format
+- Added support for .opus audio files when using a Clone Hero playlist
+- Improved support for YARG and Clone Hero background videos when using song.ini format (now supports background.avi, video.mp4, video.webm, bg.mp4 and bg.webm)
+- Added support for Fornite Festival songs using the custom .fnf file format and .opus audio - either one single song.opus multitrack file or individual drums/bass/guitar/vocals/song .opus tracks - original .m4a format is currently not supported so make sure the audio files are in .opus format
+- Added support for PlayStation 3 PKG file format (still supports PlayStation 3 songs.dta format)
+- Added limited support (audio, limited metadata, audio spectrum) for GHWT:DE song.ini file format with FSB.XEN audio
+- Added limited support (album art, multitrack audio, very limited metadata, audio spectrum) for BandFuse LIVE file format with CLT audio
+- Added limited support (multitrack audio, limited metadata, audio spectrum) for Power Gig file format
+- Added limited support (album art, audio, limited metadata, audio spectrum) for Rocksmith 2014 PSARC file format
+- Fixed bug where uploading screenshot to Imgur would not work because of the changeover to https
+- Fixed small bug where sometimes there would be an error processing the keys audio tracks
+- Several changes throughout the code to improve performance
+
+----------
+
+v2.5.0
+- Fixed bug where some songs created with Onyx would have tracks swapped when selecting which tracks to play
+- Improved displaying of Spanish lyrics that used the § symbol, to more closely resemble how it shows up in game
+- Under the hood improvements and fixes that you probably won't notice but were necessary
+
+----------
+
+v2.4.0
+- Now detects intro/outro silence for Phase Shift songs in advance like it does for the consoles (i.e. less waiting for the song to start)
+- Added tool to rebuild the metadata for the songs in your playlist (this is helpful if you add instruments or if you modify the attenuation levels or any other metadata to a song already in your playlist) - click on Playlist -> Rebuild playlist metadata
+- Karaoke Mode will now scale better in resolutions higher than 1080p (i.e. larger words, easier to read in a 4K TV)
+- Improved video playback for Phase Shift songs
+- Improved extracting and reading of DTA and MOGG files for increased speed and reduced hard drive usage - thanks to Maxton for the suggestion and code sample
+- Fixed broken playback of encrypted PS3 audio files
+- Fixed bug where sometimes audio would switch to the next song when changing the audio tracks to play
+- Fixed bug where last playlist path would be lost in very specific scenarios
+- Many other minor bug fixes and several minor visual tweaks
+
+----------
+
+v2.3.0
+- Improved method of displaying MIDI visuals/karaoke mode/audio spectrums so there should be no more flickering
+- The poorly implemented 'crossfading' option is now replaced with the option to skip silent (or very low volume) intros and outros
+- Removed quite a bit of unnecessary fluff 'features' that were not being used in an effort to streamline the code
+- Improved and tweaked a few things
+
+----------
+
+v2.2.2
+- Added Karaoke Mode! See Help for more information if it's not ridiculously easy to use
+- Added ability to sort playlist by date modified (i.e. show the newest released/modified songs on top)
+- Now displays toms and cymbals differently, rather than showing everything as toms with tom markers on top
+- Improved detection of disco flip use
+- Fixed bug where adding songs to the playlist while having an active search term would cause data loss in the playlist
+- Few other minor bug fixes and improvements
+
+----------
+
+v2.2.1
+- Now displays drum charts using disco flip correctly
+- Song information now displays whether the playing song uses disco flips
+- Added ability to both automatically and manually check for future updates
+- Fixed broken Looping feature - now you can listen to Taylor Swift on repeat and just shake it off until your ears bleed
+- Fixed bug that would draw an empty space for Pro Keys (but not display anything) when a song had Rhythm on Keys and fake Pro Keys 'charted'
+- Fixed bug that would sometimes cause a crash if you pressed the Escape key
+- Fixed bug where the song details for some songs would indicate the song had Pro Keys when it didn't
+- Few other under the hood improvements and tweaks
+
+----------
+
+v2.2.0
+- Added feature to select a song at random - just click on the die picture when visible and cPlayer will select a song at random and start playing it
+- Added drawing of vocal/harmony slides - might be rough but should be decent enough
+- Added option to specify whether to display Pro Keys or 5-lane Keys MIDI visuals
+- Added option to specify whether to display Harmonies or PART VOCALS MIDI visuals
+- Added option to draw Pro Keys as black and white keys instead of showing the REAPER colors
+- Added option to force PART VOCALS to use the Harm1 color instead of the REAPER colors
+- Added ability to display all the detailed information that cPlayer has on a selected song - click on Playlist -> View selected song details or press Ctrl + I - more information is displayed if the selected song is the same song that is currently playing
+- Added option to upload screenshots to Imgur
+- Improved displaying of note names for Pro Keys, Harmonies and Vocals - no more ridiculously oversized text when only displaying Pro Keys or Harmonies/Vocals MIDI visuals and a font that is easier to read
+- Changed track background color during solos to one that is easier on the eyes
+- Changed track background colors for easier viewing of black and white Pro Keys and some other note colors
+- Fixed bug where pressing Next would sometimes play the audio from the previous song
+- Fixed bug where if you had selected to 'Display album art' and the song didn't have it, when going to the next song it would get stuck with both 'Display album art' and 'Display audio spectrum' options enabled
+- Fixed bug where the note range for PART VOCALS was always the same as the note range for harmonies
+- Fixed bug where selecting random colors would not change the color of PART VOCALS or Harmonies charts
+- Fixed bug where song's average BPM wasn't being read from the .playlist file
+- Some under the hood improvements
+
+----------
+
+v2.1.5
+- Added support for drag/dropping of song.ini files to add Phase Shift songs to your Playlist
+- Fixed playback of songs with certain amount of channels that would result in the wrong channels being assigned to each instrument track
+- Fixed displaying of guitar chart in Phase Shift songs with COOP GUITAR charts that would mix both guitar charts at once (COOP GUITAR is ignored)
+- Fixed bug that would cause an error if you only had one song in the playlist and then deleted that song
+
+----------
+
+v2.1.4
+- Minor bug fixes
+
+----------
+
+v2.1.3
+- Can now switch between playlists for different consoles without having to first change the console yourself
+- Shaved about 90KB off the executable with some code improvements
+
+----------
+
+v2.1.2
+- Added ability to expand cPlayer to full screen (i.e. maximize button is enabled now)
+- Added initial support for playing of background videos for Phase Shift songs that have them (your experience may vary!) - Click on Options -> Play background videos to enable or disable
+- Added option to highlight instrument track during solos - can be enabled/disabled under Options -> MIDI display settings
+- Added ability to see all practice sessions by right-clicking on the time line - click on any practice session to skip to it
+- Added ability to take a screenshot of the visualization panel by pressing F12 - find the screenshots in the \Screenshots\ directory
+- Expanded (theoretical) maximum amount of songs to 999,999 entries and adjusted code to display their numbering correctly
+- Improved behavior when dealing with Phase Shift, Wii and PS3 files to move only the necessary files and load the rest from their location - should fix some of the reported errors and save some time when processing those songs
+- Added support for non-standard (Rock Band) genres - mostly beneficial to Phase Shift users
+- Added detailed logging of most steps - stored under the installation directory, log.txt - click Help -> Open log file to open log.txt with your default text editor
+- Improved error notifications for when loading a playlist causes an error - should make it easier to track down problem song(s)
+- Various bug fixes and improvements
+
+----------
+
+v2.1.1
+- Added support for Phase Shift songs that use GH1 MIDI files that use 'T1 GEMS' instead of 'PART GUITAR' for the guitar chart
+- Added support for Phase Shift songs that use delay values in the song.ini file to sync the audio to the MIDI file
+- Added check for old Phase Shift songs that used a JPG image for album art with the PNG extension
+- Fixed bug that would fail to load a Phase Shift song if a charter/author wasn't listed in the song.ini
+
+----------
+
+v2.1.0
+- Added support for Phase Shift customs - see the Help file for more information
+- Added option to display the note name for Pro-Keys and Vocals/Harmonies - Options -> MIDI display settings and enable/disable the options there
+- Fixed huge memory leak that could happen when using Chart: Full MIDI preview
+- Fixed minor memory leak when displaying album art on right panel and audio spectrum would show on album art box on the left panel
+- Other under the hood fixes and improvements
+
+----------
+
+v2.0.2
+- Under the hood fixes to add support for upcoming customs created with Magma: C3 Roks Edition v3.3.0 or newer
+
+----------
+
+v2.0.1
+- Fixed bug that would fail obtaining song length from the audio file when the DTA file didn't include it
+- Few other minor bug fixes.
+
+----------
+
+v2.0.0
+- Changed from using SoX for audio playback to using BASS.NET so Windows Vista (and maybe Windows XP?) users should be able to enjoy the program without problems
+- Restored and greatly improved visualization Chart: Snippet - gives you a real-time preview of the MIDI charts (organized like in REAPER as drums, bass, guitar, pro-keys/keys,harmonies/vocals)
+- Expanded lyric display - can now choose between static lyrics, scrolling lyrics, karaoke style lyrics, or no lyrics at all, only PART VOCALS or Harmonies, using whole words or using in game syl- la- bles
+- Added audio spectrum visualizations - right-click on the Visuals Panel and select 'Display audio spectrum' - there are over 10 different ones, just click on the Visuals Panel to change from one to another - cPlayer will remember which style you last used - default uses game palette colors, but just like with the MIDI charts you can enable random colors
+- Added new visualization - Random: Phrase Lyrics will display the active phrase lyrics, randomizing the color, location, font, and size of each word in the phrase for a cool (but chaotic) karaoke vibe
+- Changed how selecting lyric display settings works for a much smoother and responsive behavior - click on Options -> Lyrics settings -> and select your settings as you wish,  as you do, the lyrics displayed are updated immediately
+- Changed how selecting which audio tracks to play works for a much smoother and responsive behavior - click on Options -> Audio tracks to play and check/uncheck each track as you wish, as you do, the audio playback is updated immediately
+- Changed how selecting which MIDI charts to display works for a much smoother and responsive behavior - click on Options -> MIDI charts to display and check/uncheck each track as you wish, as you do, the MIDI chart tracks displayed are updated immediately
+- When changing volume you now hear the volume change immediately and without any audio hiccups (with SoX it meant stopping and restarting playback)
+- When seeking by dragging the time slider you have immediate audio reponse (i.e. that famous 'seeking' sound)
+- Direct access to playback timer makes for even more accurate timing of lyrics, phrase sections and MIDI chart visuals
+- Many other improvements and fixes for a much more enjoyable user experience
+
+----------
+
+v1.0.0
+(First non-beta release! If you were using a beta version, please disregard all prior settings and Playlists and start from scratch)
+- Added 'Start Insta-Mix' feature to create a sort of radio station like Pandora and Google Play - right-click on a song in the Playlist and select 'Start Insta-Mix', cPlayer will look through your entire Playlist for songs with the same genre, and similar BPM and song lengths and create a randomized Playlist for you - this is an educated guess, won't be perfect
+- Added feature to display the current section name- click on Options -> Show section names
+- Added new MIDI chart visual - Random: Note Names - will randomly choose an installed font, font size, and location and draw the name of the note
+- Added ability to select which charts are displayed by the MIDI Visuals - click on Options -> Show MIDI chart visuals -> and enable/disable any tracks as you wish
+- Added ability to select duration of crossfade between 4, 6 and 8 seconds - click on Options -> Crossfade settings -> enable/disable it here and select your preferred duration
+- Added feature to randomize the Playlist - right-click on the Playlist and choose 'Randomize playlist'
+- Added Go To feature so you can go directly to your search term without actually filtering the playlist - press Go To again and it'll continue to the next occurrence of the search term, etc - this is now the default behavior when pressing Enter after typing a search term
+- Added Filter button in case you actually want to filter your playlist by your search term
+- Improved grabbing and displaying of lyrics
+- Quickly view where you'll be jumping to by hovering the mouse over the timeline - the time and section name (if available) will be displayed
+- While dragging the slider seeking a section of the song, the author name is replaced with the time and section name (if available) to make it easier to find where to stop
+- Added feature to quickly access the last five Playlists you've loaded - click on File -> Open recent... and pick the Playlist you want to load
+- Pressing Space bar now pauses/resumes playback - or you can continue to use the Play/Pause button
+- Pressing any letter while the Playlist is selected will take you to the next song in the Playlist that starts with that letter
+- Pressing up or down while holding down the Alt key will move the selected song(s) up or down on your Playlist order
+- Fixed out-of-sync "lag" in songs caused by poor math and not poor system performance - thanks to raynebc for catching the error
+- Now displays total songs (filtered) and combined playtime of the songs on the top right of the program
+- Removed annoying ding sound when pressing enter to search for a song
+- Various under the hood fixes and improvements when working with MIDI files (thanks to raynebc for the update to midishrink)
+- Various other bug fixes and improvements
+
+----------
+
+v0.9.0 beta2
+- Added option to select which audio tracks to play (when available) - Click on Options -> Audio tracks to play
+- Improved accuracy when displaying MIDI chart using Chart: Full
+- Random circles and squares randomize between outlined or filled circles/squares (also works when using Random: Mixed)
+- Added feature to resync cPlayer's timer and hopefully reduce the de-syncing issue some were having
+- Improved shuffling behavior to start over once all songs in the Playlist were played
+- Added fun album art background to window when MIDI Visuals are disabled but Lyrics are enabled
+- Added option to show side window and display album art background - Options -> Open side window
+- Changed searching behavior to only search after you press Enter - this removes the slow-down caused by the constant searching after each character was typed
+- Removed Chart: Snippet Style until and if a more accurate mode to display the chart on time can be achieved within the .NET Framework's restrictions
+- Resized (made a tiny bit smaller) to better fit screens with x768 resolutions
+- Now using leaner version of NAudio.dll, trimmed and improved for much more accurate timing of notes and lyrics
+- Other minor updates and improvements
+
+----------
+
+v0.9.0 beta1
+- First public release!
+- Supports Rock Band custom songs in Xbox CON/LIVE file format and PS3 and Wii folder structures - see the help documentation for instructions on how to use and program limitations
+- Requires Windows and .NET Framework 4.0 (https://www.microsoft.com/en-us/download/details.aspx?id=17851)
