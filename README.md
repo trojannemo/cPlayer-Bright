@@ -1,6 +1,6 @@
 # 🎵 cPlayer
 
-![cPlayer](https://nemosnautilus.com/cplayer/v600.png)
+![cPlayer](https://nemosnautilus.com/cplayer/v610.mp4)
 
 ---
 
@@ -177,4 +177,4 @@ cPlayer has grown well beyond its original scope and continues to evolve alongsi
 
 Enjoy.
 
-*December 13, 2025*
+*May 19, 2026*
