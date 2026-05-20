@@ -16,6 +16,11 @@
         private readonly int _controller;
         public bool StrobeIsOn;
         public bool FoggerIsOn;
+        private short _lastRed;
+        private short _lastGreen;
+        private short _lastBlue;
+        private short _lastYellow;
+
 
         /// <summary>
         /// Creates an instance of the stage kit controller.
@@ -28,15 +33,119 @@
             _controller = controller;
         }
 
+        public void ResetLedCache()
+        {
+            _lastRed = short.MinValue;
+            _lastGreen = short.MinValue;
+            _lastBlue = short.MinValue;
+            _lastYellow = short.MinValue;
+        }
+
         /// <summary>
         /// Turns on or off LEDs on the LED Display based upon the values in the <see cref="LedDisplay"/> object.
         /// </summary>
         /// <param name="display">The LEDs to turn on or off.</param>
         public void DisplayLeds(LedDisplay display)
         {
+            short red = (short)(display.RedLedArray);
+            short green = (short)(display.GreenLedArray);
+            short blue = (short)(display.BlueLedArray);
+            short yellow = (short)(display.YellowLedArray);
+
+            if (red != _lastRed)
+            {
+                SetVibration(red, RedColor);
+                _lastRed = red;
+            }
+
+            if (green != _lastGreen)
+            {
+                SetVibration(green, GreenColor);
+                _lastGreen = green;
+            }
+
+            if (blue != _lastBlue)
+            {
+                SetVibration(blue, BlueColor);
+                _lastBlue = blue;
+            }
+
+            if (yellow != _lastYellow)
+            {
+                SetVibration(yellow, YellowColor);
+                _lastYellow = yellow;
+            }
+        }
+
+        public void DisplayRedLed(ref LedDisplay display, int ledIndex, bool ledState)
+        {
+            switch (ledIndex)
+            {
+                case 0: display.RedLedArray.Led1 = ledState; break;
+                case 1: display.RedLedArray.Led2 = ledState; break;
+                case 2: display.RedLedArray.Led3 = ledState; break;
+                case 3: display.RedLedArray.Led4 = ledState; break;
+                case 4: display.RedLedArray.Led5 = ledState; break;
+                case 5: display.RedLedArray.Led6 = ledState; break;
+                case 6: display.RedLedArray.Led7 = ledState; break;
+                case 7: display.RedLedArray.Led8 = ledState; break;
+                default: return;
+            }
+
             SetVibration(display.RedLedArray, RedColor);
-            SetVibration(display.GreenLedArray, GreenColor);
+        }
+
+        public void DisplayBlueLed(ref LedDisplay display, int ledIndex, bool ledState)
+        {
+            switch (ledIndex)
+            {
+                case 0: display.BlueLedArray.Led1 = ledState; break;
+                case 1: display.BlueLedArray.Led2 = ledState; break;
+                case 2: display.BlueLedArray.Led3 = ledState; break;
+                case 3: display.BlueLedArray.Led4 = ledState; break;
+                case 4: display.BlueLedArray.Led5 = ledState; break;
+                case 5: display.BlueLedArray.Led6 = ledState; break;
+                case 6: display.BlueLedArray.Led7 = ledState; break;
+                case 7: display.BlueLedArray.Led8 = ledState; break;
+                default: return;
+            }
+
             SetVibration(display.BlueLedArray, BlueColor);
+        }
+
+        public void DisplayGreenLed(ref LedDisplay display, int ledIndex, bool ledState)
+        {
+            switch (ledIndex)
+            {
+                case 0: display.GreenLedArray.Led1 = ledState; break;
+                case 1: display.GreenLedArray.Led2 = ledState; break;
+                case 2: display.GreenLedArray.Led3 = ledState; break;
+                case 3: display.GreenLedArray.Led4 = ledState; break;
+                case 4: display.GreenLedArray.Led5 = ledState; break;
+                case 5: display.GreenLedArray.Led6 = ledState; break;
+                case 6: display.GreenLedArray.Led7 = ledState; break;
+                case 7: display.GreenLedArray.Led8 = ledState; break;
+                default: return;
+            }
+
+            SetVibration(display.GreenLedArray, GreenColor);
+        }
+
+        public void DisplayYellowLed(ref LedDisplay display, int ledIndex, bool ledState)
+        {
+            switch (ledIndex)
+            {
+                case 0: display.YellowLedArray.Led1 = ledState; break;
+                case 1: display.YellowLedArray.Led2 = ledState; break;
+                case 2: display.YellowLedArray.Led3 = ledState; break;
+                case 3: display.YellowLedArray.Led4 = ledState; break;
+                case 4: display.YellowLedArray.Led5 = ledState; break;
+                case 5: display.YellowLedArray.Led6 = ledState; break;
+                case 6: display.YellowLedArray.Led7 = ledState; break;
+                case 7: display.YellowLedArray.Led8 = ledState; break;
+                default: return;
+            }
+
             SetVibration(display.YellowLedArray, YellowColor);
         }
 
@@ -336,12 +445,39 @@
             // Sets the vibration on the controller using interop method calls. The XNA framework is not needed.
             var index = (PlayerIndex)(_controller - 1);
             GamePad.SetVibration(index, left, right);
-            System.Threading.Thread.Sleep(10);
+            System.Threading.Thread.Sleep(5);
         }
 
         private void SetVibration(short right)
         {
             SetVibration(0x0, right);
+        }
+
+        public void DisplayLedsFromShorts(short red, short green, short blue, short yellow)
+        {
+            if (red != _lastRed)
+            {
+                SetVibration(red, RedColor);
+                _lastRed = red;
+            }
+
+            if (green != _lastGreen)
+            {
+                SetVibration(green, GreenColor);
+                _lastGreen = green;
+            }
+
+            if (blue != _lastBlue)
+            {
+                SetVibration(blue, BlueColor);
+                _lastBlue = blue;
+            }
+
+            if (yellow != _lastYellow)
+            {
+                SetVibration(yellow, YellowColor);
+                _lastYellow = yellow;
+            }
         }
     }
 

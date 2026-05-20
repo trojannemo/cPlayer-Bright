@@ -201,12 +201,12 @@ namespace cPlayer
                             catch { }
                         }
                     }
-                    catch (Exception ex) { }
+                    catch  { }
                 }
                 sr.Dispose();
                 Songs.Add(song);
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -282,13 +282,13 @@ namespace cPlayer
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     { }
                 }
                 sr.Dispose();
                 Songs.Add(song);
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -469,6 +469,7 @@ namespace cPlayer
                     try
                     {
                         var line = sr.ReadLine();
+                        if (line.TrimStart().StartsWith(";")) continue;
                         if (line.Contains("diff") && line.Contains("-1"))
                         {
                             isFretSmasher |= true;
@@ -523,6 +524,10 @@ namespace cPlayer
                         {
                             song.PSDelay = Convert.ToInt16(Tools.GetConfigString(line));
                         }
+                        else if (line.Contains("video_start_time =") || line.Contains("video_start_time="))
+                        {
+                            song.VideoStartTime = Convert.ToInt16(Tools.GetConfigString(line));
+                        }
                         else if (line.Contains("diff_guitar=") || line.Contains("diff_guitar ="))
                         {
                             song.GuitarDiff = Convert.ToInt16(Tools.GetConfigString(line));
@@ -545,14 +550,10 @@ namespace cPlayer
                         }
                         else if (line.Contains("diff_vocals_harm"))
                         {
-                            song.VocalParts = Convert.ToInt16(Tools.GetConfigString(line));
-                        }
-                        else if (line.Contains("shortname"))
-                        {
-                            song.ShortName = Tools.GetConfigString(line);
+                            //song.VocalParts = Convert.ToInt16(Tools.GetConfigString(line)); THIS IS WRONG
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     { }
                 }
                 sr.Dispose();
@@ -568,7 +569,7 @@ namespace cPlayer
 
                 Songs.Add(song);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

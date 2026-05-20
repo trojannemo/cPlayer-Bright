@@ -1216,7 +1216,7 @@ namespace cPlayer
             {
                 MIDI = new MidiFile(midi_in, false);
             }
-            catch (Exception ex)
+            catch
             {
                 var folder = Path.GetDirectoryName(midi_in) ?? Environment.CurrentDirectory;
                 var startInfo = new ProcessStartInfo
@@ -1249,7 +1249,7 @@ namespace cPlayer
                     {
                         MIDI = new MidiFile(midi_out, false);
                     }
-                    catch (Exception e)
+                    catch
                     {
                         MIDI = null;
                     }
@@ -1270,6 +1270,7 @@ namespace cPlayer
         /// <returns></returns>
         public string GetConfigString(string raw_line)
         {
+            if (raw_line == null) return "";
             var line = raw_line;
             var index = line.IndexOf("=", StringComparison.Ordinal) + 1;
             try

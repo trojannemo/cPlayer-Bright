@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.XtraEditors.Drawing;
+using System;
 using System.Windows.Forms;
 
 namespace cPlayer
@@ -6,6 +7,8 @@ namespace cPlayer
     public partial class MIDISelector : Form
     {
         private readonly frmMain MainForm;
+        private bool loading;
+
         public MIDISelector(frmMain xParent)
         {
             InitializeComponent();
@@ -15,6 +18,7 @@ namespace cPlayer
 
         private void MIDISelector_Shown(object sender, EventArgs e)
         {
+            loading = true;
             chkDrums.Checked = MainForm.doMIDIDrums;
             chkBass.Checked = MainForm.doMIDIBass;
             chkGuitar.Checked = MainForm.doMIDIGuitar;
@@ -32,18 +36,30 @@ namespace cPlayer
             chkHighlightSolos.Checked = MainForm.doMIDIHighlightSolos;
             chkBWKeys.Checked = MainForm.doMIDIBWKeys;
             chkHarmColorOnVocals.Checked = MainForm.doMIDIHarm1onVocals;
+            loading = false;
         }
 
         private void CheckAll(bool enabled)
         {
+            if (!enabled)
+            {
+                chkDrums.Checked = enabled;
+                chkBass.Checked = enabled;
+                chkGuitar.Checked = enabled;
+                radioHarms.Checked = enabled;
+                radioProKeys.Checked = enabled;
+                radioVocals.Checked = enabled;
+                radioNoVocals.Checked = enabled;
+                radioKeys.Checked = enabled;
+                radioNoKeys.Checked = enabled;
+            }
+
+            if (!enabled) return;
             chkDrums.Checked = enabled;
             chkBass.Checked = enabled;
             chkGuitar.Checked = enabled;
             radioHarms.Checked = enabled;
             radioProKeys.Checked = enabled;
-            if (enabled) return;
-            radioKeys.Checked = false;
-            radioVocals.Checked = false;
         }
 
         private void btnAll_Click(object sender, EventArgs e)
@@ -66,6 +82,7 @@ namespace cPlayer
             MainForm.doMIDIGuitar = chkGuitar.Checked;
             MainForm.doMIDIVocals = radioVocals.Checked;
             MainForm.doMIDIHarmonies = radioHarms.Checked;
+            MainForm.doMIDINoVocals = radioNoVocals.Checked;
             MainForm.doMIDIKeys = radioKeys.Checked;
             MainForm.doMIDIProKeys = radioProKeys.Checked;
         }
@@ -139,6 +156,7 @@ namespace cPlayer
 
         private void radioProKeys_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             MainForm.doMIDIProKeys = radioProKeys.Checked;
             MainForm.doMIDIKeys = radioKeys.Checked;
             MainForm.doMIDINoKeys = radioNoKeys.Checked;
@@ -146,6 +164,7 @@ namespace cPlayer
 
         private void radioHarms_CheckedChanged(object sender, EventArgs e)
         {
+            if (loading) return;
             MainForm.doMIDIHarmonies = radioHarms.Checked;
             MainForm.doMIDIVocals = radioVocals.Checked;
             MainForm.doMIDINoVocals = radioNoVocals.Checked;

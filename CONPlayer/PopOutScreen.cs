@@ -25,11 +25,11 @@ namespace cPlayer
 
             var options = new[]
             {
-            "--vout=d3d11", // Ensure Direct3D 11 is used if available
-            "--no-audio", // Disable audio processing
-            "--no-sub-autodetect-file", // Skip subtitle loading
-            "--no-video-title-show" // Hide overlay text on videos
-        };
+                //"--vout=d3d11", // Ensure Direct3D 11 is used if available
+                "--no-audio", // Disable audio processing
+                "--no-sub-autodetect-file", // Skip subtitle loading
+                "--no-video-title-show" // Hide overlay text on videos
+            };
 
             _libVLC = new LibVLC(options);
             _mediaPlayer = new MediaPlayer(_libVLC);
@@ -204,7 +204,7 @@ namespace cPlayer
             if (mp == null) { _stopInProgress = 0; return; }
 
             ClearOverlayFrame();
-            ChangeBackgroundImage(Resources.logo);
+            ChangeVisualsImage(Resources.logo);
             videoView.Visible = false;
             VideoIsPlaying = false;
 
@@ -245,11 +245,15 @@ namespace cPlayer
                 catch 
                 { }
             }
-        }               
+        }
 
         public void ChangeBackgroundImage(Image image, bool zoom = false)
         {
-            picVisuals.Image = image;
+            if (!ReferenceEquals(picVisuals.BackgroundImage, image))
+            {
+                picVisuals.BackgroundImage = image;
+            }
+            picVisuals.Invalidate();
             if (zoom)
             {
                 picVisuals.SizeMode = PictureBoxSizeMode.Zoom;
@@ -258,7 +262,15 @@ namespace cPlayer
             {
                 picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
             }
-            backgroundImage = picVisuals.Image;
+        }
+
+        public void ChangeVisualsImage(Image image)
+        {
+            if (!ReferenceEquals(picVisuals.Image, image))
+            {
+                picVisuals.Image = image; 
+            }
+            picVisuals.Invalidate();
         }
 
         public Size RenderSize()
@@ -274,6 +286,11 @@ namespace cPlayer
         public void ChangeBackgroundColor(Color color)
         {
             picVisuals.BackColor = color;
+        }
+
+        public void InvalidateVisuals()
+        {
+            picVisuals.Invalidate();
         }
     }
 }

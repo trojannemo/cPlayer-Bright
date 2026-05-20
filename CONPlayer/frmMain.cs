@@ -2,6 +2,7 @@
 using cPlayer.StageKit;
 using cPlayer.Texture;
 using cPlayer.x360;
+using HidSharp;
 using LibForge.Midi;
 using LibForge.SongData;
 using LibVLCSharp.Shared;
@@ -14,6 +15,7 @@ using NautilusFREE;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -26,6 +28,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -34,6 +37,7 @@ using Un4seen.Bass.AddOn.Enc;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Opus;
 using Un4seen.Bass.Misc;
+using Vortice.XInput;
 using static cPlayer.NemoTools;
 using static cPlayer.YARGSongFileStream;
 
@@ -54,7 +58,6 @@ namespace cPlayer
         private readonly Color TrackBackgroundColor2 = Color.FromArgb(80, 80, 80);
         private readonly Color RBStyleVocalsBackgroundColor = Color.FromArgb(127, 0, 0, 0);
         private readonly Color KaraokeBackgroundColor = Color.Transparent;
-        public double VolumeLevel = 12.5;
         private string PlayerConsole = "xbox";
         private double FadeLength = 1.0;
         public bool doAudioDrums = true;
@@ -63,21 +66,21 @@ namespace cPlayer
         public bool doAudioKeys = true;
         public bool doAudioVocals = true;
         public bool doAudioBacking = true;
-        public bool doAudioCrowd = false;
+        public bool doAudioCrowd;
         public bool doMIDIDrums = true;
         public bool doMIDIBass = true;
         public bool doMIDIGuitar = true;
         public bool doMIDIProKeys = true;
-        public bool doMIDIKeys = false;
-        public bool doMIDINoKeys = false;
-        public bool doMIDIVocals = false;
+        public bool doMIDIKeys;
+        public bool doMIDINoKeys;
+        public bool doMIDIVocals;
         public bool doMIDIHarmonies = true;
-        public bool doMIDINoVocals = false;
-        public bool doMIDINameVocals = false;
-        public bool doMIDINameProKeys = false;
-        public bool doStaticLyrics = false;
+        public bool doMIDINoVocals;
+        public bool doMIDINameVocals;
+        public bool doMIDINameProKeys;
+        public bool doStaticLyrics;
         public bool doScrollingLyrics = true;
-        public bool doKaraokeLyrics = false;
+        public bool doKaraokeLyrics;
         public bool doWholeWordsLyrics = true;
         public bool doHarmonyLyrics = true;
         public bool doMIDINameTracks = true;
@@ -86,9 +89,9 @@ namespace cPlayer
         public bool doMIDIHarm1onVocals = true;
         private readonly Visuals Spectrum = new Visuals();
         public double PlaybackWindow = 3.0;
-        private readonly double PlaybackWindowRB = 2.0;
-        private readonly double PlaybackWindowRBVocals = 5.0;
-        public int NoteSizingType = 0;
+        private readonly double PlaybackWindowRB = 1.2;
+        private readonly double PlaybackWindowRBVocals = 4.0;
+        public int NoteSizingType;
         private const string AppName = "cPlayer";
         private const int BassBuffer = 1000;
         private readonly NemoTools Tools;
@@ -126,8 +129,8 @@ namespace cPlayer
         public bool CancelWorkers;
         private readonly string EXE;
         private readonly string[] RecentPlaylists;
-        private int BassMixer;
-        private int BassStream;
+        public int BassMixer;
+        public int BassStream;
         private readonly List<int> BassStreams;
         public int SpectrumID;
         public Color SpectrumColor = Color.Black;
@@ -137,7 +140,6 @@ namespace cPlayer
         private string ImgURL;
         private bool showUpdateMessage;
         private bool AlreadyTried;
-        private bool DrewFullChart;
         private double IntroSilence;
         private double OutroSilence;
         private float SilenceThreshold = 0.25f;
@@ -147,9 +149,9 @@ namespace cPlayer
         private bool ShowingNotFoundMessage;
         private readonly nTools nautilus;
         private SongData ActiveSongData;
-        private LibVLC _libVLC;
-        private MediaPlayer _mediaPlayer;
-        private VideoView videoView;
+        private readonly LibVLC _libVLC;
+        public MediaPlayer _mediaPlayer;
+        private readonly VideoView videoView;
         private string[] opusFiles;
         private string[] oggFiles;
         private string[] mp3Files;
@@ -159,11 +161,8 @@ namespace cPlayer
         private string currentKLIC;
         private string pkgPath;
         private string sngPath;
-        private string oggPath;
         private string psarcPath;
         private string ghwtPath;
-        public bool isChoosingStems;
-        private bool hasNoMIDI;
         private int overrideSongLength;
         private string XML_PATH;
         private string XMA_EXT_PATH;
@@ -179,14 +178,11 @@ namespace cPlayer
         private int ChartGoal = 630;
         private const int vocalsHeight = 160;
         private const double MinVolume = 50;
+        private readonly Bitmap bmpFocusBG;
         private readonly Bitmap bmpDrumsCymbalB;
         private readonly Bitmap bmpDrumsCymbalY;
         private readonly Bitmap bmpDrumsCymbalG;
         private readonly Bitmap bmpDrumsCymbalOD;
-        private readonly Bitmap bmpDrumsCymbalBGlow;
-        private readonly Bitmap bmpDrumsCymbalYGlow;
-        private readonly Bitmap bmpDrumsCymbalGGlow;
-        private readonly Bitmap bmpDrumsCymbalODGlow;
         private readonly Bitmap bmpNoteBlue;
         private readonly Bitmap bmpNoteGreen;
         private readonly Bitmap bmpNoteYellow;
@@ -217,16 +213,6 @@ namespace cPlayer
         private readonly Bitmap bmpBackgroundKeysSolo;
         private readonly Bitmap bmpBackgroundProKeys;
         private readonly Bitmap bmpBackgroundProKeysSolo;
-        private readonly Bitmap bmpBackgroundDrumsRB;
-        private readonly Bitmap bmpBackgroundDrumsSoloRB;
-        private readonly Bitmap bmpBackgroundBassRB;
-        private readonly Bitmap bmpBackgroundBassSoloRB;
-        private readonly Bitmap bmpBackgroundGuitarRB;
-        private readonly Bitmap bmpBackgroundGuitarSoloRB;
-        private readonly Bitmap bmpBackgroundKeysRB;
-        private readonly Bitmap bmpBackgroundKeysSoloRB;
-        private readonly Bitmap bmpBackgroundProKeysRB;
-        private readonly Bitmap bmpBackgroundProKeysSoloRB;
         private readonly Bitmap bmpHitbox;
         private readonly Bitmap bmpHitboxVocals;
         private readonly Bitmap bmpBackgroundVocals;
@@ -238,19 +224,32 @@ namespace cPlayer
         private readonly Bitmap bmpRedHopo;
         private readonly Bitmap bmpOrangeHopo;
         private readonly Bitmap bmpODHopo;
-        private readonly Bitmap bmpBlueHopoGlow;
-        private readonly Bitmap bmpGreenHopoGlow;
-        private readonly Bitmap bmpYellowHopoGlow;
-        private readonly Bitmap bmpRedHopoGlow;
-        private readonly Bitmap bmpOrangeHopoGlow;
-        private readonly Bitmap bmpODHopoGlow;
+        private readonly Bitmap bmpBackgroundProKeysRB;
+        private readonly Bitmap bmpBackgroundProKeysSoloRB;
+        private readonly Bitmap bmpBackgroundGuitarRB;
+        private readonly Bitmap bmpBackgroundGuitarSoloRB;
+        private readonly Bitmap bmpBackgroundBassRB;
+        private readonly Bitmap bmpBackgroundBassSoloRB;
+        private readonly Bitmap bmpBackgroundDrumsRB;
+        private readonly Bitmap bmpBackgroundDrumsSoloRB;
+        private readonly Bitmap bmpBackgroundKeysRB;
+        private readonly Bitmap bmpBackgroundKeysSoloRB;
+        private readonly Bitmap bmpProKeysBlueGlow;
+        private readonly Bitmap bmpProKeysYellowGlow;
+        private readonly Bitmap bmpProKeysRedGlow;
+        private readonly Bitmap bmpProKeysGreenGlow;
+        private readonly Bitmap bmpProKeysWhiteLeftGlow;
+        private readonly Bitmap bmpProKeysWhiteCenterGlow;
+        private readonly Bitmap bmpProKeysWhiteRightGlow;
+        private readonly Bitmap bmpProKeysWhiteFullGlow;
         private const int HitboxVocalsX = 200;
         private WaveInEvent waveIn;
         private WaveOutEvent waveOut;
         private BufferedWaveProvider bufferedWaveProvider;
         public VolumeWaveProvider16 volumeProvider;
         public int microphoneIndex = -1;
-        private StageKitController stageKit;
+        private readonly List<StageKitController> stageKits = new List<StageKitController>();
+        private readonly List<FatsCoHidLightController> fatsCoLights = new List<FatsCoHidLightController>();
         private LedDisplay ledDisplay;
         private int currHOPOThreshold = 170;
         public Color KaraokeModeBackgroundColor = Color.Orange;
@@ -262,17 +261,14 @@ namespace cPlayer
         public Color KaraokeModeHarm3Highlight = Color.DarkSeaGreen;
         private Size picVisualsSize;
         private Point picVisualsPosition;
-        private bool isFullScreen;
-        private FormWindowState lastWindowState = FormWindowState.Maximized;
-        private Point savedFormLocation;
-        private Size savedFormSize;
+        public bool isFullScreen;
+        private readonly FormWindowState lastWindowState = FormWindowState.Maximized;
         private readonly List<Image> stageFrames;
         private Image stageBackground;
-        private int stageKitIndex = 1;
-        private int redSKIndex = 0;
-        private int greenSKIndex = 0;
-        private int blueSKIndex = 0;
-        private int yellowSKIndex = 0;
+        private int redSKIndex;
+        private int greenSKIndex;
+        private int blueSKIndex;
+        private int yellowSKIndex;
         private readonly bool[] CurrentStateYellow;
         private readonly bool[] CurrentStateRed;
         private readonly bool[] CurrentStateGreen;
@@ -286,23 +282,31 @@ namespace cPlayer
         private bool enable1970s;
         private bool enable1960s;
         private bool enableOldies;
-        private List<FavoriteSong> favoritesList;
+        private readonly List<FavoriteSong> favoritesList;
         public string genreFilter;
         public string instrumentFilter;
         public string languageFilter;
         private string CHVideoPath;
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
-        private List<string> BackgroundImages;
-        private List<string> BackgroundVideos;
+        public float defaultVol = 1.0f;
+        public float bassVol = 1.0f;
+        public float drumsVol = 1.0f;
+        public float guitarVol = 1.0f;
+        public float keysVol = 1.0f;
+        public float vocalsVol = 1.0f;
+        public float backingVol = 1.0f;
+        public float crowdVol = 1.0f;
+        public float masterVol = 0.8f;
+        private readonly List<string> BackgroundImages;
+        private readonly List<string> BackgroundVideos;
         public bool changedBackground;
         private Bitmap _renderedFrame;
-        private bool doUseBackgroundVideos = true;
-        private bool doUseBackgroundImages = false;
+        public bool doUseBackgroundVideosLast;
+        public bool doUseBackgroundImagesLast;
+        public bool doUseBackgroundVideos = true;
+        public bool doUseBackgroundImages;
+        public bool doFocusMode;
+        public bool doAnimatedSpectrum;
+        public bool doSpectrumColors;
         private readonly Random rng = new Random();
         private readonly ShuffleBag _videoBag;
         private readonly ShuffleBag _imageBag;
@@ -311,6 +315,144 @@ namespace cPlayer
         public bool enableBTAVOffsetSync;
         private string nautilusPath;
         private readonly frmHover hoverForm;
+        public Size activeRenderingResolution = new Size(1920, 1080);
+        private const double TrackBackgroundBeatsPerLoop = 2.0;
+        private const bool ReverseTrackAnimation = true;
+        public bool displayAlbumArt;
+        public bool displayAudioSpectrum;
+        public bool doVerticalChart;
+        public bool doRockBandChart = true;
+        public bool doMIDIChart;
+        public bool doRockBandKaraoke;
+        public bool enableYARGCHVideos = true;
+        public bool doModernKaraokeMode;
+        public bool doCPlayerStyleKaraoke;
+        public bool doAnimatedBackground;
+        public bool doStaticBackground = true;
+        public bool doAnimatedBackground2;
+        public bool doStaticBackground2 = true;
+        public bool doForceSoloVocals = true;
+        public bool doForceTwoPartHarmonies;
+        public bool doSolidColorBackground = true;
+        public bool doBackgroundImages;
+        private int lastBackground;
+        private BiQuadFilter highPassFilter = BiQuadFilter.HighPassFilter(44100, 100, 1); // 100 Hz cutoff, Q factor 1
+        private Point lastCursorPos = Point.Empty;
+        private int _lastDisplayedSecond = -1;
+        private int _lastSliderLeft = int.MinValue;
+        private static readonly Random _rng = new Random();
+        private readonly Dictionary<string, TrackTrapezoidCache> _trackTrapezoidCache = new Dictionary<string, TrackTrapezoidCache>();
+        private Dictionary<string, Bitmap[]> _rbLaneAnimatedFillNormalCache = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+        private Dictionary<string, Bitmap[]> _rbLaneAnimatedFillSoloCache = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+        private Dictionary<string, Bitmap> _rbLaneSoloOverlayCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+        private Dictionary<string, Bitmap> _rbLaneFocusOverlayCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+        private List<BeatMarker> _beatMarkers = new List<BeatMarker>();
+        private Dictionary<string, Bitmap> _rbLaneNormalCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+        private Dictionary<string, Bitmap> _rbLaneSoloCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+        private string _rbLaneCacheKey;
+        private int _trackAnimFrame;
+        private readonly Stopwatch _trackAnimStopwatch = Stopwatch.StartNew();
+        private bool _rbCacheBuildInProgress;
+        private readonly object _rbCacheLock = new object();
+        private bool _rbCacheRebuildRequested;
+        const float HighwayAngleFactor = 0.48f;
+        private readonly Bitmap needleHarm1 = Resources.needle_harm1;
+        private readonly Bitmap needleHarm2 = Resources.needle_harm2;
+        private readonly Bitmap needleHarm3 = Resources.needle_harm3;
+        private readonly Font _impact12Font = new Font("Impact", 12.0f);
+        private readonly List<AnimatedNote> activeNotes = new List<AnimatedNote>();
+        private readonly Random rand = new Random();
+        private bool doSoloVocals;
+        private bool doHarm2;
+        private bool doHarm3 = true;
+        private double highlightDelay = 1.5;
+        private double timeGap = 5.0;
+        private bool doEnableHighlightAnimation = true;
+        private bool doShowLoadingBar = true;
+        private const string loadingBarXL = "████████████████████████████████";
+        const int spawnFrequency = 30;
+        private int noteCounter = spawnFrequency;
+        private Bitmap loadingBarBaseBmp;
+        private Bitmap loadingBarHighlightBmp;
+        private Size loadingBarSize;
+        private Font loadingBarFont;
+        private readonly Font _karaokeBaseFont = new Font("Arial", 24f);
+        private readonly Dictionary<string, CachedKaraokeLine> _karaokeLineCache = new Dictionary<string, CachedKaraokeLine>();
+        private static readonly Random Rng = new Random();
+        private int _lastStageKitBeatIndex = -1;
+        private int _lastStageKitSubBeatIndex = -1;
+        private int _lastStageKitMeasureIndex = -1;
+        private double _nextFogEligible = 0;
+        private StageKitLedPattern _currentStageKitPattern = StageKitLedPattern.OneEachSameDirection;
+        private StageKitLedPattern _previousStageKitPattern = StageKitLedPattern.OneEachSameDirection;
+        private int _stageKitPatternStartStep = 0;
+        private int _stageKitPatternLength = 32;
+        private readonly object _stageKitCommandLock = new object();
+        private readonly AutoResetEvent _stageKitCommandSignal = new AutoResetEvent(false);
+        private readonly Queue<Action> _stageKitCommandQueue = new Queue<Action>();
+        private Thread _stageKitCommandThread;
+        private volatile bool _stageKitCommandWorkerRunning;
+        private const int VLCBuffer = 250;
+        private List<Bitmap> _cachedRBKaraokeAnimatedFrames;
+        private Size _cachedRBKaraokeAnimatedFrameSize = Size.Empty;
+        private int _cachedRBKaraokeAnimatedSourceCount = -1;
+        private List<Image> _cachedRBKaraokeAnimatedSourceRef;
+        private int stageCounter = 0;
+        private Bitmap _scaledFrame;
+        private readonly Stopwatch _fpsWatch = Stopwatch.StartNew();
+        private readonly Stopwatch _frameWatch = Stopwatch.StartNew();
+        private long _lastFrameTick = 0;
+        private long _fpsFrameCount = 0;
+        private long _currentFps = 0;
+        private long frameMs = 0;
+        private string _lastPracticeSectionText = null;
+        private bool _lastPracticeSectionVisible = false;
+        private int _lastPracticeSectionIndex = -1;
+        private const double depthPower = 1.50;
+        private const float horizonPercent = 0.40f;
+        private const float overshootPx = 20f;
+        private readonly HashSet<long> _stageKitTriggeredKickTicks = new HashSet<long>();
+        private double _lastKickStrobeTime = -999;
+        private readonly Font _lyricsFont = new Font("Segoe UI", 16f, FontStyle.Bold);
+        private readonly Dictionary<string, Bitmap> _lyricRowBgCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+        private Media _currentVlcMedia;
+        private readonly object _vlcMediaLock = new object();
+        private int _stopInProgress;
+        private Image LargeAlbumArt = null;
+        private Image OriginalAlbumArt = null;
+        private Color _cachedMoodColor = Color.AliceBlue;
+        private readonly Brush _lightGrayBrush = new SolidBrush(Color.LightGray);
+        private Color _lastPicVisualsBackColor = Color.AliceBlue;
+        private Color _lastSecondScreenBackColor = Color.AliceBlue;
+        private bool isResizing = false;
+        private frmHelpHub helpHubForm;
+        private MIDISelector midiSelectorForm;
+        private LyricSelector lyricSelectorForm;
+        private ChangeLog changeLogForm;
+        private MicControl micControlForm;
+        private PopOutScreen secondScreen;
+        private BTAVSync btSyncForm;
+        private frmSettings settingsForm;
+        private AudioMixer audioMixerForm;
+        public string currentVideoPath;
+        private Size screenSize = new Size();
+        private Bitmap _cachedRBKaraokeStaticBackground;
+        private Size _cachedRBKaraokeStaticBackgroundSize = Size.Empty;
+        private Image _cachedRBKaraokeStaticBackgroundSource;
+        private int _applyARInProgress;
+        private volatile string _pendingAspectRatio;
+        private string _currentVideoPath;
+        private VideoPathType _currentVideoType;
+        private Media _currentMedia;
+        private Bitmap RBStyleBackground;
+        private static readonly List<int> stageKitIndices = new List<int>();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+
         public frmMain()
         {
             InitializeComponent();
@@ -326,7 +468,7 @@ namespace cPlayer
             };
             statusLabel.IsLink = false;
             menuStrip1.Items.Add(statusLabel);
-            
+
             _videoBag = new ShuffleBag(rng);
             _imageBag = new ShuffleBag(rng);
             EXE = "." + "e" + "x" + "e";
@@ -351,14 +493,14 @@ namespace cPlayer
             CurrentStateYellow = new bool[8];
             RecentPlaylists = new string[5];
             PracticeSessions = new List<PracticeSection>();
-            
+
             var options = new[]
             {
-            "--vout=d3d11", // Ensure Direct3D 11 is used if available
-            "--no-audio", // Disable audio processing
-            "--no-sub-autodetect-file", // Skip subtitle loading
-            "--no-video-title-show" // Hide overlay text on videos
-        };
+                "--vout=d3d11", // Ensure Direct3D 11 is used if available
+                "--no-audio", // Disable audio processing
+                "--no-sub-autodetect-file", // Skip subtitle loading
+                "--no-video-title-show" // Hide overlay text on videos
+            };
 
             _libVLC = new LibVLC(options);
             _mediaPlayer = new MediaPlayer(_libVLC);
@@ -373,7 +515,7 @@ namespace cPlayer
             };
             this.Controls.Add(videoView);
             CreateOverlay();
-            UpdateOverlayPosition();                                           
+            UpdateOverlayPosition();
 
             stageFrames = new List<Image>();
             var stagePath = Application.StartupPath + "\\res\\stage\\";
@@ -406,26 +548,17 @@ namespace cPlayer
             ActiveSongData = new SongData();
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
             this.UpdateStyles();
+            bmpFocusBG = Resources.focus;
             bmpDrumsCymbalB = Resources.drums_cymbal_b;
             bmpDrumsCymbalY = Resources.drums_cymbal_y;
             bmpDrumsCymbalG = Resources.drums_cymbal_g;
             bmpDrumsCymbalOD = Resources.drums_cymbal_od;
-            bmpDrumsCymbalBGlow = Resources.drums_cymbal_b_glow;
-            bmpDrumsCymbalYGlow = Resources.drums_cymbal_y_glow;
-            bmpDrumsCymbalGGlow = Resources.drums_cymbal_g_glow;
-            bmpDrumsCymbalODGlow = Resources.drums_cymbal_od_glow;
             bmpGreenHopo = Resources.note_green_hopo;
             bmpRedHopo = Resources.note_red_hopo;
             bmpYellowHopo = Resources.note_yellow_hopo;
             bmpBlueHopo = Resources.note_blue_hopo;
             bmpOrangeHopo = Resources.note_orange_hopo;
             bmpODHopo = Resources.note_overdrive_hopo;
-            bmpGreenHopoGlow = Resources.note_green_hopo_glow;
-            bmpRedHopoGlow = Resources.note_red_hopo_glow;
-            bmpYellowHopoGlow = Resources.note_yellow_hopo_glow;
-            bmpBlueHopoGlow = Resources.note_blue_hopo_glow;
-            bmpOrangeHopoGlow = Resources.note_orange_hopo_glow;
-            bmpODHopoGlow = Resources.note_overdrive_hopo_glow;
             bmpNoteBlue = Resources.note_blue;
             bmpNoteGreen = Resources.note_green;
             bmpNoteYellow = Resources.note_yellow;
@@ -456,16 +589,24 @@ namespace cPlayer
             bmpBackgroundKeysSolo = Resources.background_keys_solo;
             bmpBackgroundProKeys = Resources.background_prokeys;
             bmpBackgroundProKeysSolo = Resources.background_prokeys_solo;
-            bmpBackgroundDrumsRB = Resources.background_drumsRB;
-            bmpBackgroundDrumsSoloRB = Resources.background_drums_soloRB;
-            bmpBackgroundBassRB = Resources.background_bassRB;
-            bmpBackgroundBassSoloRB = Resources.background_bass_soloRB;
-            bmpBackgroundGuitarRB = Resources.background_guitarRB;
-            bmpBackgroundGuitarSoloRB = Resources.background_guitar_soloRB;
-            bmpBackgroundKeysRB = Resources.background_keysRB;
-            bmpBackgroundKeysSoloRB = Resources.background_keys_soloRB;
-            bmpBackgroundProKeysRB = Resources.background_prokeysRB;
-            bmpBackgroundProKeysSoloRB = Resources.background_prokeys_soloRB;
+            bmpBackgroundProKeysRB = CreateVerticalMirroredLoop(Resources.background_prokeysRB);
+            bmpBackgroundProKeysSoloRB = CreateVerticalMirroredLoop(Resources.background_prokeys_soloRB);
+            bmpBackgroundGuitarRB = CreateVerticalMirroredLoop(Resources.background_guitar);
+            bmpBackgroundGuitarSoloRB = CreateVerticalMirroredLoop(Resources.background_guitar_solo);
+            bmpBackgroundBassRB = CreateVerticalMirroredLoop(Resources.background_bass);
+            bmpBackgroundBassSoloRB = CreateVerticalMirroredLoop(Resources.background_bass_solo);
+            bmpBackgroundDrumsRB = CreateVerticalMirroredLoop(Resources.background_drums);
+            bmpBackgroundDrumsSoloRB = CreateVerticalMirroredLoop(Resources.background_drums_solo);
+            bmpBackgroundKeysRB = CreateVerticalMirroredLoop(Resources.background_keys);
+            bmpBackgroundKeysSoloRB = CreateVerticalMirroredLoop(Resources.background_keys_solo);
+            bmpProKeysBlueGlow = Resources.prokeys_blue_glow;
+            bmpProKeysYellowGlow = Resources.prokeys_yellow_glow;
+            bmpProKeysRedGlow = Resources.prokeys_red_glow;
+            bmpProKeysGreenGlow = Resources.prokeys_green_glow;
+            bmpProKeysWhiteLeftGlow = Resources.prokeys_white_left_glow;
+            bmpProKeysWhiteCenterGlow = Resources.prokeys_white_center_glow;
+            bmpProKeysWhiteRightGlow = Resources.prokeys_white_right_glow;
+            bmpProKeysWhiteFullGlow = Resources.prokeys_white_full_glow;
             bmpHitbox = Resources.hitbox;
             bmpHitboxVocals = Resources.hitbox_vocals;
             bmpBackgroundVocals = Resources.frostedglass75dark;//frostedglass50;
@@ -480,10 +621,74 @@ namespace cPlayer
             BackgroundVideos = Directory.GetFiles(path, "*.mp4", SearchOption.TopDirectoryOnly).ToList();
         }
 
+        public void ApplyMasterVolume()
+        {
+            if (BassMixer == 0)
+                return;
+
+            Bass.BASS_ChannelSetAttribute(
+                BassMixer,
+                BASSAttribute.BASS_ATTRIB_VOL,
+                masterVol
+            );
+        }
+
+        private Bitmap CreateVerticalMirroredLoop(Image source, float opacity = 0.90f)
+        {
+            Bitmap src = new Bitmap(source);
+            Bitmap loop = new Bitmap(src.Width, src.Height * 2, PixelFormat.Format32bppPArgb);
+
+            using (Graphics g = Graphics.FromImage(loop))
+            using (var imageAttributes = new ImageAttributes())
+            {
+                var colorMatrix = new ColorMatrix
+                {
+                    Matrix00 = 1.0f,
+                    Matrix11 = 1.0f,
+                    Matrix22 = 1.0f,
+                    Matrix33 = opacity,
+                    Matrix44 = 1.0f
+                };
+
+                imageAttributes.SetColorMatrix(
+                    colorMatrix,
+                    ColorMatrixFlag.Default,
+                    ColorAdjustType.Bitmap);
+
+                g.DrawImage(
+                    src,
+                    new Rectangle(0, 0, src.Width, src.Height),
+                    0,
+                    0,
+                    src.Width,
+                    src.Height,
+                    GraphicsUnit.Pixel,
+                    imageAttributes);
+
+                using (Bitmap flipped = (Bitmap)src.Clone())
+                {
+                    flipped.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                    g.DrawImage(
+                        flipped,
+                        new Rectangle(0, src.Height, src.Width, src.Height),
+                        0,
+                        0,
+                        src.Width,
+                        src.Height,
+                        GraphicsUnit.Pixel,
+                        imageAttributes);
+                }
+            }
+
+            src.Dispose();
+            return loop;
+        }
+              
         private void CreateOverlay()
         {
             if (videoOverlay != null) return;
-            videoOverlay = new OverlayForm();
+            videoOverlay = new OverlayForm();            
             videoOverlay.Show(picVisuals);
             videoOverlay.HostMenu = picVisuals.ContextMenuStrip;
             videoOverlay.OnOverlayRightClick = () =>
@@ -510,8 +715,7 @@ namespace cPlayer
             // Show using owner so it appears correctly in z-order
             menu.Show(owner, client);
         }
-
-        private int lastBackground = 0;
+                
         private void randomizeBackgroundImage()
         {
             //random was annoying so just linear change from one to the next
@@ -536,8 +740,11 @@ namespace cPlayer
         private void foggerTimer_Tick(object sender, EventArgs e)
         {
             foggerTimer.Enabled = false;
-            stageKit.TurnFogOff();
-        }              
+            foreach (var stageKit in stageKits)
+            {
+                stageKit.TurnFogOff();
+            }
+        }
 
         public void StartPassthrough(int deviceIndex, int volume)
         {
@@ -581,7 +788,7 @@ namespace cPlayer
                 MessageBox.Show($"Error starting passthrough: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 StopPassthrough();
             }
-        }        
+        }
 
         public void StopPassthrough()
         {
@@ -593,8 +800,7 @@ namespace cPlayer
             waveOut?.Dispose();
             waveOut = null;
         }
-
-        private BiQuadFilter highPassFilter = BiQuadFilter.HighPassFilter(44100, 100, 1); // 100 Hz cutoff, Q factor 1
+               
         private void WaveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
             // Apply the high-pass filter to each sample
@@ -607,7 +813,7 @@ namespace cPlayer
 
             // Write processed samples to the buffer
             bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
-        }        
+        }
 
         public bool MonitorApplicationFocus()
         {
@@ -649,7 +855,7 @@ namespace cPlayer
 
             // 2) GIF overlay centered over form (screen coords)
             if (GIFOverlay != null && !GIFOverlay.IsDisposed)
-            {                
+            {
                 int x = pr.Left + (pr.Width - GIFOverlay.Width) / 2;
                 int y = pr.Top + (pr.Height - GIFOverlay.Height) / 2;
                 GIFOverlay.Location = new Point(x, y);
@@ -693,18 +899,17 @@ namespace cPlayer
             Cursor = Cursors.NoMove2D;
             mouseX = MousePosition.X;
             mouseY = MousePosition.Y;
-            if (!displayAudioSpectrum.Checked || PlayingSong == null) return;
+            if (!displayAudioSpectrum || PlayingSong == null) return;
             SpectrumID++;
-            picVisuals.Image = null;
+            SafeVisualsSetter(null);
+            //picVisuals.Image = null;
             try
             {
                 Spectrum.ClearPeaks();
             }
-            catch { }            
+            catch { }
         }
-
-        private Point lastCursorPos = Point.Empty;       
-
+        
         private void frmMain_MouseUp(object sender, MouseEventArgs e)
         {
             Cursor = Cursors.Default;
@@ -718,7 +923,7 @@ namespace cPlayer
         private void StartNew(bool confirm)
         {
             if (Text.Contains("*") && confirm)
-            {                
+            {
                 if (MessageBox.Show("You have unsaved changes on the current playlist\nAre you sure you want to start a new playlist?",
                         AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 {
@@ -763,7 +968,7 @@ namespace cPlayer
             lblSections.Invoke(new MethodInvoker(() => lblSections.Text = ""));
             lblSections.Invoke(new MethodInvoker(() => lblSections.Image = null));
             lblSections.Invoke(new MethodInvoker(() => lblSections.CreateGraphics().Clear(LabelBackgroundColor)));
-            picVisuals.Invoke(new MethodInvoker(() => picVisuals.Image = Resources.logo)); 
+            SafeVisualsSetter(Resources.logo);
             toolTip1.SetToolTip(picPreview, "");
             toolTip1.SetToolTip(lblArtist, "");
             toolTip1.SetToolTip(lblSong, "");
@@ -787,7 +992,7 @@ namespace cPlayer
             panelLine.Cursor = Cursors.Default;
             PlayingSong = null;
             MIDITools.Initialize(true);
-            AlreadyFading = false;            
+            AlreadyFading = false;
             reset = false;
         }
 
@@ -869,6 +1074,7 @@ namespace cPlayer
             helpToolStripMenuItem.Enabled = fileToolStripMenuItem.Enabled;
             equipmentToolStripMenuItem.Enabled = fileToolStripMenuItem.Enabled;
             nautilusToolStripMenuItem.Enabled = fileToolStripMenuItem.Enabled;
+            audioMixerTool.Enabled = fileToolStripMenuItem.Enabled;
             changeViewToolStrip.Enabled = fileToolStripMenuItem.Enabled;
             txtSearch.Enabled = enabled && !isScanning;
         }
@@ -881,8 +1087,8 @@ namespace cPlayer
                 return;
             }
 
-            if (WindowState == FormWindowState.Minimized) return;                  
-            
+            if (WindowState == FormWindowState.Minimized) return;
+
             GIFOverlay = new gifOverlay(this)
             {
                 StartPosition = FormStartPosition.Manual,
@@ -976,7 +1182,7 @@ namespace cPlayer
             if (message)
             {
                 MessageBox.Show("Song '" + new_song.Artist + " - " + new_song.Name + "' is already in your playlist", AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }            
+            }
             return false;
         }
 
@@ -986,8 +1192,6 @@ namespace cPlayer
             var song = new SongData();
             Parser.Songs = new List<SongData>();
             song.Initialize();
-
-            hasNoMIDI = false;
 
             //this should work with any _ps4 file as input rather than forcing songdta_ps4 to be the input file
             var path = Path.GetDirectoryName(ps4File) + "\\" + Path.GetFileNameWithoutExtension(ps4File);
@@ -1003,7 +1207,7 @@ namespace cPlayer
             using (MemoryStream ms = new MemoryStream(dtaBytes))
             {
                 var ps4Data = new SongDataReader(ms);
-                var songData = ps4Data.Read();                      
+                var songData = ps4Data.Read();
                 song.SongId = (int)songData.SongId;
                 song.GameVersion = songData.Version;
                 song.PreviewStart = (int)songData.PreviewStart;
@@ -1028,7 +1232,7 @@ namespace cPlayer
                 song.ShortName = songData.Shortname;
                 song.Source = songData.GameOrigin;
                 Parser.Songs.Add(song);
-            }            
+            }
 
             //convert album art
             Image img = null;
@@ -1169,7 +1373,7 @@ namespace cPlayer
                 fixed (byte* ptr = bytes)
                 {
                     if (!TheMethod3.decrypt_mogg(ptr, (uint)bytes.Length)) return;
-                    nautilus.ReleaseStreamHandle(true);                    
+                    nautilus.ReleaseStreamHandle(true);
                     if (!nautilus.RemoveMHeader(bytes, true, DecryptMode.ToMemory, "")) return;
                 }
             }
@@ -1190,7 +1394,6 @@ namespace cPlayer
                         Tools.DeleteFile(CurrentSongMIDI);
                         Tools.DeleteFile(MIDI);
                         NextSongMIDI = "";
-                        hasNoMIDI = true;
                         MIDITools.Initialize(true);
 
                         using (var inStream = File.OpenRead(MIDI_PS4))
@@ -1210,7 +1413,6 @@ namespace cPlayer
                         NextSongMIDI = MIDI;
                         if (File.Exists(NextSongMIDI))
                         {
-                            hasNoMIDI = false;
                             MIDITools.Initialize(false);
                             if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold, false))
                             {
@@ -1219,7 +1421,6 @@ namespace cPlayer
                         }
                         else
                         {
-                            hasNoMIDI = true;
                             MIDITools.Initialize(true);
                             Tools.DeleteFile(CurrentSongMIDI);
                         }
@@ -1228,12 +1429,11 @@ namespace cPlayer
                 catch
                 {
                     Tools.DeleteFile(MIDI);
-                    hasNoMIDI = true;
                     MIDITools.Initialize(true);
                     Tools.DeleteFile(CurrentSongMIDI);
                 }
             }
-            
+
             Tools.DeleteFile(NextSongArtPNG);
             Tools.DeleteFile(NextSongArtBlurred);
             if (File.Exists(PNG))
@@ -1241,7 +1441,7 @@ namespace cPlayer
                 NextSongArtPNG = PNG;
                 NextSongArtBlurred = NextSongArtPNG.Replace(".png", "_b.png");
                 Tools.CreateBlurredArt(NextSongArtPNG, NextSongArtBlurred);
-            }            
+            }
 
             long length;
             ProcessMogg(scanning, song.Length, "", out length);
@@ -1260,15 +1460,14 @@ namespace cPlayer
         }
 
         private void loadDTA(string dta, bool message = false, bool scanning = true, bool next = false, bool prep = false)
-        {            
+        {
             if (!ValidateDTAFile(dta, message)) return;
-            
-            hasNoMIDI = false;
+
             for (var i = 0; i < Parser.Songs.Count; i++)
             {
                 if (CancelWorkers) return;
                 var song = prep ? Parser.Songs[ActiveSong.DTAIndex] : (next ? Parser.Songs[NextSong.DTAIndex] : Parser.Songs[i]);
-                
+
                 string internalName = "";
                 string PNG = "";
                 var EDAT = "";
@@ -1353,16 +1552,11 @@ namespace cPlayer
                     }
                     if (File.Exists(NextSongMIDI))
                     {
-                        hasNoMIDI = false;
                         MIDITools.Initialize(false);
                         if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold, false))
                         {
                             newSong.BPM = MIDITools.MIDIInfo.AverageBPM;
                         }
-                    }
-                    else
-                    {
-                        hasNoMIDI = true;
                     }
 
                     if (next || prep) //only do when processing for playback
@@ -1407,7 +1601,7 @@ namespace cPlayer
         private bool ValidateINIFile(string file, bool message)
         {
             if (Parser.ReadINIFile(file)) return true;
-                       
+
             if (message)
             {
                 MessageBox.Show("Something went wrong reading that INI file, can't add to the playlist", AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1430,7 +1624,7 @@ namespace cPlayer
                     Tools.DeleteFolder(outFolder, true);
                 }
                 Directory.CreateDirectory(outFolder);
-                    if (!Tools.ExtractSNG(input, outFolder))
+                if (!Tools.ExtractSNG(input, outFolder))
                 {
                     MessageBox.Show("Failed to process SNG file '" + Path.GetFileName(input) + "', can't play it", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
@@ -1448,7 +1642,7 @@ namespace cPlayer
                 INI = input;
             }
             if (!ValidateINIFile(INI, message)) return;
-            
+
             if (CancelWorkers) return;
             var song = Parser.Songs[0];
 
@@ -1458,9 +1652,9 @@ namespace cPlayer
             var notesMIDI = Path.GetDirectoryName(INI) + "\\notes.mid";
             var nameMIDI = Path.GetDirectoryName(INI) + "\\" + song.ShortName + ".mid";
             var notesChart = Path.GetDirectoryName(INI) + "\\notes.chart";
-            if (File.Exists(notesChart) &&  !File.Exists(notesMIDI))
+            if (File.Exists(notesChart) && !File.Exists(notesMIDI))
             {
-                notesMIDI = notesChart;              
+                notesMIDI = notesChart;
             }
 
             if (File.Exists(notesMIDI))
@@ -1493,7 +1687,7 @@ namespace cPlayer
                         AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 return;
-            }            
+            }
             var audio = opusFiles.Any() ? opusFiles.Aggregate("", (current, opus) => current + " " + Path.GetFileName(opus)) : oggFiles.Aggregate("", (current, ogg) => current + " " + Path.GetFileName(ogg));
             if (m4aFiles.Any())
             {
@@ -1506,7 +1700,7 @@ namespace cPlayer
                     }
                 }
             }
-            
+
             Song newSong;
             if (!ValidateNewSong(song, 0, string.IsNullOrEmpty(sngPath) ? INI : sngPath, scanning, message, out newSong)) return;
             newSong.Location = input;//for .yargsong files
@@ -1518,21 +1712,16 @@ namespace cPlayer
                 if (File.Exists(NextSongMIDI))
                 {
                     MIDITools.Initialize(false);
-                    if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold,false))
+                    if (MIDITools.ReadMIDIFile(NextSongMIDI, song.HOPOThreshold, false))
                     {
-                        hasNoMIDI = false;
                         newSong.BPM = MIDITools.MIDIInfo.AverageBPM;
                     }
                 }
-                else
-                {
-                    hasNoMIDI = true;
-                }
 
                 if (next || prep) //only do when processing for playback
-                {                    
+                {
                     if (File.Exists(NextSongArtPNG) || File.Exists(NextSongArtJPG))
-                    {                        
+                    {
                         Tools.CreateBlurredArt(File.Exists(NextSongArtPNG) ? NextSongArtPNG : NextSongArtJPG, NextSongArtBlurred);
                     }
                 }
@@ -1605,7 +1794,7 @@ namespace cPlayer
             {
                 Bass.BASS_ChannelFree(BassStream);
                 BassStream = fnfParser.m4aToBassStream(audio, 10);
-                            
+
                 if (BassStream == 0)
                 {
                     MessageBox.Show("File '" + audio + "' is not a valid input file", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -1663,16 +1852,14 @@ namespace cPlayer
                         nautilus.ReleaseStreamHandle(true);
                     }
                 }
-                catch (Exception ex)
-                {  }
+                catch { }
             }
         }
 
         private void loadCON(string con, bool message = false, bool scanning = true, bool next = false, bool prep = false)
         {
             if (!ValidateDTAFile(con, message)) return;
-            
-            hasNoMIDI = false;
+
             if (message && isScanning)
             {
                 message = false;
@@ -1720,7 +1907,7 @@ namespace cPlayer
                     newsong.BPM = 120;//default in case something fails below
                     currHOPOThreshold = song.HOPOThreshold;
                     xFile = xPackage.GetFile("songs/" + internalname + "/" + internalname + ".mid");
-                    
+
                     if (xFile != null)
                     {
                         if (xFile.ExtractToFile(NextSongMIDI))
@@ -1738,7 +1925,7 @@ namespace cPlayer
                         Tools.DeleteFile(NextSongArtPNG);
                         Tools.DeleteFile(NextSongArtBlurred);
                         xFile = xPackage.GetFile("songs/" + internalname + "/gen/" + internalname + "_keep.png_xbox");
-                        
+
                         if (xFile != null)
                         {
                             var art = Path.GetTempPath() + "next.png_xbox";
@@ -1794,7 +1981,7 @@ namespace cPlayer
             {
                 xPackage.CloseIO();
             }
-            catch (Exception ex)
+            catch
             { }
         }
 
@@ -1803,14 +1990,14 @@ namespace cPlayer
             if (!File.Exists(edat)) return;
             Tools.DeleteFile(NextSongMIDI);
             Tools.DecryptEdat(edat, NextSongMIDI, currentKLIC);
-            
+
             if (!File.Exists(NextSongMIDI))
             {
                 if (message)
                 {
                     MessageBox.Show("Failed to decrypt that song's EDAT file to a usable MIDI", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
-            } 
+            }
         }
 
         private void batchSongLoader_DoWork(object sender, DoWorkEventArgs e)
@@ -1890,12 +2077,12 @@ namespace cPlayer
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             { }
             finally
             {
                 SongsToAdd.RemoveAt(0);
-            }            
+            }
         }
 
         private void ExtractBandFuse(string file, bool message = false, bool scanning = true, bool next = false, bool prep = false)
@@ -1974,8 +2161,6 @@ namespace cPlayer
 
             NextSongArtPNG = album_art;
             NextSongMIDI = "";
-            hasNoMIDI = true;
-
             if (next || prep) //only do when processing for playback
             {
                 Tools.DeleteFile(NextSongArtBlurred);
@@ -2086,7 +2271,7 @@ namespace cPlayer
         }
 
         private void loadSNG(string sng, bool message = false, bool scanning = true, bool next = false, bool prep = false)
-        {            
+        {
             sngPath = sng;
             loadINI(sng, message, scanning, next, prep);
         }
@@ -2098,7 +2283,7 @@ namespace cPlayer
             var ogXMA = XMAs[0];
 
             if (!ValidateXMLFile(xml, message)) return;
-            
+
             var album_art = "";
             var albumPNG = Path.GetDirectoryName(XML_PATH) + "\\album.png";
             var albumJPG = Path.GetDirectoryName(XML_PATH) + "\\album.jpg";
@@ -2116,7 +2301,6 @@ namespace cPlayer
 
             NextSongArtPNG = album_art;
             NextSongMIDI = "";
-            hasNoMIDI = true;
 
             Song newSong;
             if (!ValidateNewSong(song, 0, xml, scanning, message, out newSong)) return;
@@ -2128,7 +2312,7 @@ namespace cPlayer
                 {
                     Tools.DeleteFile(NextSongArtBlurred);
                     if (File.Exists(NextSongArtPNG))
-                    {                        
+                    {
                         Tools.CreateBlurredArt(NextSongArtPNG, NextSongArtBlurred);
                     }
                 }
@@ -2294,7 +2478,7 @@ namespace cPlayer
         private bool ValidateHSANFile(string file, bool message)
         {
             if (Parser.ReadHSANFile(file)) return true;
-            
+
             if (message)
             {
                 MessageBox.Show("Something went wrong reading that HSAN file, can't add to the playlist", AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2305,7 +2489,7 @@ namespace cPlayer
         private bool ValidateXMLFile(string file, bool message)
         {
             if (Parser.ReadXMLFile(file)) return true;
-            
+
             if (message)
             {
                 MessageBox.Show("Something went wrong reading that XML file, can't add to the playlist", AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2326,7 +2510,7 @@ namespace cPlayer
             var sngFolder = folder + "\\songs\\bin\\generic\\";
             var sngFiles = Directory.GetFiles(sngFolder, "*.sng");
             var HSAN = "";
-                        
+
             bool hasRhythm = false;
             bool hasVocals = false;
 
@@ -2335,7 +2519,7 @@ namespace cPlayer
                 HSAN = metadataFiles[0];
             }
             if (!ValidateHSANFile(HSAN, message)) return;
-            
+
             if (pngFiles.Count() > 0)
             {
                 album_art = pngFiles[0];
@@ -2398,7 +2582,6 @@ namespace cPlayer
 
             NextSongArtPNG = album_art;
             NextSongMIDI = "";
-            hasNoMIDI = true;
 
             if (!OggFiles.Any())
             {
@@ -2413,8 +2596,6 @@ namespace cPlayer
             if (CancelWorkers) return;
             try
             {
-                hasNoMIDI = true;
-
                 if (next || prep) //only do when processing for playback
                 {
                     Tools.DeleteFile(NextSongArtBlurred);
@@ -2494,7 +2675,6 @@ namespace cPlayer
                 NextSongArtPNG = albumJPG;
             }
             NextSongMIDI = "";
-            hasNoMIDI = true;
 
             var temp = Application.StartupPath + "\\temp\\";
             if (!Directory.Exists(temp))
@@ -2742,7 +2922,7 @@ namespace cPlayer
             CancelWorkers = false;
             if (WindowState == FormWindowState.Minimized)
             {
-                NotifyTray_MouseDoubleClick(null, null);
+                //NotifyTray_MouseDoubleClick(null, null);
             }
             AddedSongs();
         }
@@ -2797,8 +2977,7 @@ namespace cPlayer
                 var notify = "Paused: " + PlayingSong.Artist + " - " + PlayingSong.Name;
                 text = notify.Length > 63 ? notify.Substring(0, 63) : notify;
             }
-            NotifyTray.Text = text;
-            Text = AppName + " - " + PlaylistName + " - " + text;
+            Text = AppName + " - " + (string.IsNullOrEmpty(PlaylistName) ? "[No Playlist Loaded]" : PlaylistName) + " - " + text;
         }
 
         private void songLoader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -2842,33 +3021,13 @@ namespace cPlayer
             isClosing = true;
             StopPassthrough();
             StopPlayback();
-            StopStageKit();
+            StopStageKits();
+            StopStageKitCommandWorker();
             Bass.BASS_Free();
             SaveConfig();
             DeleteUsedFiles();
             var folder = Application.StartupPath + "\\temp\\";
             Tools.DeleteFolder(folder, true);
-        }
-
-        private void SelectStageKitController()
-        {
-            try
-            {
-                stageKit = new StageKitController(stageKitIndex);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error creating Stage Kit controller:\n" + ex.Message, AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void UncheckAllStageKits()
-        {
-            StopStageKit();
-            controller1.Checked = false;
-            controller2.Checked = false;
-            controller3.Checked = false;
-            controller4.Checked = false;
         }
 
         private void DeleteUsedFiles(bool all_files = true)
@@ -2912,23 +3071,21 @@ namespace cPlayer
 
         private void DoClickStop()
         {
-            stageTimer.Enabled = false;            
             PlaybackTimer.Enabled = false;
             StopPlayback();
             ClearVisuals(true);
             lblSections.Text = "";
             PlaybackSeconds = 0;
             _renderedFrame = null;
-            picVisuals.BackColor = Color.AliceBlue;
-            picVisuals.Image = Resources.logo;
+            SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+            SafeVisualsSetter(Resources.logo);
             videoOverlay.Hide();
-            //videoOverlayShown = false;
             if (secondScreen != null)
             {
-                secondScreen.ChangeBackgroundColor(Color.AliceBlue);
-                secondScreen.ChangeBackgroundImage(Resources.logo);
+                SetSecondScreenBackColorIfChanged(Color.AliceBlue);
+                secondScreen.ChangeVisualsImage(Resources.logo);
                 secondScreen.ClearOverlayFrame();
-            }            
+            }
             UpdateTime();
             UpdateNotifyTray();
         }
@@ -3005,64 +3162,64 @@ namespace cPlayer
                 {
                     case 2:
                         //stereo kit
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 0);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 0, Stem.Drums);
                         break;
                     case 3:
                         //mono kick
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0, Stem.Drums);
                         //stereo kit
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 1);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 1, Stem.Drums);
                         break;
                     case 4:
                         //mono kick
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0, Stem.Drums);
                         //mono snare
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 1);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 1, Stem.Drums);
                         //stereo kit
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 2);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 2, Stem.Drums);
                         break;
                     case 5:
                         //mono kick
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 1, 0, Stem.Drums);
                         //stereo snare
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 1);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 1, Stem.Drums);
                         //stereo kit
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 3);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 3, Stem.Drums);
                         break;
                     case 6:
                         //stereo kick
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 0);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 0, Stem.Drums);
                         //stereo snare
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 2);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 2, Stem.Drums);
                         //stereo kit
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 4);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, 2, 4, Stem.Drums);
                         break;
                 }
             }
             //var channel = song.ChannelsDrums;
             if (ActiveSongData.ChannelsBass > 0 && doAudioBass)
             {
-                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsBass, ActiveSongData.ChannelsBassStart);//channel);
+                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsBass, ActiveSongData.ChannelsBassStart, Stem.Bass);//channel);
             }
             //channel = channel + song.ChannelsBass;
             if (ActiveSongData.ChannelsGuitar > 0 && doAudioGuitar)
             {
-                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsGuitar, ActiveSongData.ChannelsGuitarStart);//channel);
+                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsGuitar, ActiveSongData.ChannelsGuitarStart, Stem.Guitar);//channel);
             }
             //channel = channel + song.ChannelsGuitar;
             if (ActiveSongData.ChannelsVocals > 0 && doAudioVocals)
             {
-                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsVocals, ActiveSongData.ChannelsVocalsStart);//channel);
+                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsVocals, ActiveSongData.ChannelsVocalsStart, Stem.Vocals);//channel);
             }
             //channel = channel + song.ChannelsVocals;
             if (ActiveSongData.ChannelsKeys > 0 && doAudioKeys)
             {
-                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsKeys, ActiveSongData.ChannelsKeysStart);//channel);
+                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsKeys, ActiveSongData.ChannelsKeysStart, Stem.Keys);//channel);
             }
             //channel = channel + song.ChannelsKeys;
             if (ActiveSongData.ChannelsCrowd > 0 && doAudioCrowd)
             {
-                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsCrowd, ActiveSongData.ChannelsCrowdStart);//channel);
+                matrix = DoMatrixPanning(matrix, ArrangedChannels, ActiveSongData.ChannelsCrowd, ActiveSongData.ChannelsCrowdStart, Stem.Crowd);//channel);
             }
             //channel = channel + song.ChannelsCrowd;
             if (doAudioBacking) //song.ChannelsBacking > 0 &&  ---- should always be enabled per specifications
@@ -3076,18 +3233,23 @@ namespace cPlayer
                 {
                     if (ActiveSongData.ChannelsCrowdStart + ActiveSongData.ChannelsCrowd == ActiveSongData.ChannelsTotal) //crowd channels are last
                     {
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, backing, ActiveSongData.ChannelsCrowdStart - backing);//channel);                        
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, backing, ActiveSongData.ChannelsCrowdStart - backing, Stem.Backing);//channel);                        
                     }
                     else
                     {
-                        matrix = DoMatrixPanning(matrix, ArrangedChannels, backing, ActiveSongData.ChannelsTotal - backing);//channel);
+                        matrix = DoMatrixPanning(matrix, ArrangedChannels, backing, ActiveSongData.ChannelsTotal - backing, Stem.Backing);//channel);
                     }
                 }
             }
             return matrix;
         }
 
-        private float[,] DoMatrixPanning(float[,] in_matrix, IList<int> ArrangedChannels, int inst_channels, int curr_channel)
+        private enum Stem
+        {
+            Bass, Drums, Guitar, Keys, Vocals, Backing, Crowd
+        }
+
+        private float[,] DoMatrixPanning(float[,] in_matrix, IList<int> ArrangedChannels, int inst_channels, int curr_channel, Stem stem)
         {
             //by default matrix values will be 0 = 0 volume
             //if nothing is assigned here, it stays at 0 so that channel won't be played
@@ -3102,18 +3264,43 @@ namespace cPlayer
 
             //BASS.NET lets us specify maximum volume when converting dB to Level
             //in case we want to change this later, it's only one value to change
-            const double max_dB = 1.0;
+            const double maxLevel = 1.0;
 
             //technically we could do each channel, but Magma only allows us to specify volume per track, 
             //so both channels should have same volume, let's save a tiny bit of processing power
             float vol;
             try
             {
-                vol = (float)Utils.DBToLevel(Convert.ToDouble(volumes[ArrangedChannels[curr_channel]]), max_dB);
+                vol = (float)Utils.DBToLevel(Convert.ToDouble(volumes[ArrangedChannels[curr_channel]]), maxLevel);
             }
             catch (Exception)
             {
-                vol = (float)1.0;
+                vol = 1.0f;
+            }
+
+            switch (stem)
+            {
+                case Stem.Bass:
+                    vol = vol * bassVol;
+                    break;
+                case Stem.Guitar:
+                    vol = vol * guitarVol;
+                    break;
+                case Stem.Drums:
+                    vol = vol * drumsVol;
+                    break;
+                case Stem.Keys:
+                    vol = vol * keysVol;
+                    break;
+                case Stem.Vocals:
+                    vol = vol * vocalsVol;
+                    break;
+                case Stem.Backing:
+                    vol = vol * backingVol;
+                    break;
+                case Stem.Crowd:
+                    vol = vol * crowdVol;
+                    break;
             }
 
             //assign volume level to channels in the matrix
@@ -3158,46 +3345,63 @@ namespace cPlayer
             }
             return matrix;
         }
-
+        
         private void UpdateTime(bool seek = false, bool update = false)
-        {            
-            string time;
-            var TimeSelection = seek ? PlaybackSeek : PlaybackSeconds;
-            if (PlayingSong != null && TimeSelection * 1000 > PlayingSong.Length)
+        {
+            var timeSelection = seek ? PlaybackSeek : PlaybackSeconds;
+
+            if (PlayingSong != null && timeSelection * 1000 > PlayingSong.Length)
             {
                 picNext_MouseClick(null, null);
                 return;
             }
-            if (TimeSelection >= 3600)
+
+            int wholeSeconds = (int)timeSelection;
+
+            // Only update the time label when the visible second changes
+            if (wholeSeconds != _lastDisplayedSecond)
             {
-                var hours = (int)(TimeSelection / 3600);
-                var minutes = (int)(TimeSelection - (hours * 3600));
-                var seconds = (int)(TimeSelection - (minutes * 60));
-                time = hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-            }
-            else if (TimeSelection >= 60)
-            {
-                var minutes = (int)(TimeSelection / 60);
-                var seconds = (int)(TimeSelection - (minutes * 60));
-                time = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-            }
-            else
-            {
-                time = "0:" + (TimeSelection < 10 ? "0" : "") + (int)TimeSelection;
-            }
-            if (lblTime.InvokeRequired)
-            {
-                lblTime.Invoke(new MethodInvoker(() => lblTime.Text = time));
-            }
-            else
-            {
+                _lastDisplayedSecond = wholeSeconds;
+
+                string time;
+
+                if (timeSelection >= 3600)
+                {
+                    var hours = (int)(timeSelection / 3600);
+                    var minutes = (int)((timeSelection - (hours * 3600)) / 60);
+                    var seconds = (int)(timeSelection - (hours * 3600) - (minutes * 60));
+                    time = hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+                }
+                else if (timeSelection >= 60)
+                {
+                    var minutes = (int)(timeSelection / 60);
+                    var seconds = (int)(timeSelection - (minutes * 60));
+                    time = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+                }
+                else
+                {
+                    time = "0:" + (timeSelection < 10 ? "0" : "") + wholeSeconds;
+                }
+
                 lblTime.Text = time;
             }
-            if (panelSlider.Cursor == Cursors.NoMoveHoriz || reset || PlayingSong == null) return;
-            var percent = TimeSelection / ((double)PlayingSong.Length / 1000);
-            panelSlider.Invoke(new MethodInvoker(() => panelSlider.Left = panelLine.Left + (int)((panelLine.Width - panelSlider.Width) * percent)));
-            if (!update || displayKaraokeMode.Checked) return;
-            DoPracticeSessions();
+
+            if (panelSlider.Cursor == Cursors.NoMoveHoriz || reset || PlayingSong == null)
+                return;
+
+            var percent = timeSelection / ((double)PlayingSong.Length / 1000);
+            int sliderLeft = panelLine.Left + (int)((panelLine.Width - panelSlider.Width) * percent);
+
+            // Only move slider if pixel position actually changed
+            if (sliderLeft != _lastSliderLeft)
+            {
+                _lastSliderLeft = sliderLeft;
+                panelSlider.Left = sliderLeft;
+            }
+
+            if (!update) return;
+
+            DoPracticeSessions(GetCorrectedTime());
         }
 
         private void panelLine_MouseClick(object sender, MouseEventArgs e)
@@ -3215,8 +3419,8 @@ namespace cPlayer
             if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PAUSED || Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
                 SetPlayLocation(PlaybackSeconds);
-                var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * (MinVolume - VolumeLevel)), 1.0);
-                Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, track_vol);
+                //var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * (MinVolume - VolumeLevel)), 1.0);
+                Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, masterVol);
             }
             UpdateTime(false, !PlaybackTimer.Enabled);
         }
@@ -3234,11 +3438,9 @@ namespace cPlayer
             if (Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING) return;
             PlaybackTimer.Enabled = false;
             StopPlayback();
-            StartPlayback(doFade, false);
+            _ = StartPlaybackAsync(doFade, false);
         }
-
-        private static readonly Random _rng = new Random();
-
+                
         private int ShuffleSongs(bool can_repeat = false)
         {
             int count = lstPlaylist.Items.Count;
@@ -3389,13 +3591,8 @@ namespace cPlayer
             MoveSongFiles();
             isScanning = batchSongLoader.IsBusy || songLoader.IsBusy;
             UpdateNotifyTray();
-            if (GIFOverlay != null)
-            {
-                GIFOverlay.Close();
-                GIFOverlay = null;
-            }
             PrepareForPlayback();
-            UpdateHighlights();            
+            UpdateHighlights();
         }
 
         private void PrepareForPlayback() //mainly for GHWT:DE
@@ -3449,24 +3646,20 @@ namespace cPlayer
             SetVideoPlayerPath(PlayingSong.Location);
             if (!File.Exists(CurrentSongArt))
             {
-                displayAlbumArt.Checked = false;
-                if (!chartVisualsToolStripMenuItem.Checked && !displayKaraokeMode.Checked)
-                {
-                    displayAudioSpectrum.Checked = true;
-                }
-                if (!displayAudioSpectrum.Checked)
+                displayAlbumArt = false;
+                displayAudioSpectrum = true;
+                if (!displayAudioSpectrum)
                 {
                     toolTip1.SetToolTip(picPreview, "Click to change spectrum style");
                 }
             }
             UpdateButtons();
             UpdateDisplay();
-            StartPlayback(PlaybackSeconds == 0, true);
+            _ = StartPlaybackAsync(PlaybackSeconds == 0, true);
         }
 
         private void EnableDisableButtons(bool enabled)
         {
-            //picPlay.Enabled = enabled;
             picPause.Enabled = enabled;
             picStop.Enabled = enabled;
             picNext.Enabled = enabled;
@@ -3479,16 +3672,13 @@ namespace cPlayer
             if (!MIDITools.ReadMIDIFile(CurrentSongMIDI, currHOPOThreshold, true))
             {
                 ShowUpdate("Error reading MIDI file!");
-                displayAudioSpectrum.Checked = true;
-                chartVisualsToolStripMenuItem.Checked = false;
+                displayAudioSpectrum = true;
             }
             PracticeSessions = MIDITools.PracticeSessions;
-            if (displayKaraokeMode.Checked && (!MIDITools.PhrasesVocals.Phrases.Any() || !MIDITools.LyricsVocals.Lyrics.Any()))
+            if (!MIDITools.PhrasesVocals.Phrases.Any() || !MIDITools.LyricsVocals.Lyrics.Any())
             {
-                displayKaraokeMode.Checked = false;                
-                displayAudioSpectrum.Checked = true;
+                displayAudioSpectrum = true;
             }
-            DrewFullChart = false;
             try
             {
                 var size = secondScreen == null ? picVisuals.ClientSize : secondScreen.RenderSize();
@@ -3531,7 +3721,7 @@ namespace cPlayer
                 }
             }
             if (!MIDITools.MIDI_Chart.Vocals.ChartedNotes.Any() || ((!doMIDIVocals && !doMIDIHarmonies) || doMIDINoVocals)) return tracks;
-            if (MIDITools.MIDI_Chart.Vocals.NoteRange.Count > 8 || chartVertical.Checked || rBStyle.Checked)
+            if (MIDITools.MIDI_Chart.Vocals.NoteRange.Count > 8 || doVerticalChart || doRockBandChart)
             {
                 tracks += tall;
             }
@@ -3544,7 +3734,7 @@ namespace cPlayer
 
         private void DrawMIDIFile(Size size, Graphics graphics)
         {
-            if (MIDITools.MIDI_Chart == null || MIDITools.PhrasesVocals == null) return;
+            if (MIDITools.MIDI_Chart == null) return;
             const int tall = 2;
             var tracks = GetTrackstoDraw();
             if (tracks == 0) return;
@@ -3553,18 +3743,19 @@ namespace cPlayer
             var track_y = lblSections.Visible ? lblSections.Height : 0;
             int Index;
             var track_color = 1;
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;// new Size(1920, 1080);
 
             if (secondScreen != null)
             {
-                secondScreen.ChangeBackgroundColor(chartVertical.Checked || rBStyle.Checked ? Color.Black : Color.FromArgb(200, 200, 200));
-                picVisuals.BackColor = Color.AliceBlue;
+                SetSecondScreenBackColorIfChanged(Color.Black);
+                SetPicVisualsBackColorIfChanged(Color.AliceBlue);
             }
             else
             {
-                picVisuals.BackColor = chartVertical.Checked || rBStyle.Checked ? Color.Black : Color.FromArgb(200, 200, 200);
+                SetPicVisualsBackColorIfChanged(Color.Black);
             }
-            if (!chartVertical.Checked && !rBStyle.Checked)
+
+            if (doMIDIChart)
             {
                 if (MIDITools.MIDI_Chart.Drums.ChartedNotes.Count > 0 && doMIDIDrums)
                 {
@@ -3614,72 +3805,81 @@ namespace cPlayer
             }
             else
             {
-                DrawRockBandStyle(graphics);
+                _ = DrawRockBandStyleAsync(graphics, false);
             }
-            if (MIDITools.MIDI_Chart.Vocals.ChartedNotes.Count <= 0) return;
-            var multVocals = 1;
-            if (MIDITools.MIDI_Chart.Vocals.NoteRange.Count > 8 || chartVertical.Checked || rBStyle.Checked)
+            List<MIDITrack> activeTracks = new List<MIDITrack>();
+            var waitY = GetYForRBVocals() + (vocalsHeight / 2);
+            if (MIDITools.PhrasesVocals != null && MIDITools.MIDI_Chart.Vocals.ChartedNotes.Count > 0)
             {
-                multVocals = tall;
-            }
-            if (doMIDIVocals || doMIDIHarmonies)
-            {
-                if (chartVertical.Checked || rBStyle.Checked)
+                var multVocals = 1;
+                if (MIDITools.MIDI_Chart.Vocals.NoteRange.Count > 8 || doVerticalChart || doRockBandChart)
                 {
-                    if (chartVertical.Checked)
+                    multVocals = tall;
+                }
+                if ((doMIDIVocals || doMIDIHarmonies) && !doMIDINoVocals)
+                {
+                    if (doVerticalChart || doRockBandChart)
                     {
-                        using (var overlayBrush = new SolidBrush(
-                        Color.FromArgb(chartVertical.Checked ? 255 : 128, Color.Black)))
+                        if (doVerticalChart)
                         {
-                            graphics.FillRectangle(overlayBrush, 0, 0, renderSize.Width, vocalsHeight + 8);
+                            using (var overlayBrush = new SolidBrush(
+                            Color.FromArgb(doVerticalChart ? 255 : 128, Color.Black)))
+                            {
+                                graphics.FillRectangle(overlayBrush, 0, 0, renderSize.Width, vocalsHeight + 8);
+                            }
                         }
+                        graphics.DrawImage(doVerticalChart ? Resources.frostedglass75 : Resources.frostedglass50, 0, doRockBandChart ? GetYForRBVocals() : 0, renderSize.Width, vocalsHeight + 8);
+                        DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, vocalsHeight, 4);
+                        track_y = vocalsHeight;
                     }
-                    graphics.DrawImage(chartVertical.Checked ? Resources.frostedglass75 : Resources.frostedglass50, 0, rBStyle.Checked ? GetYForRBVocals() : 0, renderSize.Width, vocalsHeight + 8);                    
-                    DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, vocalsHeight, 4);
-                    track_y = vocalsHeight;
+                    else
+                    {
+                        track_y += track_height * multVocals;
+                        DrawTrackBackground(graphics, track_y, track_height * multVocals, track_color, MIDITools.MIDI_Chart.Harm1.ChartedNotes.Any() && doMIDIHarmonies ? "HARMONIES" : "VOCALS", null, Instrument.Vocals);
+                        DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, track_height * multVocals, track_y);
+                    }
+                }
+                if (!doMIDIChart)
+                {
+                    DrawLyrics(size, graphics, (doRockBandChart || doVerticalChart || doMIDIChart) ? RBStyleVocalsBackgroundColor : Color.FromArgb(127, 200, 200, 200));
+                }
+                if ((!doMIDIVocals && !doMIDIHarmonies) || doMIDINoVocals) return;                
+                if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Count > 0 && doMIDIHarmonies)
+                {
+                    activeTracks.Add(MIDITools.MIDI_Chart.Harm3);
+                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm3, track_height * multVocals, track_y, false, 3, out Index);
+                    MIDITools.MIDI_Chart.Harm3.ActiveIndex = Index;
+                }
+                if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Count > 0 && doMIDIHarmonies)
+                {
+                    activeTracks.Add(MIDITools.MIDI_Chart.Harm2);
+                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm2, track_height * multVocals, track_y, false, 2, out Index);
+                    MIDITools.MIDI_Chart.Harm2.ActiveIndex = Index;
+                }
+                if (MIDITools.MIDI_Chart.Harm1.ChartedNotes.Count > 0 && doMIDIHarmonies)
+                {
+                    activeTracks.Add(MIDITools.MIDI_Chart.Harm1);
+                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm1, track_height * multVocals, track_y, false, 1, out Index);
+                    MIDITools.MIDI_Chart.Harm1.ActiveIndex = Index;
                 }
                 else
                 {
-                    track_y += track_height * multVocals;
-                    DrawTrackBackground(graphics, track_y, track_height * multVocals, track_color, MIDITools.MIDI_Chart.Harm1.ChartedNotes.Any() && doMIDIHarmonies ? "HARMONIES" : "VOCALS", null, Instrument.Vocals);
-                    DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, track_height * multVocals, track_y);
+                    activeTracks.Add(MIDITools.MIDI_Chart.Vocals);
+                    DrawNotes(graphics, MIDITools.MIDI_Chart.Vocals, track_height * multVocals, track_y, false, 0, out Index);
+                    MIDITools.MIDI_Chart.Vocals.ActiveIndex = Index;
+                }
+                if (doMIDIChart)
+                {
+                    DrawLyrics(size, graphics, (doRockBandChart || doVerticalChart || doMIDIChart) ? RBStyleVocalsBackgroundColor : Color.FromArgb(127, 200, 200, 200));
                 }
             }
-            DrawLyrics(size, graphics, chartVisualsToolStripMenuItem.Checked ? RBStyleVocalsBackgroundColor : Color.FromArgb(127, 200, 200, 200));
-            if ((!doMIDIVocals && !doMIDIHarmonies) || doMIDINoVocals) return;
-            List<MIDITrack> activeTracks = new List<MIDITrack>();
-            var waitY = GetYForRBVocals() + (vocalsHeight / 2);
-            if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Count > 0 && doMIDIHarmonies)
-            {
-                activeTracks.Add(MIDITools.MIDI_Chart.Harm3);
-                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm3, track_height * multVocals, track_y, false, 3, out Index);
-                MIDITools.MIDI_Chart.Harm3.ActiveIndex = Index;
-            }
-            if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Count > 0 && doMIDIHarmonies)
-            {
-                activeTracks.Add(MIDITools.MIDI_Chart.Harm2);
-                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm2, track_height * multVocals, track_y, false, 2, out Index);
-                MIDITools.MIDI_Chart.Harm2.ActiveIndex = Index;
-            }
-            if (MIDITools.MIDI_Chart.Harm1.ChartedNotes.Count > 0 && doMIDIHarmonies)
-            {
-                activeTracks.Add(MIDITools.MIDI_Chart.Harm1);
-                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm1, track_height * multVocals, track_y, false, 1, out Index);
-                MIDITools.MIDI_Chart.Harm1.ActiveIndex = Index;
-            }
-            else
-            {
-                activeTracks.Add(MIDITools.MIDI_Chart.Vocals);                
-                DrawNotes(graphics, MIDITools.MIDI_Chart.Vocals, track_height * multVocals, track_y, false, 0, out Index);
-                MIDITools.MIDI_Chart.Vocals.ActiveIndex = Index;
-            }
-            if (chartVertical.Checked || rBStyle.Checked)
+            if (doVerticalChart || doRockBandChart)
             {
                 double time = GetCorrectedTime();
 
                 const double gapSeconds = 5.0;
-                const double grace = 0.05;                 // match your sustain grace
-                double window = PlaybackWindowRB;          // your lookahead window (seconds)
+                const double grace = 0.05;
+                double window = PlaybackWindowRB;
 
                 // 1) Find the latest end time among notes that are currently "visible / relevant"
                 //    Visible condition: (entered window) AND (not fully gone yet)
@@ -3747,7 +3947,7 @@ namespace cPlayer
                     if (gap >= gapSeconds)
                     {
                         // We only want the timer after current visuals are done:
-                        // i.e., once time is past latestVisibleEnd (plus grace if you want).
+                        // i.e., once time is past latestVisibleEnd (plus grace if we want).
                         if (time >= latestVisibleEnd)
                         {
                             double wait = nextStart - time; // countdown to the next phrase
@@ -3760,8 +3960,8 @@ namespace cPlayer
                     }
                 }
             }
-            
-            if (!chartVertical.Checked && !rBStyle.Checked) return;
+
+            if ((!doVerticalChart && !doRockBandChart) || MIDITools.PhrasesVocals.Phrases.Count == 0) return;
             DrawHitbox(graphics, bmpHitboxVocals, HitboxVocalsX + (bmpHitboxVocals.Width / 2) - 4, GetYForRBVocals(), 4, vocalsHeight, 1, "");
         }
 
@@ -3785,7 +3985,7 @@ namespace cPlayer
                 graphics.DrawImage(image, new Rectangle(posX, posY, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
             }
 
-            if (!doMIDINameTracks || (!chartVertical.Checked && !rBStyle.Checked)) return;
+            if (!doMIDINameTracks || (!doVerticalChart && !doRockBandChart)) return;
             Font font;
             try
             {
@@ -3800,7 +4000,234 @@ namespace cPlayer
             Size textSize = TextRenderer.MeasureText(graphics, trackName, font);
             int centeredX = hitbox.X + (hitbox.Width - textSize.Width) / 2;
             int centeredY = hitbox.Y + (hitbox.Height - textSize.Height) / 2;
-            TextRenderer.DrawText(graphics, trackName, font, new Point(centeredX, centeredY), Color.FromArgb(127,0,0,0));
+            TextRenderer.DrawText(graphics, trackName, font, new Point(centeredX, centeredY), Color.FromArgb(127, 0, 0, 0));
+        }
+
+        private sealed class TrackTrapezoidCache
+        {
+            public string Key = "";
+            public GraphicsPath ClipPath;
+            public RectangleF[] DestRects = Array.Empty<RectangleF>();
+            public float TopLeftX;
+            public float TopRightX;
+            public float BottomLeftX;
+            public float BottomRightX;
+            public float HorizonY;
+            public float HitboxY;
+            public int Strips;
+        }
+        
+        private TrackTrapezoidCache GetOrCreateTrackTrapezoidCache(
+            int chartLeft,
+            int topY,
+            int trackHeight,
+            int trackWidth,
+            float horizonY,
+            float hitboxY,
+            int strips)
+        {
+            string key = string.Join("|",
+                chartLeft,
+                topY,
+                trackHeight,
+                trackWidth,
+                horizonY.ToString("0.###"),
+                hitboxY.ToString("0.###"),
+                strips);
+
+            if (_trackTrapezoidCache.TryGetValue(key, out var cached))
+                return cached;
+
+            float fullTop = topY;
+            float fullBottom = topY + trackHeight;
+
+            if (hitboxY > fullBottom) hitboxY = fullBottom;
+            if (hitboxY < fullTop + 2) hitboxY = fullBottom;
+
+            if (horizonY < fullTop) horizonY = fullTop;
+            if (horizonY > hitboxY - 2) horizonY = fullTop;
+
+            float spanY = hitboxY - horizonY;
+
+            float centerX = chartLeft + (trackWidth / 2f);
+
+            const float topWidthFactor = HighwayAngleFactor;
+            float topW = trackWidth * topWidthFactor;
+
+            float topLeftX = centerX - (topW / 2f);
+            float topRightX = centerX + (topW / 2f);
+            float bottomLeftX = chartLeft;
+            float bottomRightX = chartLeft + trackWidth;
+
+            float LerpF(float a, float b, float t) => a + (b - a) * t;
+
+            var path = new GraphicsPath();
+            path.AddPolygon(new[]
+            {
+                new PointF(topLeftX, horizonY),
+                new PointF(topRightX, horizonY),
+                new PointF(bottomRightX, hitboxY),
+                new PointF(bottomLeftX, hitboxY)
+            });
+
+            var destRects = new RectangleF[strips];
+
+            for (int i = 0; i < strips; i++)
+            {
+                float t0 = (float)i / strips;
+                float t1 = (float)(i + 1) / strips;
+
+                float y0 = horizonY + (spanY * t0);
+                float y1 = horizonY + (spanY * t1);
+                float h = Math.Max(1f, y1 - y0);
+
+                float leftX = LerpF(topLeftX, bottomLeftX, t0);
+                float rightX = LerpF(topRightX, bottomRightX, t0);
+                float w = Math.Max(1f, rightX - leftX);
+
+                destRects[i] = new RectangleF(leftX, y0, w, h);
+            }
+
+            var entry = new TrackTrapezoidCache
+            {
+                Key = key,
+                ClipPath = path,
+                DestRects = destRects,
+                TopLeftX = topLeftX,
+                TopRightX = topRightX,
+                BottomLeftX = bottomLeftX,
+                BottomRightX = bottomRightX,
+                HorizonY = horizonY,
+                HitboxY = hitboxY,
+                Strips = strips
+            };
+
+            _trackTrapezoidCache[key] = entry;
+            return entry;
+        }
+
+        private Bitmap BuildFadedSoloOverlayBitmap(RBLaneLayout lane, Size renderSize)
+        {
+            float hitboxY = renderSize.Height - 50f;
+            const float horizonPercent = 0.50f;
+            float horizonY = hitboxY * horizonPercent;
+            float trapezoidBottom = lane.Id == "ProKeys" ? hitboxY : hitboxY + 20f;
+
+            var highlight = GetRockBandBackgroundBitmap(lane.Id, true);
+            if (highlight == null)
+                return null;
+
+            int drawWidth = lane.Width;
+
+            var bmp = new Bitmap(Math.Max(1, lane.X + drawWidth), renderSize.Height, PixelFormat.Format32bppPArgb);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.Transparent);
+
+                DrawTrackPerspectiveTrapezoidSoloFaded(
+                    g,
+                    highlight,
+                    lane.X,
+                    0,
+                    renderSize.Height,
+                    drawWidth,
+                    horizonY,
+                    trapezoidBottom,
+                    0.80f,
+                    1.00f
+                );
+            }
+
+            return bmp;
+        }
+
+        private Bitmap BuildFadedFocusOverlayBitmap(RBLaneLayout lane, Size renderSize)
+        {
+            if (bmpFocusBG == null)
+                return null;
+
+            float hitboxY = renderSize.Height - 50f;
+            const float horizonPercent = 0.50f;
+            float horizonY = hitboxY * horizonPercent;
+            float trapezoidBottom = lane.Id == "ProKeys" ? hitboxY : hitboxY + 20f;
+
+            int drawWidth = lane.Id == "ProKeys" ? lane.Width * 2 : lane.Width;
+
+            var bmp = new Bitmap(Math.Max(1, lane.X + lane.Width), renderSize.Height, PixelFormat.Format32bppPArgb);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.Transparent);
+
+                DrawTrackPerspectiveTrapezoidSoloFaded(
+                    g,
+                    bmpFocusBG,
+                    lane.X,
+                    0,
+                    renderSize.Height,
+                    lane.Width,
+                    horizonY,
+                    trapezoidBottom,
+                    0.80f,
+                    1.00f
+                );
+            }
+
+            return bmp;
+        }
+
+        private Bitmap[] BuildAnimatedTrackFillFrames(RBLaneLayout lane, bool isSolo, Size renderSize, int frameCount = 16)
+        {
+            var frames = new Bitmap[frameCount];
+
+            float hitboxY = renderSize.Height - 50f;
+            const float horizonPercent = 0.50f;
+            float horizonY = hitboxY * horizonPercent;
+            float trapezoidBottom = lane.Id == "ProKeys" ? hitboxY : hitboxY + 20f;
+
+            var bg = GetRockBandBackgroundBitmap(lane.Id, isSolo);
+            if (bg == null)
+                return frames;
+
+            int srcH = bg.Height;
+            int wrapHeight = srcH / 2;
+            if (wrapHeight <= 0) wrapHeight = srcH;
+            if (wrapHeight <= 0)
+                return frames;
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                float offset = (wrapHeight * i) / (float)frameCount;
+
+                var bmp = new Bitmap(Math.Max(1, lane.Width), renderSize.Height, PixelFormat.Format32bppPArgb);
+
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    g.Clear(Color.Transparent);
+
+                    DrawTrackPerspectiveTrapezoidFilled(
+                        g,
+                        bg,
+                        0,
+                        0,
+                        renderSize.Height,
+                        lane.Width,
+                        horizonY,
+                        trapezoidBottom,
+                        offset,
+                        strips: 48
+                    );
+                }
+
+                // Fade top of finished cached frame:
+                // start fade around 80% of the visible track, fully gone by the very top
+                ApplyTopFadeToTrackFrame(bmp, horizonY, trapezoidBottom, 0.80f, 1.00f);
+
+                frames[i] = bmp;
+            }
+
+            return frames;
         }
 
         private void DrawTrackPerspectiveTrapezoidFilled(
@@ -3812,99 +4239,201 @@ namespace cPlayer
             int trackWidth,
             float horizonY,
             float hitboxY,
-            int strips = 120
-)
+            float scrollOffset,
+            int strips = 48)
         {
             if (trackBmp == null || trackHeight <= 0 || trackWidth <= 0) return;
 
-            // Clamp to track rect
-            float fullTop = topY;
-            float fullBottom = topY + trackHeight;
+            var cache = GetOrCreateTrackTrapezoidCache(
+                chartLeft,
+                topY,
+                trackHeight,
+                trackWidth,
+                horizonY,
+                hitboxY,
+                strips);
 
-            if (hitboxY > fullBottom) hitboxY = fullBottom;
-            if (hitboxY < fullTop + 2) hitboxY = fullBottom;
+            Region oldClip = g.Clip;
+            var oldInterp = g.InterpolationMode;
+            var oldPixel = g.PixelOffsetMode;
 
-            if (horizonY < fullTop) horizonY = fullTop;
-            if (horizonY > hitboxY - 2) horizonY = fullTop;
+            g.SetClip(cache.ClipPath);
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-            float spanY = hitboxY - horizonY;
-            if (spanY < 2) return;
-
-            // Trapezoid geometry (straight sides)
-            float centerX = chartLeft + (trackWidth / 2f);
-                        
-            const float topWidthFactor = 0.35f; // tweak 0.45–0.70
-            float topW = trackWidth * topWidthFactor;
-            float bottomW = trackWidth;
-
-            float topLeftX = centerX - (topW / 2f);
-            float topRightX = centerX + (topW / 2f);
-            float bottomLeftX = chartLeft;
-            float bottomRightX = chartLeft + trackWidth;
-
-            // Helper: linear interpolate between two floats
-            float LerpF(float a, float b, float t) => a + (b - a) * t;
-
-            // Clip to trapezoid so nothing spills out
-            using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+            int srcW = trackBmp.Width;
+            int srcH = trackBmp.Height;
+            if (srcW <= 0 || srcH <= 0)
             {
-                path.AddPolygon(new[]
-                {
-            new PointF(topLeftX, horizonY),
-            new PointF(topRightX, horizonY),
-            new PointF(bottomRightX, hitboxY),
-            new PointF(bottomLeftX, hitboxY)
-                });
-
-                var oldClip = g.Clip;
-                g.SetClip(path);
-
-                var oldInterp = g.InterpolationMode;
-                var oldPixel = g.PixelOffsetMode;
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
-                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-
-                // Source geometry
-                int srcW = trackBmp.Width;
-                int srcH = trackBmp.Height;
-
-                // Draw horizontal strips; IMPORTANT: each strip width matches trapezoid edges at that Y
-                for (int i = 0; i < strips; i++)
-                {
-                    float t0 = (float)i / strips;           // 0..1 from horizon->hitbox
-                    float t1 = (float)(i + 1) / strips;
-
-                    float y0 = horizonY + (spanY * t0);
-                    float y1 = horizonY + (spanY * t1);
-                    float h = Math.Max(1f, y1 - y0);
-
-                    // Compute trapezoid left/right edges at this Y
-                    float leftX = LerpF(topLeftX, bottomLeftX, t0);
-                    float rightX = LerpF(topRightX, bottomRightX, t0);
-                    float w = Math.Max(1f, rightX - leftX);
-
-                    // Source slice matching this vertical band
-                    int sy0 = (int)Math.Round(srcH * t0);
-                    int sy1 = (int)Math.Round(srcH * t1);
-                    int sh = Math.Max(1, sy1 - sy0);                                     
-
-                    var srcRect = new Rectangle(0, sy0, srcW, sh);
-                    var dstRect = new RectangleF(leftX, y0, w, h);
-
-                    g.DrawImage(trackBmp, dstRect, srcRect, GraphicsUnit.Pixel);
-                }
-
                 g.InterpolationMode = oldInterp;
                 g.PixelOffsetMode = oldPixel;
                 g.Clip = oldClip;
+                return;
             }
-            
+
+            int wrapHeight = srcH / 2;
+            if (wrapHeight <= 0) wrapHeight = srcH;
+            if (wrapHeight <= 0)
+            {
+                g.InterpolationMode = oldInterp;
+                g.PixelOffsetMode = oldPixel;
+                g.Clip = oldClip;
+                return;
+            }
+
+            for (int i = 0; i < cache.Strips; i++)
+            {
+                float t0 = (float)i / cache.Strips;
+                float t1 = (float)(i + 1) / cache.Strips;
+
+                RectangleF dstRect = cache.DestRects[i];
+
+                int sy0 = ((int)Math.Round(wrapHeight * t0 + scrollOffset)) % srcH;
+                int sy1 = ((int)Math.Round(wrapHeight * t1 + scrollOffset)) % srcH;
+
+                if (sy0 < 0) sy0 += srcH;
+                if (sy1 < 0) sy1 += srcH;
+
+                if (sy1 > sy0)
+                {
+                    int sh = Math.Max(1, sy1 - sy0);
+                    var srcRect = new Rectangle(0, sy0, srcW, sh);
+                    g.DrawImage(trackBmp, dstRect, srcRect, GraphicsUnit.Pixel);
+                }
+                else
+                {
+                    int firstPartH = srcH - sy0;
+                    int secondPartH = sy1;
+
+                    int totalSrcH = firstPartH + secondPartH;
+                    if (totalSrcH <= 0) totalSrcH = 1;
+
+                    float firstDstH = dstRect.Height * (firstPartH / (float)totalSrcH);
+                    float secondDstH = dstRect.Height - firstDstH;
+
+                    if (firstPartH > 0)
+                    {
+                        var srcRect1 = new Rectangle(0, sy0, srcW, firstPartH);
+                        var dstRect1 = new RectangleF(dstRect.X, dstRect.Y, dstRect.Width, firstDstH);
+                        g.DrawImage(trackBmp, dstRect1, srcRect1, GraphicsUnit.Pixel);
+                    }
+
+                    if (secondPartH > 0)
+                    {
+                        var srcRect2 = new Rectangle(0, 0, srcW, secondPartH);
+                        var dstRect2 = new RectangleF(dstRect.X, dstRect.Y + firstDstH, dstRect.Width, secondDstH);
+                        g.DrawImage(trackBmp, dstRect2, srcRect2, GraphicsUnit.Pixel);
+                    }
+                }
+            }
+
+            g.InterpolationMode = oldInterp;
+            g.PixelOffsetMode = oldPixel;
+            g.Clip = oldClip;
+
             using (var pen = new Pen(Color.FromArgb(60, Color.White), 1f))
             {
-                g.DrawLine(pen, topLeftX, horizonY, bottomLeftX, hitboxY);
-                g.DrawLine(pen, topRightX, horizonY, bottomRightX, hitboxY);
+                g.DrawLine(pen, cache.TopLeftX, cache.HorizonY, cache.BottomLeftX, cache.HitboxY);
+                g.DrawLine(pen, cache.TopRightX, cache.HorizonY, cache.BottomRightX, cache.HitboxY);
             }
-        }        
+        }
+
+        private void ApplyTopFadeToTrackFrame(
+            Bitmap bmp,
+            float horizonY,
+            float bottomY,
+            float fadeStartPercent = 0.80f,   // start fading at 80% up from bottom
+            float fadeEndPercent = 1.00f      // fully gone at 100% (top)
+        )
+        {
+            if (bmp == null) return;
+            if (bottomY <= horizonY) return;
+
+            fadeStartPercent = Math.Max(0f, Math.Min(1f, fadeStartPercent));
+            fadeEndPercent = Math.Max(0f, Math.Min(1f, fadeEndPercent));
+            if (fadeEndPercent <= fadeStartPercent) return;
+
+            int top = (int)Math.Round(horizonY);
+            int bottom = (int)Math.Round(bottomY);
+
+            if (top < 0) top = 0;
+            if (bottom > bmp.Height) bottom = bmp.Height;
+            if (bottom <= top) return;
+
+            int trackHeight = bottom - top;
+
+            // 0.0 = bottom, 1.0 = top
+            int fadeStartY = bottom - (int)Math.Round(trackHeight * fadeStartPercent);
+            int fadeEndY = bottom - (int)Math.Round(trackHeight * fadeEndPercent);
+
+            if (fadeEndY > fadeStartY)
+            {
+                int temp = fadeStartY;
+                fadeStartY = fadeEndY;
+                fadeEndY = temp;
+            }
+
+            if (fadeEndY < top) fadeEndY = top;
+            if (fadeStartY > bottom) fadeStartY = bottom;
+            if (fadeStartY <= fadeEndY) return;
+
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData data = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppPArgb);
+
+            try
+            {
+                int stride = data.Stride;
+                int width = bmp.Width;
+
+                unsafe
+                {
+                    byte* scan0 = (byte*)data.Scan0;
+
+                    // Fully transparent above the fade
+                    for (int y = top; y < fadeEndY; y++)
+                    {
+                        byte* row = scan0 + (y * stride);
+
+                        for (int x = 0; x < width; x++)
+                        {
+                            byte* px = row + (x * 4);
+
+                            px[0] = 0; // B
+                            px[1] = 0; // G
+                            px[2] = 0; // R
+                            px[3] = 0; // A
+                        }
+                    }
+
+                    // Fade band: transparent at top -> solid at bottom
+                    for (int y = fadeEndY; y < fadeStartY; y++)
+                    {
+                        float t = (y - fadeEndY) / (float)Math.Max(1, fadeStartY - fadeEndY);
+
+                        // Stronger fade curve
+                        t = t * t;
+                        // For even stronger fade, use:
+                        // t = t * t * t;
+
+                        byte* row = scan0 + (y * stride);
+
+                        for (int x = 0; x < width; x++)
+                        {
+                            byte* px = row + (x * 4);
+
+                            px[0] = (byte)Math.Round(px[0] * t); // B
+                            px[1] = (byte)Math.Round(px[1] * t); // G
+                            px[2] = (byte)Math.Round(px[2] * t); // R
+                            px[3] = (byte)Math.Round(px[3] * t); // A
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                bmp.UnlockBits(data);
+            }
+        }
 
         private sealed class BeatMarker
         {
@@ -3966,7 +4495,7 @@ namespace cPlayer
                 beats.Add(new BeatMarker
                 {
                     Tick = tick,
-                    TimeSeconds = MIDITools.GetRealtime(tick), 
+                    TimeSeconds = MIDITools.GetRealtime(tick),
                     IsMeasure = (beatInMeasure == 0),
                     BeatInMeasure = beatInMeasure
                 });
@@ -3989,10 +4518,8 @@ namespace cPlayer
 
             return beats;
         }
-
-        private List<BeatMarker> _beatMarkers = new List<BeatMarker>();
-
-        private void DrawBeatLinesPerspective_FromMarkers(
+        
+        private void DrawBeatLines(
             Graphics g,
             double correctedTime,
             float horizonY,
@@ -4024,19 +4551,16 @@ namespace cPlayer
                 double bt = _beatMarkers[i].TimeSeconds;
                 if (bt > correctedTime + playbackWindow) break;
 
-                // ✅ EXACT SAME t->p as gems
                 double tBeat = 1.0 - ((bt - correctedTime) / playbackWindow);
                 tBeat = ClampMin0(tBeat);
                 double pBeat = EaseIn(tBeat); // can be > 1
 
-                // ✅ EXACT SAME Y mapping as gems
                 float y = (float)Lerp(horizonY, hitboxY + overshootPx, pBeat);
 
-                // If you don't want beat lines past hitbox, clamp:
+                // If we don't want beat lines past hitbox, clamp:
                 if (y > hitboxY) y = hitboxY;
                 if (y < horizonY) continue;
 
-                // ✅ EXACT SAME span mapping as gems (NO Clamp01)
                 double scale = Lerp(minScale, maxScale, pBeat);
                 double span = trackWidth * scale;
 
@@ -4054,394 +4578,1101 @@ namespace cPlayer
             }
         }
 
-
-        private void DrawRockBandStyle(Graphics graphics)
+        private sealed class RBLaneLayout
         {
-            var renderSize = new Size(1920, 1080);
-            
-            var tracks = 0;
-            if (MIDITools.MIDI_Chart.Drums.ChartedNotes.Any() && doMIDIDrums)
-            {
-                tracks++;
-            }
-            if (MIDITools.MIDI_Chart.Bass.ChartedNotes.Any() && doMIDIBass)
-            {
-                tracks++;
-            }
-            if (MIDITools.MIDI_Chart.Guitar.ChartedNotes.Any() && doMIDIGuitar)
-            {
-                tracks++;
-            }
-            if (MIDITools.MIDI_Chart.Keys.ChartedNotes.Any() && doMIDIKeys)
-            {
-                tracks++;
-            }
-            else if (MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Any() && doMIDIProKeys)
-            {
-                tracks += 2;
-            }
-            if (tracks == 0) return;
+            public string Id;
+            public MIDITrack Track;
+            public int X;
+            public int Width;
+            public int Height;
+            public string Label;
+        }
 
-            var drumsX = 0;
-            var bassX = 0;
-            var guitarX = 0;
-            var keysX = 0;
-            var proKeysX = 0;
+        private double GetContinuousBeatPosition(double correctedTime)
+        {
+            if (_beatMarkers == null || _beatMarkers.Count < 2)
+                return 0.0;
+
+            int nextIndex = 0;
+
+            while (nextIndex < _beatMarkers.Count && _beatMarkers[nextIndex].TimeSeconds <= correctedTime)
+                nextIndex++;
+
+            if (nextIndex <= 0)
+                return 0.0;
+
+            if (nextIndex >= _beatMarkers.Count)
+                return _beatMarkers.Count - 1;
+
+            double prevBeatTime = _beatMarkers[nextIndex - 1].TimeSeconds;
+            double nextBeatTime = _beatMarkers[nextIndex].TimeSeconds;
+
+            double beatDuration = nextBeatTime - prevBeatTime;
+
+            if (beatDuration <= 0.0001)
+                return nextIndex - 1;
+
+            double phase = (correctedTime - prevBeatTime) / beatDuration;
+
+            if (phase < 0.0) phase = 0.0;
+            if (phase > 1.0) phase = 1.0;
+
+            return (nextIndex - 1) + phase;
+        }
+
+        private void UpdateTrackAnimationBeatMarkerSynced(int frameCount, double correctedTime)
+        {
+            if (frameCount <= 0) return;
+
+            double beatPosition = GetContinuousBeatPosition(correctedTime);
+
+            double phase = (beatPosition / TrackBackgroundBeatsPerLoop) % 1.0;
+
+            if (phase < 0.0)
+                phase += 1.0;
+
+            _trackAnimFrame = (int)(phase * frameCount) % frameCount;
+        }
+
+        private string BuildRockBandStyleCacheKey(
+            Size renderSize,
+            int tracks,
+            int padding,
+            int trackWidth,
+            List<RBLaneLayout> lanes)
+        {
+            string lanePart = string.Join("|", lanes.Select(l => $"{l.Id}:{l.Label}:{l.Width}"));
+
+            return string.Join(";",
+                renderSize.Width,
+                renderSize.Height,
+                tracks,
+                padding,
+                trackWidth,
+                doVerticalChart,
+                doFocusMode == true,
+                HighwayAngleFactor,
+                lanePart
+            );
+        }
+
+        private bool IsTrackSolo(MIDITrack track)
+        {
+            return track != null &&
+                   track.Solos != null &&
+                   track.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
+        }
+
+        private Bitmap GetRockBandBackgroundBitmap(string laneId, bool isSolo)
+        {
+            if (doVerticalChart)
+            {
+                switch (laneId)
+                {
+                    case "Bass":
+                        return isSolo ? bmpBackgroundBassSolo : bmpBackgroundBass;
+                    case "Drums":
+                        return isSolo ? bmpBackgroundDrumsSolo : bmpBackgroundDrums;
+                    case "Guitar":
+                        return isSolo ? bmpBackgroundGuitarSolo : bmpBackgroundGuitar;
+                    case "Keys":
+                        return isSolo ? bmpBackgroundKeysSolo : bmpBackgroundKeys;
+                    case "ProKeys":
+                        return isSolo ? bmpBackgroundProKeysSolo : bmpBackgroundProKeys;
+                }
+            }
+            else
+            {
+                switch (laneId)
+                {
+                    case "Bass":
+                        return isSolo ? bmpBackgroundBassSoloRB : bmpBackgroundBassRB;
+                    case "Drums":
+                        return isSolo ? bmpBackgroundDrumsSoloRB : bmpBackgroundDrumsRB;
+                    case "Guitar":
+                        return isSolo ? bmpBackgroundGuitarSoloRB : bmpBackgroundGuitarRB;
+                    case "Keys":
+                        return isSolo ? bmpBackgroundKeysSoloRB : bmpBackgroundKeysRB;
+                    case "ProKeys":
+                        return isSolo ? bmpBackgroundProKeysSoloRB : bmpBackgroundProKeysRB;
+                }
+            }
+            return null;
+        }
+
+        private Bitmap GetRockBandHitboxBitmap(string laneId)
+        {
+            if (doVerticalChart)
+                return bmpHitbox;
+
+            switch (laneId)
+            {
+                case "Drums":
+                    return Resources.hitbox_drums;
+                case "ProKeys":
+                    return Resources.pianokeys;
+                default:
+                    return Resources.hitbox_5lane;
+            }
+        }
+
+        private Bitmap BuildRockBandLaneBitmap(
+            RBLaneLayout lane,
+            bool isSolo,
+            Size renderSize,
+            bool chartVerticalValue,
+            bool doFocusModeValue,
+            double highwayAngleFactorValue)
+        {
+            var bmp = new Bitmap(Math.Max(1, lane.Width), renderSize.Height, PixelFormat.Format32bppPArgb);
+
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.Transparent);
+
+                float hitboxY = renderSize.Height - 50f;
+                const float horizonPercent = 0.50f;
+                float horizonY = ((hitboxY - 0f) * horizonPercent);
+
+                if (chartVerticalValue)
+                {
+                    var bg = GetRockBandBackgroundBitmap(lane.Id, isSolo);
+                    if (bg != null)
+                    {
+                        g.DrawImage(bg, 0, 0, lane.Width, renderSize.Height);
+                    }
+                }
+                else
+                {
+                    if (!doFocusModeValue)
+                    {
+                        DrawInstrumentHitboxLabel(
+                            g,
+                            lane.Label,
+                            0,
+                            hitboxY,
+                            lane.Width,
+                            renderSize.Height - hitboxY,
+                            renderSize
+                        );
+                    }
+
+                    float trapezoidBottom = lane.Id == "ProKeys" ? hitboxY : hitboxY + 20f;
+
+                    DrawHighwaySideBordersPerspectiveFaded(
+                        g,
+                        horizonY,
+                        trapezoidBottom,
+                        lane.Width / 2f,
+                        lane.Width,
+                        minScale: highwayAngleFactorValue,
+                        maxScale: 1.00,
+                        insetPx: lane.Id == "ProKeys" ? 5 : 4,
+                        bitmapWidth: lane.Width,
+                        bitmapHeight: renderSize.Height,
+                        stepY: 10,
+                        fadeStartPercent: 0.85f,
+                        fadeEndPercent: 1.00f,
+                        baseThickness: 4,
+                        maxThickness: 8
+                    );
+                }
+
+                var hitboxBmp = GetRockBandHitboxBitmap(lane.Id);
+
+                DrawHitbox(
+                    g,
+                    hitboxBmp,
+                    0,
+                    renderSize.Height - 52,
+                    lane.Width,
+                    30,
+                    0.90f,
+                    chartVerticalValue ? lane.Label : ""
+                );
+            }
+
+            return bmp;
+        }
+
+        private void DrawTrackPerspectiveTrapezoidSolo(
+            Graphics g,
+            Image trackBmp,
+            int chartLeft,
+            int topY,
+            int trackHeight,
+            int trackWidth,
+            float horizonY,
+            float hitboxY,
+            int strips = 48
+        )
+        {
+            if (trackBmp == null || trackHeight <= 0 || trackWidth <= 0) return;
+
+            // Clamp to track rect
+            float fullTop = topY;
+            float fullBottom = topY + trackHeight;
+
+            if (hitboxY > fullBottom) hitboxY = fullBottom;
+            if (hitboxY < fullTop + 2) hitboxY = fullBottom;
+
+            if (horizonY < fullTop) horizonY = fullTop;
+            if (horizonY > hitboxY - 2) horizonY = fullTop;
+
+            float spanY = hitboxY - horizonY;
+            if (spanY < 2) return;
+
+            // Trapezoid geometry (straight sides)
+            float centerX = chartLeft + (trackWidth / 2f);
+
+            const float topWidthFactor = HighwayAngleFactor; // tweak 0.45–0.70
+            float topW = trackWidth * topWidthFactor;
+            float bottomW = trackWidth;
+
+            float topLeftX = centerX - (topW / 2f);
+            float topRightX = centerX + (topW / 2f);
+            float bottomLeftX = chartLeft;
+            float bottomRightX = chartLeft + trackWidth;
+
+            // Helper: linear interpolate between two floats
+            float LerpF(float a, float b, float t) => a + (b - a) * t;
+
+            // Clip to trapezoid so nothing spills out
+            using (var path = new GraphicsPath())
+            {
+                path.AddPolygon(new[]
+                {
+                    new PointF(topLeftX, horizonY),
+                    new PointF(topRightX, horizonY),
+                    new PointF(bottomRightX, hitboxY),
+                    new PointF(bottomLeftX, hitboxY)
+                });
+
+                var oldClip = g.Clip;
+                g.SetClip(path);
+
+                var oldInterp = g.InterpolationMode;
+                var oldPixel = g.PixelOffsetMode;
+                g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                // Source geometry
+                int srcW = trackBmp.Width;
+                int srcH = trackBmp.Height;
+
+                // Draw horizontal strips; IMPORTANT: each strip width matches trapezoid edges at that Y
+                for (int i = 0; i < strips; i++)
+                {
+                    float t0 = (float)i / strips;           // 0..1 from horizon->hitbox
+                    float t1 = (float)(i + 1) / strips;
+
+                    float y0 = horizonY + (spanY * t0);
+                    float y1 = horizonY + (spanY * t1);
+                    float h = Math.Max(1f, y1 - y0);
+
+                    // Compute trapezoid left/right edges at this Y
+                    float leftX = LerpF(topLeftX, bottomLeftX, t0);
+                    float rightX = LerpF(topRightX, bottomRightX, t0);
+                    float w = Math.Max(1f, rightX - leftX);
+
+                    // Source slice matching this vertical band
+                    int sy0 = (int)Math.Round(srcH * t0);
+                    int sy1 = (int)Math.Round(srcH * t1);
+                    int sh = Math.Max(1, sy1 - sy0);
+
+                    var srcRect = new Rectangle(0, sy0, srcW, sh);
+                    var dstRect = new RectangleF(leftX, y0, w, h);
+
+                    g.DrawImage(trackBmp, dstRect, srcRect, GraphicsUnit.Pixel);
+                }
+
+                g.InterpolationMode = oldInterp;
+                g.PixelOffsetMode = oldPixel;
+                g.Clip = oldClip;
+            }
+
+            using (var pen = new Pen(Color.FromArgb(60, Color.White), 1f))
+            {
+                g.DrawLine(pen, topLeftX, horizonY, bottomLeftX, hitboxY);
+                g.DrawLine(pen, topRightX, horizonY, bottomRightX, hitboxY);
+            }
+        }
+
+        private DateTime _rbCacheNextAllowedBuildTime = DateTime.MinValue;
+        private int _rbCacheConsecutiveFailures = 0;
+        private string _rbCacheLastFailedKey = "";
+
+        private async Task EnsureRockBandStyleCacheAsync(
+            List<RBLaneLayout> lanes,
+            Size renderSize,
+            int tracks,
+            int padding,
+            int trackWidth)
+        {
+            string newKey = BuildRockBandStyleCacheKey(renderSize, tracks, padding, trackWidth, lanes);
+
+            lock (_rbCacheLock)
+            {
+                if (string.Equals(_rbLaneCacheKey, newKey, StringComparison.Ordinal))
+                    return;
+
+                if (_rbCacheBuildInProgress)
+                {
+                    _rbCacheRebuildRequested = true;
+                    return;
+                }
+                                
+                // If this exact cache failed recently, do not try again every frame.
+                if (string.Equals(_rbCacheLastFailedKey, newKey, StringComparison.Ordinal) &&
+                    DateTime.Now < _rbCacheNextAllowedBuildTime)
+                {
+                    return;
+                }
+
+                _rbCacheBuildInProgress = true;
+            }
+
+            Debug.WriteLine("REBUILDING ROCK BAND STYLE CACHE");
+            Debug.WriteLine("RenderSize: " + renderSize.Width + "x" + renderSize.Height);
+            Debug.WriteLine("Tracks: " + tracks + ", Padding: " + padding + ", TrackWidth: " + trackWidth);
+            Debug.WriteLine("NewKey: " + newKey);
+
+            RockBandStyleCacheBuildResult result = null;
+
+            try
+            {
+                var lanesSnapshot = lanes.ToList();
+
+                bool chartVerticalSnapshot = doVerticalChart;
+                bool doFocusModeSnapshot = doFocusMode;
+                double highwayAngleFactorSnapshot = HighwayAngleFactor;
+
+                result = await Task.Run(() =>
+                {
+                    var normalTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var soloTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var animatedNormalTemp = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+                    var animatedSoloTemp = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+                    var soloOverlayTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var focusOverlayTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+
+                    try
+                    {
+                        foreach (var lane in lanesSnapshot)
+                        {
+                            normalTemp[lane.Id] = BuildRockBandLaneBitmap(
+                                lane,
+                                false,
+                                renderSize,
+                                chartVerticalSnapshot,
+                                doFocusModeSnapshot,
+                                highwayAngleFactorSnapshot);
+
+                            soloTemp[lane.Id] = BuildRockBandLaneBitmap(
+                                lane,
+                                true,
+                                renderSize,
+                                chartVerticalSnapshot,
+                                doFocusModeSnapshot,
+                                highwayAngleFactorSnapshot);
+
+                            // TEMPORARY / SAFER:
+                            // 48 fullscreen frames per lane is likely what is killing GDI+.
+                            int animatedFrameCount = 16;
+
+                            animatedNormalTemp[lane.Id] =
+                                BuildAnimatedTrackFillFrames(lane, false, renderSize, animatedFrameCount);
+
+                            animatedSoloTemp[lane.Id] =
+                                BuildAnimatedTrackFillFrames(lane, true, renderSize, animatedFrameCount);
+
+                            soloOverlayTemp[lane.Id] =
+                                BuildFadedSoloOverlayBitmap(lane, renderSize);
+
+                            focusOverlayTemp[lane.Id] =
+                                BuildFadedFocusOverlayBitmap(lane, renderSize);
+                        }
+
+                        return new RockBandStyleCacheBuildResult
+                        {
+                            Key = newKey,
+                            Normal = normalTemp,
+                            Solo = soloTemp,
+                            AnimatedNormal = animatedNormalTemp,
+                            AnimatedSolo = animatedSoloTemp,
+                            SoloOverlay = soloOverlayTemp,
+                            FocusOverlay = focusOverlayTemp
+                        };
+                    }
+                    catch
+                    {
+                        DisposeBitmapDictionary(normalTemp);
+                        DisposeBitmapDictionary(soloTemp);
+                        DisposeBitmapArrayDictionary(animatedNormalTemp);
+                        DisposeBitmapArrayDictionary(animatedSoloTemp);
+                        DisposeBitmapDictionary(soloOverlayTemp);
+                        DisposeBitmapDictionary(focusOverlayTemp);
+
+                        throw;
+                    }
+                }).ConfigureAwait(true);
+
+                Dictionary<string, Bitmap> oldNormal;
+                Dictionary<string, Bitmap> oldSolo;
+                Dictionary<string, Bitmap[]> oldAnimatedNormal;
+                Dictionary<string, Bitmap[]> oldAnimatedSolo;
+                Dictionary<string, Bitmap> oldSoloOverlay;
+                Dictionary<string, Bitmap> oldFocusOverlay;
+
+                lock (_rbCacheLock)
+                {
+                    oldNormal = _rbLaneNormalCache;
+                    oldSolo = _rbLaneSoloCache;
+                    oldAnimatedNormal = _rbLaneAnimatedFillNormalCache;
+                    oldAnimatedSolo = _rbLaneAnimatedFillSoloCache;
+                    oldSoloOverlay = _rbLaneSoloOverlayCache;
+                    oldFocusOverlay = _rbLaneFocusOverlayCache;
+
+                    _rbLaneNormalCache = result.Normal;
+                    _rbLaneSoloCache = result.Solo;
+                    _rbLaneAnimatedFillNormalCache = result.AnimatedNormal;
+                    _rbLaneAnimatedFillSoloCache = result.AnimatedSolo;
+                    _rbLaneSoloOverlayCache = result.SoloOverlay;
+                    _rbLaneFocusOverlayCache = result.FocusOverlay;
+
+                    _rbLaneCacheKey = result.Key;
+
+                    // Successful rebuild. Reset failure state.
+                    _rbCacheConsecutiveFailures = 0;
+                    _rbCacheLastFailedKey = "";
+                    _rbCacheNextAllowedBuildTime = DateTime.MinValue;
+                }
+
+                QueueOldRockBandCacheForDisposal(
+                    oldNormal,
+                    oldSolo,
+                    oldAnimatedNormal,
+                    oldAnimatedSolo,
+                    oldSoloOverlay,
+                    oldFocusOverlay);
+
+                Debug.WriteLine("ROCK BAND STYLE CACHE REBUILD COMPLETE");
+            }
+            catch (OutOfMemoryException ex)
+            {
+                HandleRockBandCacheBuildFailure(newKey, ex);
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                HandleRockBandCacheBuildFailure(newKey, ex);
+            }
+            catch (ArgumentException ex)
+            {
+                // Bitmap constructor often throws this when GDI+ allocation fails.
+                HandleRockBandCacheBuildFailure(newKey, ex);
+            }
+            catch (Exception ex)
+            {
+                HandleRockBandCacheBuildFailure(newKey, ex);
+            }
+            finally
+            {
+                bool shouldRequestAnotherRebuild;
+
+                lock (_rbCacheLock)
+                {
+                    _rbCacheBuildInProgress = false;
+
+                    shouldRequestAnotherRebuild = _rbCacheRebuildRequested;
+                    _rbCacheRebuildRequested = false;
+                }
+
+                if (shouldRequestAnotherRebuild)
+                {
+                    if (!IsDisposed && IsHandleCreated)
+                    {
+                        BeginInvoke(new Action(Invalidate));
+                    }
+                }
+            }
+        }
+
+        private void HandleRockBandCacheBuildFailure(string failedKey, Exception ex)
+        {
+            Debug.WriteLine("ROCK BAND STYLE CACHE REBUILD FAILED");
+            Debug.WriteLine(ex);
+
+            lock (_rbCacheLock)
+            {
+                _rbCacheConsecutiveFailures++;
+                _rbCacheLastFailedKey = failedKey;
+
+                // Do NOT clear the current working cache.
+                // Keep using whatever cache was already successfully built.
+                //
+                // Also do NOT mark the failed key as valid.
+                // We simply delay the next retry.
+
+                int delayMs;
+
+                if (_rbCacheConsecutiveFailures <= 1)
+                    delayMs = 1000;
+                else if (_rbCacheConsecutiveFailures == 2)
+                    delayMs = 2500;
+                else if (_rbCacheConsecutiveFailures == 3)
+                    delayMs = 5000;
+                else
+                    delayMs = 10000;
+
+                _rbCacheNextAllowedBuildTime = DateTime.Now.AddMilliseconds(delayMs);
+
+                Debug.WriteLine("Next Rock Band cache rebuild allowed after: " + _rbCacheNextAllowedBuildTime.ToString("HH:mm:ss.fff"));
+            }
+
+            // Encourage cleanup after failed partial builds.
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        private sealed class RockBandStyleCacheBuildResult
+        {
+            public string Key { get; set; }
+
+            public Dictionary<string, Bitmap> Normal { get; set; }
+            public Dictionary<string, Bitmap> Solo { get; set; }
+
+            public Dictionary<string, Bitmap[]> AnimatedNormal { get; set; }
+            public Dictionary<string, Bitmap[]> AnimatedSolo { get; set; }
+
+            public Dictionary<string, Bitmap> SoloOverlay { get; set; }
+            public Dictionary<string, Bitmap> FocusOverlay { get; set; }
+
+            public RockBandStyleCacheBuildResult()
+            {
+                Key = "";
+
+                Normal = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                Solo = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+
+                AnimatedNormal = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+                AnimatedSolo = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+
+                SoloOverlay = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                FocusOverlay = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+            }
+        }
+
+        private void QueueOldRockBandCacheForDisposal(
+    Dictionary<string, Bitmap> oldNormal,
+    Dictionary<string, Bitmap> oldSolo,
+    Dictionary<string, Bitmap[]> oldAnimatedNormal,
+    Dictionary<string, Bitmap[]> oldAnimatedSolo,
+    Dictionary<string, Bitmap> oldSoloOverlay,
+    Dictionary<string, Bitmap> oldFocusOverlay)
+        {
+            if (oldNormal == null &&
+                oldSolo == null &&
+                oldAnimatedNormal == null &&
+                oldAnimatedSolo == null &&
+                oldSoloOverlay == null &&
+                oldFocusOverlay == null)
+            {
+                return;
+            }
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(250);
+
+                DisposeBitmapDictionary(oldNormal);
+                DisposeBitmapDictionary(oldSolo);
+                DisposeBitmapArrayDictionary(oldAnimatedNormal);
+                DisposeBitmapArrayDictionary(oldAnimatedSolo);
+                DisposeBitmapDictionary(oldSoloOverlay);
+                DisposeBitmapDictionary(oldFocusOverlay);
+
+                Debug.WriteLine("Old Rock Band style cache disposed.");
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            });
+        }
+
+        private async Task EnsureRockBandStyleCacheAsync1(
+            List<RBLaneLayout> lanes,
+            Size renderSize,
+            int tracks,
+            int padding,
+            int trackWidth)
+        {
+            string newKey = BuildRockBandStyleCacheKey(renderSize, tracks, padding, trackWidth, lanes);
+
+            if (string.Equals(_rbLaneCacheKey, newKey, StringComparison.Ordinal))
+                return;
+
+            Debug.WriteLine("REBUILDING CACHE");
+            if (_rbCacheBuildInProgress)
+            {
+                _rbCacheRebuildRequested = true;
+                return;
+            }
+
+            _rbCacheBuildInProgress = true;
+            _rbLaneCacheKey = newKey;
+
+            try
+            {
+                var lanesSnapshot = lanes.ToList();
+
+                bool chartVerticalSnapshot = doVerticalChart;
+                bool doFocusModeSnapshot = doFocusMode;
+                double highwayAngleFactorSnapshot = HighwayAngleFactor;
+
+                var result = await Task.Run(() =>
+                {
+                    var normalTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var soloTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var animatedNormalTemp = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+                    var animatedSoloTemp = new Dictionary<string, Bitmap[]>(StringComparer.Ordinal);
+                    var soloOverlayTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+                    var focusOverlayTemp = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
+
+                    foreach (var lane in lanesSnapshot)
+                    {
+                        normalTemp[lane.Id] = BuildRockBandLaneBitmap(
+                            lane, false, renderSize,
+                            chartVerticalSnapshot,
+                            doFocusModeSnapshot,
+                            highwayAngleFactorSnapshot);
+
+                        soloTemp[lane.Id] = BuildRockBandLaneBitmap(
+                            lane, true, renderSize,
+                            chartVerticalSnapshot,
+                            doFocusModeSnapshot,
+                            highwayAngleFactorSnapshot);
+
+                        animatedNormalTemp[lane.Id] =
+                            BuildAnimatedTrackFillFrames(lane, false, renderSize, 48);
+
+                        animatedSoloTemp[lane.Id] =
+                            BuildAnimatedTrackFillFrames(lane, true, renderSize, 48);
+
+                        soloOverlayTemp[lane.Id] =
+                            BuildFadedSoloOverlayBitmap(lane, renderSize);
+
+                        focusOverlayTemp[lane.Id] =
+                            BuildFadedFocusOverlayBitmap(lane, renderSize);
+                    }
+
+                    return new
+                    {
+                        Normal = normalTemp,
+                        Solo = soloTemp,
+                        AnimatedNormal = animatedNormalTemp,
+                        AnimatedSolo = animatedSoloTemp,
+                        SoloOverlay = soloOverlayTemp,
+                        FocusOverlay = focusOverlayTemp
+                    };
+                }).ConfigureAwait(true);
+
+                var oldNormal = _rbLaneNormalCache;
+                var oldSolo = _rbLaneSoloCache;
+                var oldAnimatedNormal = _rbLaneAnimatedFillNormalCache;
+                var oldAnimatedSolo = _rbLaneAnimatedFillSoloCache;
+                var oldSoloOverlay = _rbLaneSoloOverlayCache;
+                var oldFocusOverlay = _rbLaneFocusOverlayCache;
+
+                lock (_rbCacheLock)
+                {
+                    _rbLaneNormalCache = result.Normal;
+                    _rbLaneSoloCache = result.Solo;
+                    _rbLaneAnimatedFillNormalCache = result.AnimatedNormal;
+                    _rbLaneAnimatedFillSoloCache = result.AnimatedSolo;
+                    _rbLaneSoloOverlayCache = result.SoloOverlay;
+                    _rbLaneFocusOverlayCache = result.FocusOverlay;
+                }
+
+                /*DisposeBitmapDictionary(oldNormal);
+                DisposeBitmapDictionary(oldSolo);
+                DisposeBitmapDictionary(oldSoloOverlay);
+                DisposeBitmapDictionary(oldFocusOverlay);
+                DisposeBitmapArrayDictionary(oldAnimatedNormal);
+                DisposeBitmapArrayDictionary(oldAnimatedSolo);*/
+            }
+            finally
+            {
+                _rbCacheBuildInProgress = false;
+            }
+
+            if (_rbCacheRebuildRequested)
+            {
+                _rbCacheRebuildRequested = false;
+                _rbLaneCacheKey = "";
+                Invalidate();
+            }
+        }
+
+        private static void DisposeBitmapDictionary(Dictionary<string, Bitmap> dict)
+        {
+            foreach (var bmp in dict.Values)
+                bmp?.Dispose();
+
+            dict.Clear();
+        }
+
+        private static void DisposeBitmapArrayDictionary(Dictionary<string, Bitmap[]> dict)
+        {
+            foreach (var frames in dict.Values)
+            {
+                if (frames == null) continue;
+
+                foreach (var bmp in frames)
+                    bmp?.Dispose();
+            }
+
+            dict.Clear();
+        }
+
+        public async Task DrawRockBandStyleAsync(Graphics graphics, bool rebuildOnly = false)
+        {
+            var renderSize = activeRenderingResolution;
+
+            int tracks = 0;
+
+            bool hasDrums = MIDITools.MIDI_Chart.Drums.ChartedNotes.Any() && doMIDIDrums;
+            bool hasBass = MIDITools.MIDI_Chart.Bass.ChartedNotes.Any() && doMIDIBass;
+            bool hasGuitar = MIDITools.MIDI_Chart.Guitar.ChartedNotes.Any() && doMIDIGuitar;
+            bool hasKeys = MIDITools.MIDI_Chart.Keys.ChartedNotes.Any() && doMIDIKeys;
+            bool hasProKeys = MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Any() && doMIDIProKeys && !hasKeys;
+
+            if (hasDrums) tracks++;
+            if (hasBass) tracks++;
+            if (hasGuitar) tracks++;
+            if (hasKeys) tracks++;
+            else if (hasProKeys) tracks += 2;
+
+            if (tracks == 0)
+                return;
+
             const int maxTrackWidth = 400;
-            const int normalPadding = 2;
             const int maximizedPadding = 10;
 
-            // Determine padding based on the form's WindowState
-            var padding = this.WindowState == FormWindowState.Maximized ? maximizedPadding : normalPadding;
+            int padding = maximizedPadding;
 
-            // Calculate the effective width of each track including padding
-            var track_width = (renderSize.Width - (padding * 2 * tracks)) / tracks;
+            int track_width = (renderSize.Width - (padding * 2 * tracks)) / tracks;
             if (track_width > maxTrackWidth)
             {
                 track_width = maxTrackWidth;
             }
 
-            // Adjust the total width of all tracks including padding
-            var totalTracksWidth = (track_width * tracks) + (padding * 2 * tracks);
+            int totalTracksWidth = (track_width * tracks) + (padding * 2 * tracks);
+            int startX = (renderSize.Width - totalTracksWidth) / 2;
 
-            // Calculate starting X position to center the tracks
-            var startX = (renderSize.Width - totalTracksWidth) / 2;
-
-            var track_height = renderSize.Height; // Adjust as needed
-            var y = renderSize.Height - track_height;
-            var lastX = startX; // Initialize to starting position
+            int track_height = renderSize.Height;
+            int y = 0;
+            int lastX = startX;
 
             float hitboxY = track_height - 50f;
             const float horizonPercent = 0.50f;
-            float horizonY = y + ((hitboxY - y) * horizonPercent);                                             
+            float horizonY = y + ((hitboxY - y) * horizonPercent);
 
-            // Draw Bass track if present
-            if (MIDITools.MIDI_Chart.Bass.ChartedNotes.Any() && doMIDIBass)
+            if (!rebuildOnly)
             {
-                var isSolo = MIDITools.MIDI_Chart.Bass.Solos != null && MIDITools.MIDI_Chart.Bass.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
+                if (secondScreen != null)
+                {
+                    SetSecondScreenBackColorIfChanged(Color.Black);
+                    SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+                }
+                else
+                {
+                    SetPicVisualsBackColorIfChanged(Color.Black);
+                }
+            }
+
+            int drumsX = 0;
+            int bassX = 0;
+            int guitarX = 0;
+            int keysX = 0;
+            int proKeysX = 0;
+
+            var lanes = new List<RBLaneLayout>();
+
+            if (hasBass)
+            {
                 bassX = lastX + padding;
-                if (chartVertical.Checked)
+                lanes.Add(new RBLaneLayout
                 {
-                    float trackCenterX = bassX + (track_width / 2f);
-                    graphics.DrawImage(isSolo ? bmpBackgroundBassSolo : bmpBackgroundBass, bassX, y, track_width, track_height);
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Bass.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                else
-                {
-                    DrawInstrumentHitboxLabel(
-                        graphics,
-                        "BASS",
-                        bassX,
-                        hitboxY,
-                        track_width,
-                        renderSize.Height - hitboxY,
-                        renderSize
-                    );
-                    DrawTrackPerspectiveTrapezoidFilled(
-                        graphics,
-                        isSolo ? bmpBackgroundBassSoloRB : bmpBackgroundBassRB,
-                        bassX,
-                        y,
-                        track_height,
-                        track_width,
-                        horizonY,
-                        hitboxY + 20f,
-                        strips: 120
-                    );
-                    float trackCenterX = bassX + (track_width / 2f);                    
-                    DrawHighwaySideBordersPerspective(
-                        graphics,
-                        horizonY,
-                        hitboxY + 20f,
-                        trackCenterX,
-                        track_width,
-                        minScale: 0.35,
-                        maxScale: 1.00,
-                        insetPx: 4,
-                        stepY: 10
-                    );
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Bass.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                DrawHitbox(graphics, chartVertical.Checked ? bmpHitbox : Resources.hitbox_5lane, bassX, renderSize.Height - 52, track_width, 30, 0.90f, chartVertical.Checked ? "Bass" : "");
+                    Id = "Bass",
+                    Track = MIDITools.MIDI_Chart.Bass,
+                    X = bassX,
+                    Width = track_width,
+                    Height = track_height,
+                    Label = "BASS"
+                });
                 lastX += track_width + (2 * padding);
             }
 
-            // Draw Drums track if present
-            if (MIDITools.MIDI_Chart.Drums.ChartedNotes.Any() && doMIDIDrums)
+            if (hasDrums)
             {
-                var isSolo = MIDITools.MIDI_Chart.Drums.Solos != null && MIDITools.MIDI_Chart.Drums.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
                 drumsX = lastX + padding;
-                if (chartVertical.Checked)
+                lanes.Add(new RBLaneLayout
                 {
-                    float trackCenterX = drumsX + (track_width / 2f);
-                    graphics.DrawImage(isSolo ? bmpBackgroundDrumsSolo : bmpBackgroundDrums, drumsX, y, track_width, track_height);
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Drums.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                else
-                {
-                    DrawInstrumentHitboxLabel(
-                        graphics,
-                        "PRO DRUMS",
-                        drumsX,
-                        hitboxY,
-                        track_width,
-                        renderSize.Height - hitboxY,
-                        renderSize
-                    );
-                    DrawTrackPerspectiveTrapezoidFilled(
-                         graphics,
-                         isSolo ? bmpBackgroundDrumsSoloRB : bmpBackgroundDrumsRB,
-                         drumsX,
-                         y,
-                         track_height,
-                         track_width,
-                         horizonY,
-                         hitboxY + 20f,
-                         strips: 120
-                     );
-                    float trackCenterX = drumsX + (track_width / 2f);                    
-                    DrawHighwaySideBordersPerspective(
-                        graphics,
-                        horizonY,
-                        hitboxY + 20f,
-                        trackCenterX,
-                        track_width,
-                        minScale: 0.35,
-                        maxScale: 1.00,
-                        insetPx: 4,
-                        stepY: 10
-                    );
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Drums.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                DrawHitbox(graphics, chartVertical.Checked ? bmpHitbox : Resources.hitbox_drums, drumsX, renderSize.Height - 52, track_width, 30, 0.90f, chartVertical.Checked ? "Pro Drums" : "");
-                lastX += track_width + (2 * padding); // Move to the next position
-            }
-
-            // Draw Guitar track if present
-            if (MIDITools.MIDI_Chart.Guitar.ChartedNotes.Any() && doMIDIGuitar)
-            {
-                var isSolo = MIDITools.MIDI_Chart.Guitar.Solos != null && MIDITools.MIDI_Chart.Guitar.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
-                guitarX = lastX + padding;
-                if (chartVertical.Checked)
-                {
-                    float trackCenterX = guitarX + (track_width / 2f);
-                    graphics.DrawImage(isSolo ? bmpBackgroundGuitarSolo : bmpBackgroundGuitar, guitarX, y, track_width, track_height);
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Guitar.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                else
-                {
-                    DrawInstrumentHitboxLabel(
-                        graphics,
-                        "GUITAR",
-                        guitarX,
-                        hitboxY,
-                        track_width,
-                        renderSize.Height - hitboxY,
-                        renderSize
-                    );
-                    DrawTrackPerspectiveTrapezoidFilled(
-                        graphics,
-                        isSolo ? bmpBackgroundGuitarSoloRB : bmpBackgroundGuitarRB,
-                        guitarX,
-                        y,
-                        track_height,
-                        track_width,
-                        horizonY,
-                        hitboxY + 20f,
-                        strips: 120
-                    );
-                    float trackCenterX = guitarX + (track_width / 2f);                    
-                    DrawHighwaySideBordersPerspective(
-                        graphics,
-                        horizonY,
-                        hitboxY + 20f,
-                        trackCenterX,
-                        track_width,
-                        minScale: 0.35,
-                        maxScale: 1.00,
-                        insetPx: 4,
-                        stepY: 10
-                    );
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Guitar.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                DrawHitbox(graphics, chartVertical.Checked ? bmpHitbox : Resources.hitbox_5lane, guitarX, renderSize.Height - 52, track_width, 30, 0.90f, chartVertical.Checked ? "Guitar" : "");
+                    Id = "Drums",
+                    Track = MIDITools.MIDI_Chart.Drums,
+                    X = drumsX,
+                    Width = track_width,
+                    Height = track_height,
+                    Label = "PRO DRUMS"
+                });
                 lastX += track_width + (2 * padding);
             }
 
-            // Draw Keys or ProKeys track if present
-            if (MIDITools.MIDI_Chart.Keys.ChartedNotes.Any() && doMIDIKeys)
+            if (hasGuitar)
             {
-                var isSolo = MIDITools.MIDI_Chart.Keys.Solos != null && MIDITools.MIDI_Chart.Keys.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
-                keysX = lastX + padding;
-                if (chartVertical.Checked)
+                guitarX = lastX + padding;
+                lanes.Add(new RBLaneLayout
                 {
-                    float trackCenterX = keysX + (track_width / 2f);
-                    graphics.DrawImage(isSolo ? bmpBackgroundKeysSolo : bmpBackgroundKeys, keysX, y, track_width, track_height);
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Keys.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                else
-                {
-                    DrawInstrumentHitboxLabel(
-                        graphics,
-                        "KEYS",
-                        keysX,
-                        hitboxY,
-                        track_width,
-                        renderSize.Height - hitboxY,
-                        renderSize
-                    );
-                    DrawTrackPerspectiveTrapezoidFilled(
-                        graphics,
-                        isSolo ? bmpBackgroundKeysSoloRB : bmpBackgroundKeysRB,
-                        keysX,
-                        y,
-                        track_height,
-                        track_width,
-                        horizonY,
-                        hitboxY + 20f,
-                        strips: 120
-                    );
-                    float trackCenterX = keysX + (track_width / 2f);
-                    
-                    DrawHighwaySideBordersPerspective(
-                        graphics,
-                        horizonY,
-                        hitboxY + 20f,
-                        trackCenterX,
-                        track_width,
-                        minScale: 0.35,
-                        maxScale: 1.00,
-                        insetPx: 4,
-                        stepY: 10
-                    );
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.Keys.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                DrawHitbox(graphics, chartVertical.Checked ? bmpHitbox : Resources.hitbox_5lane, keysX, renderSize.Height - 52, track_width, 30, 0.90f, chartVertical.Checked ? "Keys" : "");                
-            }
-            else if (MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Any() && doMIDIProKeys)
-            {
-                var isSolo = MIDITools.MIDI_Chart.ProKeys.Solos != null && MIDITools.MIDI_Chart.ProKeys.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
-                proKeysX = lastX + padding;
-                if (chartVertical.Checked)
-                {
-                    float trackCenterX = proKeysX + (track_width * 2 / 2f);
-                    graphics.DrawImage(isSolo ? bmpBackgroundProKeysSolo : bmpBackgroundProKeys, proKeysX, y, track_width * 2, track_height); // Keys may take up more space
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.ProKeys.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                else
-                {
-                    DrawInstrumentHitboxLabel(
-                        graphics,
-                        "PRO KEYS",
-                        proKeysX,
-                        hitboxY,
-                        track_width * 2,
-                        renderSize.Height - hitboxY,
-                        renderSize
-                    );
-                    DrawTrackPerspectiveTrapezoidFilled(
-                        graphics, isSolo? bmpBackgroundProKeysSoloRB : bmpBackgroundProKeysRB,
-                        proKeysX,
-                        y,
-                        track_height,
-                        track_width * 2,
-                        horizonY,
-                        hitboxY,
-                        strips: 120
-                        );
-                    float trackCenterX = proKeysX + (track_width * 2 / 2f);                    
-                    DrawHighwaySideBordersPerspective(
-                        graphics,
-                        horizonY,
-                        hitboxY,
-                        trackCenterX,
-                        track_width * 2,
-                        minScale: 0.35,
-                        maxScale: 1.00,
-                        insetPx: 0,
-                        stepY: 10
-                    );
-                    DrawWaitTimeRB(graphics, MIDITools.MIDI_Chart.ProKeys.ChartedNotes, horizonY, hitboxY, trackCenterX);
-                }
-                DrawHitbox(graphics, chartVertical.Checked ? bmpHitbox : Resources.pianokeys, proKeysX, renderSize.Height - 52, track_width * 2, 30, 0.90f, chartVertical.Checked ? "Pro Keys" : "");
+                    Id = "Guitar",
+                    Track = MIDITools.MIDI_Chart.Guitar,
+                    X = guitarX,
+                    Width = track_width,
+                    Height = track_height,
+                    Label = "GUITAR"
+                });
+                lastX += track_width + (2 * padding);
             }
 
-            if (MIDITools.MIDI_Chart.Drums.ChartedNotes.Any() && doMIDIDrums)
+            if (hasKeys)
             {
-                if (chartVertical.Checked)
+                keysX = lastX + padding;
+                lanes.Add(new RBLaneLayout
                 {
-                    DrawFills(graphics, MIDITools.MIDI_Chart.Drums, GetStartingPosition(), drumsX, track_width);
-                    DrawDrumNotes(graphics, true, GetStartingPosition(), drumsX, track_width);
-                    DrawDrumNotes(graphics, false, GetStartingPosition(), drumsX, track_width);
+                    Id = "Keys",
+                    Track = MIDITools.MIDI_Chart.Keys,
+                    X = keysX,
+                    Width = track_width,
+                    Height = track_height,
+                    Label = "KEYS"
+                });
+            }
+            else if (hasProKeys)
+            {
+                proKeysX = lastX + padding;
+                lanes.Add(new RBLaneLayout
+                {
+                    Id = "ProKeys",
+                    Track = MIDITools.MIDI_Chart.ProKeys,
+                    X = proKeysX,
+                    Width = track_width * 2,
+                    Height = track_height,
+                    Label = "PRO KEYS"
+                });
+            }
+
+            if (rebuildOnly)
+            {
+                await EnsureRockBandStyleCacheAsync(lanes, renderSize, tracks, padding, track_width).ConfigureAwait(true);
+                return;
+            }
+            _ = EnsureRockBandStyleCacheAsync(lanes, renderSize, tracks, padding, track_width);
+
+            for (int i = 0; i < lanes.Count; i++)
+            {
+                var lane = lanes[i];
+                bool isSolo = IsTrackSolo(lane.Track);
+
+                var frames = isSolo
+                    ? _rbLaneAnimatedFillSoloCache[lane.Id]
+                    : _rbLaneAnimatedFillNormalCache[lane.Id];
+
+                UpdateTrackAnimationBeatMarkerSynced(frames.Length, GetCorrectedTime());
+
+                float trapezoidBottom = lane.Id == "ProKeys" ? hitboxY : hitboxY + 20f;
+                if (doFocusMode)
+                {
+                    if (_rbLaneFocusOverlayCache.TryGetValue(lane.Id, out var focusBmp) && focusBmp != null)
+                    {
+                        graphics.DrawImageUnscaled(focusBmp, 0, 0);
+                    }
                 }
                 else
                 {
-                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Drums, GetStartingPosition(), drumsX, track_width);
-                    DrawDrumNotesRB(graphics, true, GetStartingPosition(), drumsX, track_width);
-                    DrawDrumNotesRB(graphics, false, GetStartingPosition(), drumsX, track_width);
+                    if (frames != null && frames.Length > 0)
+                    {
+                        int index = (_trackAnimFrame % frames.Length + frames.Length) % frames.Length;
+
+                        if (ReverseTrackAnimation)
+                            index = frames.Length - 1 - index;
+
+                        var frame = frames[index];
+
+                        if (frame != null)
+                        {
+                            graphics.DrawImageUnscaled(frame, lane.X, 0);
+                        }
+                    }
                 }
-            }
-            if (MIDITools.MIDI_Chart.Bass.ChartedNotes.Any() && doMIDIBass)
-            {
-                if (chartVertical.Checked)
+
+                Bitmap laneBmp;
+                if (isSolo)
                 {
-                    DrawFills(graphics, MIDITools.MIDI_Chart.Bass, GetStartingPosition(), bassX, track_width);
-                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Bass, GetStartingPosition(), bassX, track_width);
+                    if (!_rbLaneSoloCache.TryGetValue(lane.Id, out laneBmp)) laneBmp = null;
                 }
                 else
                 {
-                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Bass, GetStartingPosition(), bassX, track_width);
-                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Bass, GetStartingPosition(), bassX, track_width);
-                }
-            }
-            if (MIDITools.MIDI_Chart.Guitar.ChartedNotes.Any() && doMIDIGuitar)
-            {
-                if (chartVertical.Checked)
+                    if (!_rbLaneNormalCache.TryGetValue(lane.Id, out laneBmp)) laneBmp = null;
+                }              
+
+                if (laneBmp != null)
                 {
-                    DrawFills(graphics, MIDITools.MIDI_Chart.Guitar, GetStartingPosition(), guitarX, track_width);
-                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Guitar, GetStartingPosition(), guitarX, track_width);
+                    graphics.DrawImageUnscaled(laneBmp, lane.X, 0);
+                }
+
+                float trackCenterX = lane.X + (lane.Width / 2f);
+                DrawWaitTimeRB(graphics, lane.Track.ChartedNotes, horizonY, hitboxY, trackCenterX);
+            }
+
+            int startingPosition = GetStartingPosition();
+
+            if (hasDrums)
+            {
+                UpdateDrumBasedStageLighting(MIDITools.MIDI_Chart.Drums);
+                if (doVerticalChart)
+                {
+                    DrawFills(graphics, MIDITools.MIDI_Chart.Drums, startingPosition, drumsX, track_width);
+                    DrawDrumNotes(graphics, true, startingPosition, drumsX, track_width);
+                    DrawDrumNotes(graphics, false, startingPosition, drumsX, track_width);
                 }
                 else
                 {
-                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Guitar, GetStartingPosition(), guitarX, track_width);
-                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Guitar, GetStartingPosition(), guitarX, track_width);
+                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Drums, startingPosition, drumsX, track_width);
+                    DrawDrumNotesRB(graphics, true, startingPosition, drumsX, track_width);
+                    DrawDrumNotesRB(graphics, false, startingPosition, drumsX, track_width);
                 }
             }
-            if (MIDITools.MIDI_Chart.Keys.ChartedNotes.Any() && doMIDIKeys && !doMIDIProKeys)
+
+            if (hasBass)
             {
-                if (chartVertical.Checked)
+                if (doVerticalChart)
                 {
-                    DrawFills(graphics, MIDITools.MIDI_Chart.Keys, GetStartingPosition(), keysX, track_width);
-                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Keys, GetStartingPosition(), keysX, track_width);
+                    DrawFills(graphics, MIDITools.MIDI_Chart.Bass, startingPosition, bassX, track_width);
+                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Bass, startingPosition, bassX, track_width);
                 }
                 else
                 {
-                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Keys, GetStartingPosition(), keysX, track_width);
-                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Keys, GetStartingPosition(), keysX, track_width);
+                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Bass, startingPosition, bassX, track_width);
+                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Bass, startingPosition, bassX, track_width);
                 }
             }
-            if (MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Any() && !doMIDIKeys && doMIDIProKeys)
+
+            if (hasGuitar)
             {
-                if (chartVertical.Checked)
+                if (doVerticalChart)
                 {
-                    DrawFills(graphics, MIDITools.MIDI_Chart.ProKeys, GetStartingPosition(), proKeysX, track_width * 2);
-                    DrawProKeysNotes(graphics, GetStartingPosition(), proKeysX, track_width * 2);
+                    DrawFills(graphics, MIDITools.MIDI_Chart.Guitar, startingPosition, guitarX, track_width);
+                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Guitar, startingPosition, guitarX, track_width);
                 }
                 else
                 {
-                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.ProKeys, GetStartingPosition(), proKeysX, track_width * 2);
-                    DrawProKeysNotesRB(graphics, GetStartingPosition(), proKeysX, track_width * 2);
+                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Guitar, startingPosition, guitarX, track_width);
+                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Guitar, startingPosition, guitarX, track_width);
                 }
             }
-            var Solo = doMIDIVocals && MIDITools.MIDI_Chart.Vocals.Solos != null && MIDITools.MIDI_Chart.Vocals.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
-            if (!Solo && doMIDIHarmonies)
+
+            if (hasKeys)
             {
-                Solo = doMIDIVocals && MIDITools.MIDI_Chart.Harm1.Solos != null && MIDITools.MIDI_Chart.Harm1.Solos.Any(solo => solo.MarkerBegin <= PlaybackSeconds && solo.MarkerEnd > PlaybackSeconds);
+                if (doVerticalChart)
+                {
+                    DrawFills(graphics, MIDITools.MIDI_Chart.Keys, startingPosition, keysX, track_width);
+                    DrawFiveLaneNotes(graphics, MIDITools.MIDI_Chart.Keys, startingPosition, keysX, track_width);
+                }
+                else
+                {
+                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.Keys, startingPosition, keysX, track_width);
+                    DrawFiveLaneNotesRB(graphics, MIDITools.MIDI_Chart.Keys, startingPosition, keysX, track_width);
+                }
+            }
+
+            if (hasProKeys)
+            {
+                if (doVerticalChart)
+                {
+                    DrawFills(graphics, MIDITools.MIDI_Chart.ProKeys, startingPosition, proKeysX, track_width * 2);
+                    DrawProKeysNotes(graphics, startingPosition, proKeysX, track_width * 2);
+                }
+                else
+                {
+                    DrawFillsRB(graphics, MIDITools.MIDI_Chart.ProKeys, startingPosition, proKeysX, track_width * 2, true);
+                    DrawProKeysNotesRB(graphics, startingPosition, proKeysX, track_width * 2);
+                }
+            }
+
+            bool solo = doMIDIVocals &&
+                        MIDITools.MIDI_Chart.Vocals.Solos != null &&
+                        MIDITools.MIDI_Chart.Vocals.Solos.Any(s => s.MarkerBegin <= PlaybackSeconds && s.MarkerEnd > PlaybackSeconds);
+
+            if (!solo && doMIDIHarmonies)
+            {
+                solo = doMIDIVocals &&
+                       MIDITools.MIDI_Chart.Harm1.Solos != null &&
+                       MIDITools.MIDI_Chart.Harm1.Solos.Any(s => s.MarkerBegin <= PlaybackSeconds && s.MarkerEnd > PlaybackSeconds);
+            }
+        }
+
+        private void ResetStageKitDrumTriggers()
+        {
+            _stageKitTriggeredKickTicks.Clear();
+            _lastKickStrobeTime = -999;
+        }
+
+        private void DrawTrackPerspectiveTrapezoidSoloFaded(
+            Graphics g,
+            Image soloBmp,
+            int chartLeft,
+            int topY,
+            int trackHeight,
+            int trackWidth,
+            float horizonY,
+            float hitboxY,
+            float fadeStartPercent = 0.85f,
+            float fadeEndPercent = 1.00f)
+        {
+            if (soloBmp == null || trackHeight <= 0 || trackWidth <= 0) return;
+
+            int bmpWidth = chartLeft + trackWidth;
+            int bmpHeight = topY + trackHeight;
+
+            using (var temp = new Bitmap(
+                Math.Max(1, bmpWidth),
+                Math.Max(1, bmpHeight),
+                PixelFormat.Format32bppPArgb))
+            {
+                using (var tg = Graphics.FromImage(temp))
+                {
+                    tg.Clear(Color.Transparent);
+
+                    DrawTrackPerspectiveTrapezoidSolo(
+                        tg,
+                        soloBmp,
+                        chartLeft,
+                        topY,
+                        trackHeight,
+                        trackWidth,
+                        horizonY,
+                        hitboxY
+                    );
+                }
+
+                ApplyTopFadeToTrackFrame(temp, horizonY, hitboxY, fadeStartPercent, fadeEndPercent);
+
+                g.DrawImageUnscaled(temp, 0, 0);
             }
         }
 
         private void DrawWaitTimeTextRB(Graphics graphics, List<MIDINote> notes, float horizonY, float hitboxY, float trackCenterX, string text)
-        {           
+        {
             float y = horizonY;
 
             // Big font (pixel units)
@@ -4469,16 +5700,30 @@ namespace cPlayer
         private void DrawWaitTimeRB(Graphics graphics, List<MIDINote> notes, float horizonY, float hitboxY, float trackCenterX)
         {
             var time = GetCorrectedTime();
-            var nextNote = notes.FirstOrDefault(n => n.NoteStart > time);
-            if (nextNote != null)
-            {
-                var wait = nextNote.NoteEnd - time;
 
-                if (wait > 5.0)
-                {
-                    string text = wait.ToString("0");
-                    DrawWaitTimeTextRB(graphics, notes, horizonY, hitboxY, trackCenterX, text);
-                }
+            // If a sustain is currently active, don't start counting from "now".
+            // Start counting after the current sustained note ends.
+            var activeNote = notes
+                .Where(n => n.NoteStart <= time && n.NoteEnd > time)
+                .OrderByDescending(n => n.NoteEnd)
+                .FirstOrDefault();
+
+            double occupiedUntil = activeNote != null ? activeNote.NoteEnd : time;
+
+            var nextNote = notes
+                .Where(n => n.NoteStart > occupiedUntil)
+                .OrderBy(n => n.NoteStart)
+                .FirstOrDefault();
+
+            if (nextNote == null)
+                return;
+
+            var wait = nextNote.NoteStart - occupiedUntil;
+
+            if (wait > 5.0)
+            {
+                string text = wait.ToString("0");
+                DrawWaitTimeTextRB(graphics, notes, horizonY, hitboxY, trackCenterX, text);
             }
         }
 
@@ -4499,7 +5744,7 @@ namespace cPlayer
             if (g == null) return;
             if (width <= 0 || height <= 0) return;
 
-            // Clamp the panel to the render area (optional but keeps it safe)
+            // Clamp the panel to the render area
             float h = height;
             if (renderSize.Width > 0 || renderSize.Height > 0)
             {
@@ -4515,13 +5760,13 @@ namespace cPlayer
             var oldComp = g.CompositingMode;
             var oldCompQ = g.CompositingQuality;
 
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.SmoothingMode = SmoothingMode.None;
+            g.PixelOffsetMode = PixelOffsetMode.HighSpeed;
             g.CompositingMode = CompositingMode.SourceOver;
-            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.CompositingQuality = CompositingQuality.HighSpeed;
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
-            var rect = new RectangleF(leftX, topY, width, h);          
+            var rect = new RectangleF(leftX, topY, width, h);
             g.DrawImage(Resources.textbg, rect);
 
             // --- Text (centered) ---
@@ -4560,7 +5805,7 @@ namespace cPlayer
                 g.CompositingQuality = oldCompQ;
             }
         }
-
+                
         private void DrawHighwaySideBordersPerspective(
             Graphics g,
             float horizonY,
@@ -4573,6 +5818,7 @@ namespace cPlayer
             int stepY = 6, // polygon sampling step (6-10 is usually plenty)            
             float baseThickness = 2.0f,
             float maxThickness = 6.0f,
+            float topOpenPx = 1.5f,
             Color? borderColor = null,
             Color? highlightColor = null
         )
@@ -4617,11 +5863,14 @@ namespace cPlayer
             {
                 SpanAtY(y, out double span, out double spanLeft);
 
-                float leftX = (float)spanLeft + insetPx;
-                float rightX = (float)(spanLeft + span) - insetPx;
-
                 double p = PFromY(y);
                 float t = (float)Lerp(baseThickness, maxThickness, p);
+
+                // Extra widening at the top only, fading out toward the bottom
+                float open = (float)((1.0 - p) * topOpenPx);
+
+                float leftX = (float)spanLeft + insetPx - open;
+                float rightX = (float)(spanLeft + span) - insetPx + open;
 
                 // Border rails: inner edge sits on the highway edge,
                 // outer edge expands outward.
@@ -4632,7 +5881,7 @@ namespace cPlayer
                 rightOuter.Add(new PointF(rightX + t, y));
 
                 // Highlight rails (a thinner band just inside the border)
-                float hiT = Math.Max(1f, t * 0.35f);
+                float hiT = Math.Max(1f, t * HighwayAngleFactor);
 
                 // Left highlight is inside-left (to the right of left edge)
                 leftHiInner.Add(new PointF(leftX + 1f, y));
@@ -4649,12 +5898,14 @@ namespace cPlayer
                 float y = hitboxY;
                 SpanAtY(y, out double span, out double spanLeft);
 
-                float leftX = (float)spanLeft;
-                float rightX = (float)(spanLeft + span);
-
                 double p = PFromY(y);
                 float t = (float)Lerp(baseThickness, maxThickness, p);
-                float hiT = Math.Max(1f, t * 0.35f);
+                float hiT = Math.Max(1f, t * HighwayAngleFactor);
+
+                float open = (float)((1.0 - p) * topOpenPx);
+
+                float leftX = (float)spanLeft + insetPx - open;
+                float rightX = (float)(spanLeft + span) - insetPx + open;
 
                 leftInner.Add(new PointF(leftX, y));
                 leftOuter.Add(new PointF(leftX - t, y));
@@ -4715,72 +5966,141 @@ namespace cPlayer
             g.PixelOffsetMode = oldPix;
         }
 
+        private void DrawHighwaySideBordersPerspectiveFaded(
+            Graphics g,
+            float horizonY,
+            float hitboxY,
+            float trackCenterX,
+            float trackWidth,
+            double minScale,
+            double maxScale,
+            int insetPx,
+            int bitmapWidth,
+            int bitmapHeight,
+            int stepY = 6,
+            float baseThickness = 2.0f,
+            float maxThickness = 6.0f,
+            float topOpenPx = 1.5f,
+            float fadeStartPercent = 0.80f,
+            float fadeEndPercent = 1.00f,
+            Color? borderColor = null,
+            Color? highlightColor = null
+        )
+        {
+            using (var railBmp = new Bitmap(
+                Math.Max(1, bitmapWidth),
+                Math.Max(1, bitmapHeight),
+                PixelFormat.Format32bppPArgb))
+            {
+                using (var rg = Graphics.FromImage(railBmp))
+                {
+                    rg.Clear(Color.Transparent);
+
+                    DrawHighwaySideBordersPerspective(
+                        rg,
+                        horizonY,
+                        hitboxY,
+                        trackCenterX,
+                        trackWidth,
+                        minScale,
+                        maxScale,
+                        insetPx,
+                        stepY,
+                        baseThickness,
+                        maxThickness,
+                        topOpenPx,
+                        borderColor,
+                        highlightColor
+                    );
+                }
+
+                ApplyTopFadeToTrackFrame(
+                    railBmp,
+                    horizonY,
+                    hitboxY,
+                    fadeStartPercent,
+                    fadeEndPercent
+                );
+
+                g.DrawImageUnscaled(railBmp, 0, 0);
+            }
+        }
+
         private int GetStartingPosition()
         {
             var startingPosition = GetHeightDiff();
-            if (doKaraokeLyrics || doStaticLyrics || doScrollingLyrics || rBStyle.Checked)
+            if (doKaraokeLyrics || doStaticLyrics || doScrollingLyrics || doRockBandChart)
             {
-                if (MIDITools.MIDI_Chart.Vocals.ChartedNotes.Any() || rBStyle.Checked)
+                if (MIDITools.MIDI_Chart.Vocals.ChartedNotes.Any() || doRockBandChart)
                 {
                     startingPosition += 20;
-                    if (doHarmonyLyrics || rBStyle.Checked)
+                    if (doHarmonyLyrics || doRockBandChart)
                     {
-                        if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Any() || rBStyle.Checked)
+                        if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Any() || doRockBandChart)
                         {
                             startingPosition += 20;
                         }
-                        if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Any() || rBStyle.Checked)
+                        if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Any() || doRockBandChart)
                         {
                             startingPosition += 20;
                         }
                     }
                 }
             }
-            if (doMIDINoVocals && !rBStyle.Checked)
+            if (doMIDINoVocals && !doRockBandChart)
             {
                 startingPosition = 0;
             }
             return startingPosition;
-        }              
+        }
 
         private void DrawPhraseMarkers(Graphics graphics, PhraseCollection phrases, int track_height, int track_y)
         {
-            var renderSize = new Size(1920, 1080);
-
+            var renderSize = activeRenderingResolution;
             var time = GetCorrectedTime();
-            if (phrases == null || phrases.Phrases.Count == 0) return;
 
-            // Adjust hitbox width based on mode
+            if (phrases == null || phrases.Phrases.Count == 0)
+                return;
+
+            double playbackWindow = GetVocalScrollWindow();
+
             var hitboxWidth = HitboxVocalsX + (bmpHitboxVocals.Width / 2);
-            if (chartSnippet.Checked)
-            {
+            if (doMIDIChart)
                 hitboxWidth = 0;
-            }
 
-            // Iterate through all phrases in the range
             for (var p = 0; p < phrases.Phrases.Count; p++)
             {
-                if (phrases.Phrases[p].PhraseStart > time + (PlaybackWindowRBVocals * 1)) break; // Stop if beyond range
-                if (phrases.Phrases[p].PhraseEnd < time) continue; // Skip if already passed
+                var phrase = phrases.Phrases[p];
 
-                // Calculate X position for the current phrase
-                float normalizedTime = (float)((phrases.Phrases[p].PhraseStart - time) / PlaybackWindowRBVocals);
-                var x = (float)(normalizedTime * (renderSize.Width - hitboxWidth)) + hitboxWidth;
+                if (phrase.PhraseStart > time + playbackWindow)
+                    break;
 
-                // Prevent "skipping" issues by clamping x within visible bounds
+                if (phrase.PhraseEnd < time)
+                    continue;
+
+                float normalizedTime = (float)((phrase.PhraseStart - time) / playbackWindow);
+
+                float x = (normalizedTime * (renderSize.Width - hitboxWidth)) + hitboxWidth;
+
                 if (x < 0) x = 0;
                 if (x > renderSize.Width) x = renderSize.Width;
 
-                // Ensure the marker appears and disappears at the correct locations
-                if ((chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && x < HitboxVocalsX) continue; // Vertical mode: disappear after hitbox
-                if (chartSnippet.Checked && x < 0) continue; // Snippet mode: skip if outside screen bounds
+                if ((doVerticalChart || doRockBandChart || doRockBandKaraoke) && x < HitboxVocalsX)
+                    continue;
 
-                // Adjust positions for vertical and non-vertical modes
-                int top = isRBKaraoke() ? track_y + 4 : (chartVertical.Checked || rBStyle.Checked ? GetYForRBVocals() + 4: track_y - track_height + 4);
-                int height = isRBKaraoke() ? (track_height - 8) : (chartVertical.Checked || rBStyle.Checked ? vocalsHeight - 8 : track_height - 8);
+                if (doMIDIChart && x < 0)
+                    continue;
+
+                int top = doRockBandKaraoke
+                    ? track_y + 4
+                    : (doVerticalChart || doRockBandChart ? GetYForRBVocals() + 4 : track_y - track_height + 4);
+
+                int height = doRockBandKaraoke
+                    ? track_height - 8
+                    : (doVerticalChart || doRockBandChart ? vocalsHeight - 8 : track_height - 8);
+
                 const int width = 4;
 
-                // Draw the phrase marker
                 using (var solidBrush = new SolidBrush(Color.DarkGray))
                 {
                     graphics.FillRectangle(solidBrush, x, top, width, height);
@@ -4790,8 +6110,8 @@ namespace cPlayer
 
         private void DrawTrackBackground(Graphics graphics, int y, int height, int index, string name, ICollection<SpecialMarker> solos, Instrument instrument)
         {
-            var renderSize = new Size(1920, 1080);
-            if (!chartSnippet.Checked && !chartVertical.Checked) return;
+            var renderSize = activeRenderingResolution;
+            if (!doMIDIChart && !doVerticalChart) return;
             var is_solo = false;
             if (solos != null && solos.Count > 0 && doMIDIHighlightSolos)
             {
@@ -4810,14 +6130,14 @@ namespace cPlayer
             else
             {
                 var color = index % 2 == 0 ? TrackBackgroundColor2 : TrackBackgroundColor1;
-                using (var DrawingPen = new SolidBrush(chartVertical.Checked ? RBStyleVocalsBackgroundColor : color))
+                using (var DrawingPen = new SolidBrush(doVerticalChart ? RBStyleVocalsBackgroundColor : color))
                 {
-                    var adjustedPosY = chartVertical.Checked ? y : y - height;
+                    var adjustedPosY = doVerticalChart ? y : y - height;
                     graphics.FillRectangle(DrawingPen, 0, adjustedPosY, renderSize.Width, height);
                 }
             }
             var rectangle = new Rectangle(0, y - height, renderSize.Width, height);
-            
+
             Font font;
             try
             {
@@ -4835,70 +6155,196 @@ namespace cPlayer
             int x = rectangle.X + (rectangle.Width - textSize.Width) / 2;
             int y2 = rectangle.Y + (rectangle.Height - textSize.Height) / 2;
 
-            Rectangle textRectangle = new Rectangle(x-4, y2, textSize.Width+4, textSize.Height+4);            
+            Rectangle textRectangle = new Rectangle(x - 4, y2, textSize.Width + 4, textSize.Height + 4);
 
-            if (!doMIDINameTracks || chartVertical.Checked) return;
-            TextRenderer.DrawText(graphics, trackText, font, rectangle, index % 2 == 0 ? TrackBackgroundColor1 : TrackBackgroundColor2, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);            
+            if (!doMIDINameTracks || doVerticalChart) return;
+            TextRenderer.DrawText(graphics, trackText, font, rectangle, index % 2 == 0 ? TrackBackgroundColor1 : TrackBackgroundColor2, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
         }
-
-        private bool isRBKaraoke()
+        
+        private static IList<Lyric> AsLyricList(IEnumerable<Lyric> source)
         {
-            return rockBandKaraoke.Checked && displayKaraokeMode.Checked;
+            return source as IList<Lyric> ?? (source != null ? source.ToList() : null);
         }
 
-        private readonly Bitmap needleHarm1 = Resources.needle_harm1;
-        private readonly Bitmap needleHarm2 = Resources.needle_harm2;
-        private readonly Bitmap needleHarm3 = Resources.needle_harm3;
+        private static string FindLyricTextAtStart(IList<Lyric> lyrics, double start)
+        {
+            if (lyrics == null) return "";
+
+            for (int i = 0; i < lyrics.Count; i++)
+            {
+                if (lyrics[i].Start == start)
+                    return lyrics[i].Text ?? "";
+            }
+
+            return "";
+        }
+
+        private int FindRollingVisibleStartIndex(MIDITrack track, double correctedTime, double window, bool isVocalsTrack, bool specialChartMode)
+        {
+            var notes = track.ChartedNotes;
+            int count = notes.Count;
+            if (count == 0) return 0;
+
+            int index = track.ActiveIndex;
+            if (index < 0 || index >= count)
+                index = 0;
+
+            // If we jumped backwards far enough that the hint is obviously wrong, reset.
+            if (index > 0 && notes[index].NoteStart > correctedTime + (window * 2.0))
+                index = 0;
+
+            // Rewind a little so we don't miss sustains / long vocal notes that began before the current time.
+            double rewindWindow = isVocalsTrack
+                ? Math.Max(window * 2.0, 8.0)
+                : Math.Max(window, 2.0);
+
+            while (index > 0 && notes[index].NoteStart > correctedTime - rewindWindow)
+            {
+                index--;
+            }
+
+            // Advance past notes that are definitely dead.
+            double pastCutoff = specialChartMode ? correctedTime - 1.0 : correctedTime;
+
+            while (index < count)
+            {
+                var note = notes[index];
+
+                if (note.NoteStart > correctedTime + (window * 2.0))
+                    break;
+
+                if (note.NoteEnd >= pastCutoff)
+                    break;
+
+                index++;
+            }
+
+            return index;
+        }
+
+        private double GetVocalScrollWindow()
+        {
+            double bpm = PlayingSong != null && PlayingSong.BPM > 0 ? PlayingSong.BPM : 120.0;
+            double secondsPerBeat = 60.0 / bpm;
+            double visibleBeats = 6.8; //CHANGE THIS FOR SCROLLING SPEED - LOWER FASTER - HIGHER SLOWER
+            return Math.Max(0.90, Math.Min(6.0, secondsPerBeat * visibleBeats));
+        }
 
         private void DrawNotes(Graphics graphics, MIDITrack track, int track_height, int track_y, bool drums, int harm, out int LastPlayedIndex)
         {
             LastPlayedIndex = track.ActiveIndex;
-            var correctedTime = GetCorrectedTime();
+
+            double correctedTime = GetCorrectedTime();
+
             track_y++;
             track_height--;
-            var needleY = 0f;
-            var needleAdjustedHeight = 0f;
-            var needleUnpitched = false;
-            var drawNeedle = false;
-            var renderSize = new Size(1920, 1080);
+
+            float needleY = 0f;
+            float needleAdjustedHeight = 0f;
+            bool needleUnpitched = false;
+            bool drawNeedle = false;
+
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
+
             var oldSmoothingMode = graphics.SmoothingMode;
             var oldCompositingQuality = graphics.CompositingQuality;
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.CompositingQuality = CompositingQuality.HighQuality;
 
-            var window = 0.00;
-            switch (track.Name)
+            graphics.SmoothingMode = SmoothingMode.None;
+            graphics.CompositingQuality = CompositingQuality.HighSpeed;
+
+            string trackName = track.Name ?? "";
+
+            bool rbKaraoke = doRockBandKaraoke;
+            bool isVocalsTrack =
+                trackName == "Vocals" ||
+                trackName == "Harm1" ||
+                trackName == "Harm2" ||
+                trackName == "Harm3";
+
+            bool specialChartMode = doMIDIChart || doVerticalChart || doRockBandChart || rbKaraoke;
+            bool normalChartMode = !doMIDIChart && !doVerticalChart && !doRockBandKaraoke && !doRockBandChart;
+
+            double window;
+            switch (trackName)
             {
                 case "Vocals":
                 case "Harm1":
                 case "Harm2":
                 case "Harm3":
-                    window = PlaybackWindowRBVocals * (isRBKaraoke() && PlayingSong.BPM > 80.0 ? 80.0 / PlayingSong.BPM : 1.0);
+                    if (doMIDINoVocals) return;
+                    window = GetVocalScrollWindow();
+                    //window = PlaybackWindowRBVocals * (rbKaraoke && PlayingSong.BPM > 80.0 ? 80.0 / PlayingSong.BPM : 1.0);
                     break;
+
                 default:
-                    if (isRBKaraoke())
+                    if (rbKaraoke)
                     {
-                        window = PlaybackWindowRBVocals * (isRBKaraoke() && PlayingSong.BPM > 80.0 ? 80.0 / PlayingSong.BPM : 1.0);
+                        window = PlaybackWindowRBVocals * (PlayingSong.BPM > 80.0 ? 80.0 / PlayingSong.BPM : 1.0);
                     }
                     else
                     {
-                        window = chartVertical.Checked || rBStyle.Checked ? PlaybackWindowRB : PlaybackWindow;
+                        window = (doVerticalChart || doRockBandChart) ? PlaybackWindowRB : PlaybackWindow;
                     }
                     break;
             }
 
-            // Filter notes to process only visible ones
-            var filteredNotes = track.ChartedNotes.Where(note => note.NoteStart <= correctedTime + (window * 2)).ToList();
-
-            for (var z = 0; z < filteredNotes.Count(); z++)
+            var notes = track.ChartedNotes;
+            int noteCount = notes.Count;
+            if (noteCount == 0)
             {
-                var note = filteredNotes[z];
-                if (note.NoteEnd < correctedTime && !chartFull.Checked && !chartSnippet.Checked && !chartVertical.Checked && !rockBandKaraoke.Checked && !rBStyle.Checked) continue;
-                if (note.NoteStart > correctedTime && !chartFull.Checked && !chartSnippet.Checked && !chartVertical.Checked && !rockBandKaraoke.Checked && !rBStyle.Checked) break;
-                if ((chartSnippet.Checked || chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && note.NoteEnd < correctedTime - 1) continue;
-                if ((chartSnippet.Checked || chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && note.NoteStart > correctedTime + (window * 2)) break;
+                graphics.SmoothingMode = oldSmoothingMode;
+                graphics.CompositingQuality = oldCompositingQuality;
+                return;
+            }
+
+            double visibleEnd = correctedTime + (window * 2.0);
+            int startIndex = FindRollingVisibleStartIndex(track, correctedTime, window, isVocalsTrack, specialChartMode);
+
+            IList<Lyric> lyricList = null;
+            if (isVocalsTrack)
+            {
+                switch (trackName)
+                {
+                    case "Vocals":
+                        lyricList = AsLyricList(MIDITools.LyricsVocals.Lyrics);
+                        break;
+                    case "Harm1":
+                        lyricList = AsLyricList(MIDITools.LyricsHarm1.Lyrics);
+                        break;
+                    case "Harm2":
+                        lyricList = AsLyricList(MIDITools.LyricsHarm2.Lyrics);
+                        break;
+                    case "Harm3":
+                        lyricList = AsLyricList(MIDITools.LyricsHarm3.Lyrics);
+                        break;
+                }
+            }
+
+            for (int z = startIndex; z < noteCount; z++)
+            {
+                var note = notes[z];
+
+                if (note.NoteStart > visibleEnd)
+                    break;
+
+                if (normalChartMode)
+                {
+                    if (note.NoteEnd < correctedTime)
+                        continue;
+
+                    if (note.NoteStart > correctedTime)
+                        break;
+                }
+
+                if (specialChartMode)
+                {
+                    if (note.NoteEnd < correctedTime - 1.0)
+                        continue;
+                }
+
                 LastPlayedIndex = z;
-                if (doMIDIBWKeys && track.Name == "ProKeys")
+
+                if (doMIDIBWKeys && trackName == "ProKeys")
                 {
                     note.NoteColor = note.NoteName.Contains("#") ? Color.Black : Color.WhiteSmoke;
                 }
@@ -4907,107 +6353,88 @@ namespace cPlayer
                     switch (harm)
                     {
                         case 0:
-                            note.NoteColor = isRBKaraoke() ? KaraokeModeHarm1Highlight : (!doMIDIHarm1onVocals ? GetNoteColor(note.NoteNumber) : Harm1Color);
+                            note.NoteColor = rbKaraoke
+                                ? KaraokeModeHarm1Highlight
+                                : (!doMIDIHarm1onVocals ? GetNoteColor(note.NoteNumber) : Harm1Color);
                             break;
                         case 1:
-                            note.NoteColor = isRBKaraoke() ? KaraokeModeHarm1Highlight : Harm1Color;
+                            note.NoteColor = rbKaraoke ? KaraokeModeHarm1Highlight : Harm1Color;
                             break;
                         case 2:
-                            note.NoteColor = isRBKaraoke() ? KaraokeModeHarm2Highlight : Harm2Color;
+                            note.NoteColor = rbKaraoke ? KaraokeModeHarm2Highlight : Harm2Color;
                             break;
                         case 3:
-                            note.NoteColor = isRBKaraoke() ? KaraokeModeHarm3Highlight : Harm3Color;
+                            note.NoteColor = rbKaraoke ? KaraokeModeHarm3Highlight : Harm3Color;
                             break;
                         default:
                             note.NoteColor = GetNoteColor(note.NoteNumber, drums);
                             break;
                     }
                 }
-                
-                var note_width = ((note.NoteLength / (PlayingSong.Length / 1000.0)) * renderSize.Width);
+
+                double note_width = (note.NoteLength / (PlayingSong.Length / 1000.0)) * renderSize.Width;
                 if (note_width < 1.0)
-                {
                     note_width = 1.0;
-                }
 
-                var x = (note.NoteStart - correctedTime) / window * (float)renderSize.Width / 1.33f; //3 second equivalent for this mode, 2 second equivalent for game style mode
+                float x = (float)((note.NoteStart - correctedTime) / window * renderSize.Width / 1.33f);
 
-                // Specific logic for Vocals and Harmonies
-                if (track.Name == "Vocals" || track.Name == "Harm1" || track.Name == "Harm2" || track.Name == "Harm3")
+                if (isVocalsTrack)
                 {
-                    var hitboxWidth = HitboxVocalsX + (bmpHitboxVocals.Width / 2);
-                    if (chartVisualsToolStripMenuItem.Checked && chartSnippet.Checked)
+                    int hitboxWidth = HitboxVocalsX + (bmpHitboxVocals.Width / 2);
+                    if (doMIDIChart)
                     {
                         hitboxWidth = 0;
                     }
-                    x = (float)((note.NoteStart - correctedTime) / window * (renderSize.Width - hitboxWidth) + hitboxWidth);
-                    
-                    // Define vocal chart dimensions and note height
-                    int vocalChartTop = isRBKaraoke() ? track_y : (chartVertical.Checked || rBStyle.Checked ? GetYForRBVocals() : track_y - track_height);
-                    int vocalChartHeight = isRBKaraoke() ? vocalsHeight * 2 : (chartVertical.Checked || rBStyle.Checked ? vocalsHeight : track_height);
-                    int minNote = 36;
-                    int maxNote = 84;
-                    int noteRange = maxNote - minNote + 1;
-                    double noteHeight = (double)vocalChartHeight / noteRange; //double the height for better visibility
 
-                    // Calculate Y position based on note number
-                    var y = vocalChartTop + (int)((maxNote - note.NoteNumber) * noteHeight);
+                    x = (float)((note.NoteStart - correctedTime) / window * (renderSize.Width - hitboxWidth) + hitboxWidth);
+
+                    int vocalChartTop = rbKaraoke
+                        ? track_y
+                        : ((doVerticalChart || doRockBandChart) ? GetYForRBVocals() : track_y - track_height);
+
+                    int vocalChartHeight = rbKaraoke
+                        ? vocalsHeight * 2
+                        : ((doVerticalChart || doRockBandChart) ? vocalsHeight : track_height);
+
+                    const int minNote = 36;
+                    const int maxNote = 84;
+                    int noteRange = maxNote - minNote + 1;
+                    double noteHeight = (double)vocalChartHeight / noteRange;
+
+                    int y = vocalChartTop + (int)((maxNote - note.NoteNumber) * noteHeight);
                     double width = 0;
 
-                    IEnumerable<Lyric> source = null;
-                    switch (track.Name)
-                    {
-                        case "Vocals":
-                            source = MIDITools.LyricsVocals.Lyrics;
-                            break;
-                        case "Harm1":
-                            source = MIDITools.LyricsHarm1.Lyrics;
-                            break;
-                        case "Harm2":
-                            source = MIDITools.LyricsHarm2.Lyrics;
-                            break;
-                        case "Harm3":
-                            source = MIDITools.LyricsHarm3.Lyrics;
-                            break;
-                    }
+                    string lyricText = FindLyricTextAtStart(lyricList, note.NoteStart);
+                    bool isUnpitched = !string.IsNullOrEmpty(lyricText) && (lyricText.Trim().EndsWith("#") || lyricText.Trim().EndsWith("^"));
 
-                    var isUnpitched = false;
-                    foreach (var lyric in source)
+                    if (specialChartMode)
                     {
-                        if (lyric.Start == note.NoteStart)
-                        {
-                            isUnpitched = lyric.Text.Trim().EndsWith("#");
-                            break;
-                        }
-                    }
-                    if (chartFull.Checked)
-                    {
-                        using (var DrawingPen = new SolidBrush(note.NoteColor))
-                        {
-                            Chart.FillRectangle(DrawingPen, (float)x, y, (float)note_width, (float)noteHeight);
-                        }
-                    }
-                    else if (chartSnippet.Checked || chartVertical.Checked || rBStyle.Checked || isRBKaraoke())
-                    {                        
                         width = ((note.NoteLength / window) * renderSize.Width) * 0.8;
                         if (width < 1)
-                        {
-                            width = 1; //won't draw something less than one pixel wide, and we want something to show!
-                        }
-                        var adjustedHeight = (float)noteHeight * 2;
-                        var adjustedY = y;
-                        var alpha = 255;
+                            width = 1;
+
+                        float adjustedHeight = (float)noteHeight * 2;
+                        int adjustedY = y;
+                        int alpha = 255;
+
                         if (isUnpitched)
                         {
-                            adjustedHeight = isRBKaraoke() ? vocalsHeight * 2 : (chartVertical.Checked || rBStyle.Checked ? vocalsHeight : track_height);
-                            adjustedY = isRBKaraoke() ? track_y : (chartVertical.Checked || rBStyle.Checked ? GetYForRBVocals() : track_y - track_height);
+                            adjustedHeight = rbKaraoke
+                                ? vocalsHeight * 2
+                                : ((doVerticalChart || doRockBandChart) ? vocalsHeight : track_height);
+
+                            adjustedY = rbKaraoke
+                                ? track_y
+                                : ((doVerticalChart || doRockBandChart) ? GetYForRBVocals() : track_y - track_height);
+
                             alpha = 192;
                         }
+
                         if ((note.NoteNumber == 96 || note.NoteNumber == 97) && MIDITools.MIDI_Chart.UsesPercussion)
                         {
                             const float percHeight = 20f;
                             float percY = vocalChartTop + (vocalChartHeight - percHeight) / 2;
-                            float x0 = (float)x;
+                            float x0 = x;
                             float y0 = percY;
                             float d = percHeight;
 
@@ -5021,11 +6448,11 @@ namespace cPlayer
                                 var oldPixelOffset = graphics.PixelOffsetMode;
                                 var oldCompositing = graphics.CompositingQuality;
 
-                                graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                                graphics.CompositingQuality = CompositingQuality.HighQuality;                                
+                                graphics.SmoothingMode = SmoothingMode.None;
+                                graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                                graphics.CompositingQuality = CompositingQuality.HighSpeed;
 
-                                using (var penOuter = new Pen(Color.FromArgb(160, Color.Black), 3.0f)) // darker + thicker
+                                using (var penOuter = new Pen(Color.FromArgb(160, Color.Black), 3.0f))
                                 {
                                     penOuter.Alignment = PenAlignment.Center;
                                     graphics.DrawEllipse(penOuter, x0 + 0.5f, y0 + 0.5f, d - 1f, d - 1f);
@@ -5047,160 +6474,154 @@ namespace cPlayer
                         {
                             using (var solidBrush = new SolidBrush(Color.FromArgb(alpha, note.NoteColor)))
                             {
-                                graphics.FillRectangle(solidBrush, (float)x, adjustedY, (float)width, adjustedHeight);
+                                graphics.FillRectangle(solidBrush, x, adjustedY, (float)width, adjustedHeight);
                             }
-                            if ((chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && note.NoteStart < correctedTime)
+
+                            if (specialChartMode && note.NoteStart < correctedTime)
                             {
-                                //draw highlight - disabled for now
                                 using (var glowBrush = new SolidBrush(note.NoteColor))
                                 {
-                                    graphics.FillRectangle(glowBrush, (float)x, adjustedY, (float)width, adjustedHeight);
+                                    graphics.FillRectangle(glowBrush, x, adjustedY, (float)width, adjustedHeight);
                                 }
                             }
-                            if (!isUnpitched)
+
+                            if (!isUnpitched && specialChartMode && note.NoteStart < correctedTime)
                             {
-                                if ((chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && note.NoteStart < correctedTime)
+                                drawNeedle = true;
+                                needleY = adjustedY;
+                                needleAdjustedHeight = adjustedHeight;
+                                needleUnpitched = false;
+                                if (doRockBandKaraoke)
                                 {
-                                    drawNeedle = true;
-                                    needleY = adjustedY;
-                                    needleAdjustedHeight = adjustedHeight;
-                                    needleUnpitched = isUnpitched;
+                                    needleY += 6; //adjust for this mode only
                                 }
                             }
                         }
                     }
-                    if (isUnpitched) continue;
 
-                    // Handle sustain slides for vocals
-                    if (z + 1 < track.ChartedNotes.Count())
+                    if (isUnpitched)
+                        continue;
+
+                    if (z + 1 < noteCount)
                     {
-                        var nextNote = track.ChartedNotes[z + 1];
-                        try
+                        var nextNote = notes[z + 1];
+                        string nextLyricText = FindLyricTextAtStart(lyricList, nextNote.NoteStart);
+
+                        if (!string.IsNullOrEmpty(nextLyricText) && nextLyricText.Replace("-", "").Replace("$", "").Trim() == "+")
                         {
-                            var str = "";
-                            using (var enumerator = source?.Where(lyric => lyric.Start == nextNote.NoteStart).GetEnumerator())
+                            float x3 = (float)((nextNote.NoteStart - correctedTime) / window * (renderSize.Width - hitboxWidth) + hitboxWidth);
+                            int y3 = vocalChartTop + (int)((maxNote - nextNote.NoteNumber) * noteHeight);
+
+                            PointF pointF1 = new PointF((float)(x + width), (float)(y + (noteHeight * 2)));
+                            PointF pointF2 = new PointF((float)(x + width), y);
+                            PointF pointF3 = new PointF(x3, y3);
+                            PointF pointF4 = new PointF(x3, (float)(y3 + (noteHeight * 2)));
+
+                            PointF[] basePolygon = new[] { pointF1, pointF2, pointF3, pointF4 };
+
+                            Color polygonColor = ((trackName == "Vocals" && doMIDIHarm1onVocals) || trackName != "Vocals")
+                                ? note.NoteColor
+                                : Color.LightGray;
+
+                            using (var solidBrush = new SolidBrush(polygonColor))
                             {
-                                if (enumerator?.MoveNext() == true)
-                                {
-                                    str = enumerator.Current.Text;
-                                }
+                                graphics.FillPolygon(solidBrush, basePolygon);
                             }
 
-                            if (!string.IsNullOrEmpty(str) && str.Replace("-", "").Replace("$", "").Trim() == "+")
+                            if (specialChartMode && note.NoteStart < correctedTime)
                             {
-                                var x2 = x + width;
-                                var x3 = (float)((nextNote.NoteStart - correctedTime) / window * (renderSize.Width - hitboxWidth) + hitboxWidth);
-                                var y2 = y;
-                                var y3 = vocalChartTop + (int)((maxNote - nextNote.NoteNumber) * noteHeight);
-
-                                var pointF1 = new PointF((float)(x + width), (float)(y + (noteHeight * 2)));
-                                var pointF2 = new PointF((float)(x + width), y);
-                                var pointF3 = new PointF(x3, y3);
-                                var pointF4 = new PointF(x3, (float)(y3 + (noteHeight * 2)));
-
-                                // Define the base polygon
-                                PointF[] basePolygon = new[] { pointF1, pointF2, pointF3, pointF4 };
-
-                                using (var solidBrush = new SolidBrush(((track.Name == "Vocals" && doMIDIHarm1onVocals) || track.Name != "Vocals") ? note.NoteColor : Color.LightGray))
+                                using (var solidBrush = new SolidBrush(note.NoteColor))
                                 {
                                     graphics.FillPolygon(solidBrush, basePolygon);
                                 }
-
-                                if ((chartVertical.Checked || rBStyle.Checked || isRBKaraoke()) && note.NoteStart < correctedTime)
-                                {
-                                    using (var solidBrush = new SolidBrush(((track.Name == "Vocals" && doMIDIHarm1onVocals) || track.Name != "Vocals") ? note.NoteColor : Color.LightGray))
-                                    {
-                                        graphics.FillPolygon(new SolidBrush(note.NoteColor), basePolygon);
-                                    }
-                                }               
                             }
                         }
-                        catch (Exception ex)
-                        {}
                     }
-                    if ((!doMIDINameVocals || (track.Name != "Vocals" && track.Name != "Harm1" && (track.Name != "Harm2" && track.Name != "Harm3")))) continue;
-                    var font = new Font("Impact", 12.0f);
-                    TextRenderer.DrawText(graphics, note.NoteName, font, new Point((int)x + 1, y - 1), Color.White, TextFormatFlags.NoPadding);
 
-                    continue; // Skip the rest of the logic for vocals and harmonies
+                    if (doMIDINameVocals)
+                    {
+                        TextRenderer.DrawText(
+                            graphics,
+                            note.NoteName,
+                            _impact12Font,
+                            new Point((int)x + 1, y - 1),
+                            Color.White,
+                            TextFormatFlags.NoPadding);
+                    }
+
+                    continue;
                 }
 
-                // General logic for other tracks
-                var y_general = track_y;
+                int y_general = track_y;
                 List<int> range;
+
                 switch (NoteSizingType)
                 {
                     default:
-                        if (track.Name == "ProKeys")
-                        {
-                            range = track.NoteRange; //for these only use present note range for measuring
-                        }
-                        else
-                        {
-                            range = track.ValidNotes; //use all possible notes for measuring
-                        }
+                        range = (trackName == "ProKeys") ? track.NoteRange : track.ValidNotes;
                         break;
                     case 1:
-                        //only use present note range for measuring
                         range = track.NoteRange;
                         break;
                     case 2:
-                        //use all possible notes for measuring
                         range = track.ValidNotes;
                         break;
                 }
 
-                var note_height_general = (double)track_height / range.Count;
+                double note_height_general = (double)track_height / range.Count;
 
-                for (var i = 0; i < range.Count; i++)
+                int rangeCount = range.Count;
+                for (int i = 0; i < rangeCount; i++)
                 {
-                    if (note.NoteNumber != range[i]) continue;
-                    y_general = (int)(track_y - (note_height_general * (range.Count - i)));
+                    if (note.NoteNumber != range[i])
+                        continue;
+
+                    y_general = (int)(track_y - (note_height_general * (rangeCount - i)));
                     break;
                 }
 
-                if (chartFull.Checked)
+                if (doMIDIChart)
                 {
-                    using (var DrawingPen = new SolidBrush(note.NoteColor))
-                    {
-                        Chart.FillRectangle(DrawingPen, (float)x, y_general, (float)note_width, (float)note_height_general);
-                    }
-                }
-                else if (chartSnippet.Checked)// || chartVertical.Checked)
-                {
-                    var width = ((note.NoteLength / window) * renderSize.Width) * 0.8;
+                    double width = ((note.NoteLength / window) * renderSize.Width) * 0.8;
                     if (width < 1)
-                    {
-                        width = 1; //won't draw something less than one pixel wide, and we want something to show!
-                    }
+                        width = 1;
+
                     using (var solidBrush = new SolidBrush(note.NoteColor))
                     {
-                        graphics.FillRectangle(solidBrush, (float)x, y_general, (float)width, (float)note_height_general);
+                        graphics.FillRectangle(solidBrush, x, y_general, (float)width, (float)note_height_general);
                     }
-                    if (track.Name == "ProKeys" && doMIDINameProKeys)
+
+                    if (trackName == "ProKeys" && doMIDINameProKeys)
                     {
-                        var font = new Font("Impact", 12.0f);
-                        TextRenderer.DrawText(graphics, note.NoteName, font, new Point((int)x + 1, y_general - 1), (note.NoteName.Contains("#") ? Color.White : Color.Black), TextFormatFlags.NoPadding);
+                        TextRenderer.DrawText(
+                            graphics,
+                            note.NoteName,
+                            _impact12Font,
+                            new Point((int)x + 1, y_general - 1),
+                            note.NoteName.Contains("#") ? Color.White : Color.Black,
+                            TextFormatFlags.NoPadding);
                     }
-                }               
+                }
             }
 
-            if (drawNeedle)
+            if (drawNeedle && (doRockBandChart || doVerticalChart || doRockBandKaraoke))
             {
                 var needle = needleHarm1;
-                if (track.Name == "Harm2")
+                if (trackName == "Harm2")
                 {
                     needle = needleHarm2;
                 }
-                else if (track.Name == "Harm3")
+                else if (trackName == "Harm3")
                 {
                     needle = needleHarm3;
                 }
-                var needleHeight = needle.Height * 0.25f;
-                var needleWidth = needle.Width * 0.25f;
-                var needleX = HitboxVocalsX + (bmpHitboxVocals.Width / 2) - needleWidth;
+
+                float needleHeight = needle.Height * 0.25f;
+                float needleWidth = needle.Width * 0.25f;
+                float needleX = HitboxVocalsX + (bmpHitboxVocals.Width / 2) - needleWidth;
+
                 graphics.DrawImage(Resources.glow3, HitboxVocalsX - (needleWidth * 5f), needleY - (needleUnpitched ? 0 : needleAdjustedHeight), needleWidth * 5f, needleHeight);
-                graphics.DrawImage(needle, needleX, needleY - (needleUnpitched ? 0 : needleAdjustedHeight), needleWidth, needleHeight);                
+                graphics.DrawImage(needle, needleX, needleY - (needleUnpitched ? 0 : needleAdjustedHeight), needleWidth, needleHeight);
             }
 
             graphics.SmoothingMode = oldSmoothingMode;
@@ -5324,7 +6745,7 @@ namespace cPlayer
             UpdateTime(false, !PlaybackTimer.Enabled);
             if (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused)
             {
-                _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+                _mediaPlayer.Time = GetBASSTimeForVideo();
             }
         }
 
@@ -5367,20 +6788,20 @@ namespace cPlayer
             UpdateTime(true);
             if (Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PAUSED && Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING) return;
             SetPlayLocation(PlaybackSeek, true);
-            var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * (MinVolume - VolumeLevel)), 1.0);
-            Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, track_vol);
+            //var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * (MinVolume - VolumeLevel)), 1.0);
+            Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, masterVol);
         }
 
         private void picPreview_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left || PlayingSong == null) return;
-            if (!displayAlbumArt.Checked && File.Exists(CurrentSongArt))
+            if (!displayAlbumArt && File.Exists(CurrentSongArt))
             {
                 var display = new Art(Cursor.Position, CurrentSongArt);
                 display.Show();
                 return;
             }
-            if (!displayAlbumArt.Checked && (File.Exists(CurrentSongArt) || displayAudioSpectrum.Checked)) return;
+            if (!displayAlbumArt && (File.Exists(CurrentSongArt) || displayAudioSpectrum)) return;
             SpectrumID++;
             picPreview.Image = null;
             Spectrum.ClearPeaks();
@@ -5390,7 +6811,7 @@ namespace cPlayer
         {
             doSongPlayback();
         }
-        
+
         private void doSongPlayback()
         {
             if (lstPlaylist.SelectedItems.Count != 1 || (GIFOverlay != null && !AlreadyTried)) return;
@@ -5400,7 +6821,7 @@ namespace cPlayer
         }
 
         private void MoveSongFiles()
-        {            
+        {
             if (yarg.Checked || fortNite.Checked || guitarHero.Checked)
             {
                 CurrentSongArt = File.Exists(NextSongArtPNG) ? NextSongArtPNG : NextSongArtJPG;
@@ -5419,7 +6840,7 @@ namespace cPlayer
                 Tools.DeleteFile(CurrentSongArtBlurred);
                 Tools.MoveFile(NextSongArtBlurred, CurrentSongArtBlurred);
             }
-                        
+
             if (nautilus.NextSongOggData != null && nautilus.NextSongOggData.Length > 0)
             {
                 nautilus.PlayingSongOggData = nautilus.NextSongOggData;
@@ -5498,7 +6919,7 @@ namespace cPlayer
         public string CleanArtistSong(string input)
         {
             return string.IsNullOrEmpty(input) ? "" : (input.Replace("(RB3 version)", "").Replace("(2x Bass Pedal)", "").Replace("(Rhythm Version)", "").Replace("(Rhythm version)", "").Replace("featuring ", "ft. ").Replace("feat. ", "ft. ").Replace(" feat ", " ft. ").Replace("(feat ", ")ft. ")).Trim();
-        }               
+        }
 
         public void ReloadPlaylist(IList<Song> playlist, bool update = true, bool search = true, bool doExtract = true)
         {
@@ -5520,7 +6941,7 @@ namespace cPlayer
                 if (enable1970s) enabledRanges.Add((1970, 1979));
                 if (enable1960s) enabledRanges.Add((1960, 1969));
                 if (enableOldies) enabledRanges.Add((1000, 1959));
-                                
+
                 bool yearAllowed = enabledRanges.Count == 0 || enabledRanges.Any(r => year >= r.Start && year <= r.End);
 
                 if (!yearAllowed) continue;
@@ -5851,7 +7272,7 @@ namespace cPlayer
                 }
             }
             UpdateRecentPlaylists(PlaylistPath);
-            Text = AppName + " - " + PlaylistName;
+            Text = string.IsNullOrEmpty(PlaylistName) ? AppName : AppName + " - " + PlaylistName;
         }
 
         private void loadExistingPlaylist_Click(object sender, EventArgs e)
@@ -5958,7 +7379,7 @@ namespace cPlayer
                 }
                 PlaylistName = Tools.GetConfigString(sr.ReadLine());
                 var songcount = Convert.ToInt32(Tools.GetConfigString(sr.ReadLine()));
-                var line_number = 4;                
+                var line_number = 4;
                 for (var i = 0; i < songcount; i++)
                 {
                     var line = "";
@@ -6009,10 +7430,10 @@ namespace cPlayer
                             Playlist.Add(song);
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         error = true;
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)
@@ -6056,13 +7477,13 @@ namespace cPlayer
                 MessageBox.Show("Nothing could be loaded from that playlist", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            
+
             UpdateRecentPlaylists(PlaylistPath);
             StaticPlaylist = Playlist;
             ActiveSong = null;
             AnalyzePlaylist(Playlist);
             ReloadPlaylist(Playlist, true, true, false);
-            Text = AppName + " - " + PlaylistName;
+            Text = string.IsNullOrEmpty(PlaylistName) ? AppName : AppName + " - " + PlaylistName;
             if (showWait)
             {
                 if (GIFOverlay != null)
@@ -6095,7 +7516,7 @@ namespace cPlayer
 
             foreach (var song in playlist)
             {
-                if (song.Year >= 2020  && !enable2020s)
+                if (song.Year >= 2020 && !enable2020s)
                 {
                     enable2020s = true;
                 }
@@ -6202,91 +7623,147 @@ namespace cPlayer
             recent5.Text = Path.GetFileName(RecentPlaylists[4]);
             recent5.Visible = !string.IsNullOrEmpty(recent5.Text) && File.Exists(RecentPlaylists[4]);
         }
-
+               
         private void SaveConfig()
         {
-            using (var sw = new StreamWriter(config, false))
+            try
             {
-                sw.WriteLine("PlayerConsole=" + PlayerConsole);
-                sw.WriteLine("LoopPlayback=" + (picLoop.Tag != null && picLoop.Tag.ToString() == "loop"));
-                sw.WriteLine("ShufflePlayback=" + (picShuffle.Tag != null && picShuffle.Tag.ToString() == "shuffle"));
-                sw.WriteLine("AutoloadPlaylist=" + autoloadLastPlaylist.Checked);
-                sw.WriteLine("LastPlaylist=" + PlaylistPath);
-                sw.WriteLine("AutoPlay=" + autoPlay.Checked);
-                sw.WriteLine("PlayCrowdTrack=" + doAudioCrowd);
-                sw.WriteLine("EnableCrossFade=False //feature is deprecated");
-                sw.WriteLine("CrossFadeLength=0.0 //feature is deprecated");
-                sw.WriteLine("ShowPracticeSessions=" + showPracticeSections.Checked);
-                sw.WriteLine("ShowLyrics=" + doStaticLyrics);
-                sw.WriteLine("WholeWords=" + doWholeWordsLyrics);
-                sw.WriteLine("GameSyllables=" + !doWholeWordsLyrics);
-                sw.WriteLine("ShowMIDIVisuals=" + chartVisualsToolStripMenuItem.Checked);
-                sw.WriteLine("OpenSideWindow=" + openSideWindow.Checked);
-                sw.WriteLine("VolumeLevel=" + VolumeLevel);
-                sw.WriteLine("UseGameColors=False //feature is deprecated");
-                sw.WriteLine("UseRandomColors=False //feature is deprecated");
-                sw.WriteLine("InvertAllColors=False //feature is deprecated"); //keep this old line from prior version so as not to break config compatibility
-                sw.WriteLine("ModeBPM=False //feature is deprecated");
-                sw.WriteLine("ModeAbstract=False //feature is deprecated");
-                sw.WriteLine("DrawFullChart=" + chartFull.Checked);
-                sw.WriteLine("DrawSnippet=" + chartSnippet.Checked);
-                sw.WriteLine("DrawNoteNames=False //feature is deprecated");
-                sw.WriteLine("DrawCircles=False //feature is deprecated");
-                sw.WriteLine("DrawRectangles=False //feature is deprecated");
-                sw.WriteLine("DrawLines=False //feature is deprecated");
-                sw.WriteLine("DrawSpirals=False //feature is deprecated");
-                sw.WriteLine("DrawRandomShapes=False //feature is deprecated");
-                for (var i = 0; i < 5; i++)
+                using (var sw = new StreamWriter(config, false))
                 {
-                    sw.WriteLine("RecentPlaylist" + (i + 1) + "=" + RecentPlaylists[i]);
+                    void WriteSetting(string key, object value)
+                    {
+                        string text;
+
+                        if (value == null)
+                        {
+                            text = string.Empty;
+                        }
+                        else if (value is double d)
+                        {
+                            text = d.ToString(CultureInfo.InvariantCulture);
+                        }
+                        else if (value is float f)
+                        {
+                            text = f.ToString(CultureInfo.InvariantCulture);
+                        }
+                        else if (value is decimal m)
+                        {
+                            text = m.ToString(CultureInfo.InvariantCulture);
+                        }
+                        else if (value is IFormattable formattable)
+                        {
+                            text = formattable.ToString(null, CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            text = value.ToString();
+                        }
+
+                        sw.WriteLine(key + "=" + text);
+                    }
+
+                    void WriteColorSetting(string key, Color value)
+                    {
+                        sw.WriteLine(key + "=" + ColorTranslator.ToHtml(value));
+                    }
+
+                    WriteSetting("ConfigVersion", "2");
+
+                    WriteSetting("PlayerConsole", PlayerConsole);
+
+                    WriteSetting("LoopPlayback", picLoop.Tag != null && picLoop.Tag.ToString() == "loop");
+                    WriteSetting("ShufflePlayback", picShuffle.Tag != null && picShuffle.Tag.ToString() == "shuffle");
+                    WriteSetting("AutoloadPlaylist", autoloadLastPlaylist.Checked);
+                    WriteSetting("LastPlaylist", PlaylistPath);
+                    WriteSetting("AutoPlay", autoPlay.Checked);
+                    WriteSetting("PlayCrowdTrack", doAudioCrowd);
+                    WriteSetting("VolumeLevel", masterVol);
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        WriteSetting("RecentPlaylist" + (i + 1), RecentPlaylists[i]);
+                    }
+
+                    WriteSetting("ShowLyrics", doStaticLyrics);
+                    WriteSetting("WholeWords", doWholeWordsLyrics);
+                    WriteSetting("GameSyllables", !doWholeWordsLyrics);
+                    WriteSetting("DisplayHarmonies", doHarmonyLyrics);
+                    WriteSetting("DontDisplayLyrics", !doStaticLyrics && !doKaraokeLyrics && !doScrollingLyrics);
+                    WriteSetting("KaraokeLyrics", doKaraokeLyrics);
+                    WriteSetting("ScrollingLyrics", doScrollingLyrics);
+
+                    WriteSetting("ShowPracticeSessions", showPracticeSections.Checked);
+                    WriteSetting("DrawSnippet", doMIDIChart);
+                    WriteSetting("LabelTracks", doMIDINameTracks);
+                    WriteSetting("PlaybackWindow", PlaybackWindow);
+                    WriteSetting("NoteSizingType", NoteSizingType);
+                    WriteSetting("NameProKeysNotes", doMIDINameProKeys);
+                    WriteSetting("NameVocalNotes", doMIDINameVocals);
+                    WriteSetting("HighlightSolos", doMIDIHighlightSolos);
+                    WriteSetting("BWProKeys", doMIDIBWKeys);
+                    WriteSetting("UseHarm1ColorOnVocals", doMIDIHarm1onVocals);
+                    WriteSetting("DoNoKeys", doMIDINoKeys);
+                    WriteSetting("DoNoVocals", doMIDINoVocals);
+                    WriteSetting("DoMIDIVocals", doMIDIVocals);
+                    WriteSetting("DoMIDIHarmonies", doMIDIHarmonies);
+
+                    WriteSetting("OpenSideWindow", openSideWindow.Checked);
+
+                    WriteSetting("DrawSpectrum", displayAudioSpectrum);
+                    WriteSetting("SpectrumID", SpectrumID);
+                    WriteSetting("DisplayAlbumArt", displayAlbumArt);
+                    WriteSetting("DoAnimSpectrum", doAnimatedSpectrum);
+                    WriteSetting("DoSpectrumColors", doSpectrumColors);
+
+                    WriteSetting("DisplayBackgroundVideo", enableYARGCHVideos);
+                    WriteSetting("UseBackgroundVideos", doUseBackgroundVideos);
+                    WriteSetting("UseBackgroundImages", doUseBackgroundImages);
+                    WriteSetting("UseAnimatedBackground", doAnimatedBackground);
+                    WriteSetting("UseStaticBackground", doStaticBackground);
+                    WriteSetting("UseSolidColorBackground", doSolidColorBackground);
+                    WriteSetting("UseStaticBackground2", doStaticBackground2);
+                    WriteSetting("UseAnimatedBackground2", doAnimatedBackground2);
+
+                    WriteSetting("SkipIntroOutroSilence", skipIntroOutroSilence.Checked);
+                    WriteSetting("SilenceThreshold", SilenceThreshold);
+                    WriteSetting("FadeInLength", FadeLength);
+
+                    WriteColorSetting("KaraokeModeBackground", KaraokeModeBackgroundColor);
+                    WriteColorSetting("KaraokeModeLyric", KaraokeModeHarm1Text);
+                    WriteColorSetting("KaraokeModeHighlight", KaraokeModeHarm1Highlight);
+                    WriteColorSetting("KaraokeModeHarmony", KaraokeModeHarm2Text);
+                    WriteColorSetting("KaraokeModeHarmonyHighlight", KaraokeModeHarm2Highlight);
+                    WriteColorSetting("KaraokeModeHarmony2", KaraokeModeHarm3Text);
+                    WriteColorSetting("KaraokeModeHarmony2Highlight", KaraokeModeHarm3Highlight);
+
+                    WriteSetting("DoRockBandKaraokeMode", doRockBandKaraoke);
+                    WriteSetting("DoClassicKaraokeMode", doModernKaraokeMode);
+                    WriteSetting("DocPlayerStyleKaraoke", doCPlayerStyleKaraoke);
+                    WriteSetting("DoGameChartMode", doVerticalChart);
+                    WriteSetting("DoRockBandChartMode", doRockBandChart);
+
+                    WriteSetting("EnableAVSync", enableBTAVOffsetSync);
+                    WriteSetting("BTAVOffset", BTAVOffsetSync);
+                    WriteSetting("NautilusPath", nautilusPath);
+                    WriteSetting("DoFocusMode", doFocusMode);
+                    WriteSetting("UploadtoImgur", uploadScreenshots.Checked);
+
+                    WriteSetting("StartMaximized", WindowState == FormWindowState.Maximized);
                 }
-                sw.WriteLine("DrawLyrics=False //feature is deprecated");
-                sw.WriteLine("DrawSpectrum=" + displayAudioSpectrum.Checked);
-                sw.WriteLine("SpectrumID=" + SpectrumID);
-                sw.WriteLine("DisplayAlbumArt=" + displayAlbumArt.Checked);
-                sw.WriteLine("DisplayHarmonies=" + doHarmonyLyrics);
-                sw.WriteLine("DontDisplayLyrics=" + (!doStaticLyrics && !doKaraokeLyrics && !doScrollingLyrics));
-                sw.WriteLine("KaraokeLyrics=" + doKaraokeLyrics);
-                sw.WriteLine("ScrollingLyrics=" + doScrollingLyrics);
-                sw.WriteLine("LabelTracks=" + doMIDINameTracks);
-                sw.WriteLine("PlaybackWindow=" + PlaybackWindow);
-                sw.WriteLine("NoteSizingType=" + NoteSizingType);
-                sw.WriteLine("NameProKeysNotes=" + doMIDINameProKeys);
-                sw.WriteLine("NameVocalNotes=" + doMIDINameVocals);
-                sw.WriteLine("DisplayBackgroundVideo=" + displayBackgroundVideo.Checked);
-                sw.WriteLine("StartMaximized=" + (WindowState == FormWindowState.Maximized));
-                sw.WriteLine("HighlightSolos=" + doMIDIHighlightSolos);
-                sw.WriteLine("UploadtoImgur=" + uploadScreenshots.Checked);
-                sw.WriteLine("BWProKeys=" + doMIDIBWKeys);
-                sw.WriteLine("UseHarm1ColorOnVocals=" + doMIDIHarm1onVocals);
-                sw.WriteLine("UseKaraokeMode=" + displayKaraokeMode.Checked);
-                sw.WriteLine("SkipIntroOutroSilence=" + skipIntroOutroSilence.Checked);
-                sw.WriteLine("SilenceThreshold=" + SilenceThreshold);
-                sw.WriteLine("FadeInLength=" + FadeLength);
-                sw.WriteLine("KaraokeModeBackground=" + ColorTranslator.ToHtml(KaraokeModeBackgroundColor));
-                sw.WriteLine("KaraokeModeLyric=" + ColorTranslator.ToHtml(KaraokeModeHarm1Text));
-                sw.WriteLine("KaraokeModeHighlight=" + ColorTranslator.ToHtml(KaraokeModeHarm1Highlight));
-                sw.WriteLine("KaraokeModeHarmony=" + ColorTranslator.ToHtml(KaraokeModeHarm2Text));
-                sw.WriteLine("KaraokeModeHarmonyHighlight=" + ColorTranslator.ToHtml(KaraokeModeHarm2Highlight));
-                sw.WriteLine("KaraokeModeHarmony2=" + ColorTranslator.ToHtml(KaraokeModeHarm3Text));
-                sw.WriteLine("KaraokeModeHarmony2Highlight=" + ColorTranslator.ToHtml(KaraokeModeHarm3Highlight));
-                sw.WriteLine("DoRockBandKaraokeMode=" + rockBandKaraoke.Checked);
-                sw.WriteLine("DoClassicKaraokeMode=" + classicKaraokeMode.Checked);
-                sw.WriteLine("DocPlayerStyleKaraoke=" + cPlayerStyle.Checked);
-                sw.WriteLine("DoGameChartMode=" + chartVertical.Checked);
-                sw.WriteLine("UseAnimatedBackground=" + animatedBackground.Checked);
-                sw.WriteLine("UseStaticBackground=" + staticBackground.Checked);
-                sw.WriteLine("UseSolidColorBackground=" + solidColorBackground.Checked);
-                sw.WriteLine("UseStaticBackground2=" + staticBackground2.Checked);
-                sw.WriteLine("UseAnimatedBackground2=" + animatedBackground2.Checked);
-                sw.WriteLine("DoNoKeys=" + doMIDINoKeys);
-                sw.WriteLine("DoNoVocals=" + doMIDINoVocals);
-                sw.WriteLine("UseBackgroundVideos=" + useBackgroundVideos.Checked);
-                sw.WriteLine("UseBackgroundImages=" + useBackgroundImages.Checked);
-                sw.WriteLine("DoRockBandChartMode=" + rBStyle.Checked);
-                sw.WriteLine("EnableAVSync=" + enableBTAVOffsetSync);
-                sw.WriteLine("BTAVOffset=" + BTAVOffsetSync);
-                sw.WriteLine("NautilusPath=" + nautilusPath);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    File.AppendAllText(
+                        Path.Combine(Application.StartupPath, "ConfigSaveErrors.txt"),
+                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + Environment.NewLine +
+                        ex + Environment.NewLine + Environment.NewLine);
+                }
+                catch
+                {
+                    // Avoid crashing while trying to log a config-save failure.
+                }
             }
         }
 
@@ -6310,32 +7787,129 @@ namespace cPlayer
 
         private void UncheckAllModes()
         {
-            displayAlbumArt.Checked = false;
-            displayAudioSpectrum.Checked = false;
-            displayKaraokeMode.Checked = false;
-            classicKaraokeMode.Checked = false;
-            cPlayerStyle.Checked = false;
-            rockBandKaraoke.Checked = false;
-            chartVisualsToolStripMenuItem.Checked = false;
-            rBStyle.Checked = false;
-            chartVertical.Checked = false;
-            chartSnippet.Checked = false;
-            chartFull.Checked = false;
+            displayAlbumArt = false;
+            displayAudioSpectrum = false;
+            doModernKaraokeMode = false;
+            doCPlayerStyleKaraoke = false;
+            doRockBandKaraoke = false;
+            doRockBandChart = false;
+            doVerticalChart = false;
+            doMIDIChart = false;
+        }
+
+        private Dictionary<string, string> ReadConfigDictionary(string path)
+        {
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            if (!File.Exists(path))
+                return dict;
+
+            foreach (string rawLine in File.ReadAllLines(path))
+            {
+                if (string.IsNullOrWhiteSpace(rawLine))
+                    continue;
+
+                string line = rawLine.Trim();
+
+                int equals = line.IndexOf('=');
+
+                if (equals <= 0)
+                    continue;
+
+                string key = line.Substring(0, equals).Trim();
+                string value = line.Substring(equals + 1).Trim();
+
+                int comment = value.IndexOf("//", StringComparison.Ordinal);
+                if (comment >= 0)
+                    value = value.Substring(0, comment).Trim();
+
+                dict[key] = value;
+            }
+
+            return dict;
+        }
+
+        private string GetString(Dictionary<string, string> cfg, string key, string defaultValue = "")
+        {
+            return cfg.TryGetValue(key, out string value) ? value : defaultValue;
+        }
+
+        private bool GetBool(Dictionary<string, string> cfg, string key, bool defaultValue = false)
+        {
+            if (!cfg.TryGetValue(key, out string value))
+                return defaultValue;
+
+            return value.Equals("true", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private int GetInt(Dictionary<string, string> cfg, string key, int defaultValue = 0)
+        {
+            if (!cfg.TryGetValue(key, out string value))
+                return defaultValue;
+
+            return int.TryParse(value, out int result) ? result : defaultValue;
+        }
+
+        private double GetDouble(Dictionary<string, string> cfg, string key, double defaultValue = 0.0)
+        {
+            if (!cfg.TryGetValue(key, out string value))
+                return defaultValue;
+
+            return double.TryParse(
+                value,
+                System.Globalization.NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out double result)
+                ? result
+                : defaultValue;
+        }
+
+        private float GetFloat(Dictionary<string, string> cfg, string key, float defaultValue = 0f)
+        {
+            if (!cfg.TryGetValue(key, out string value))
+                return defaultValue;
+
+            return float.TryParse(
+                value,
+                System.Globalization.NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out float result)
+                ? result
+                : defaultValue;
+        }
+
+        private Color GetColor(Dictionary<string, string> cfg, string key, Color defaultValue)
+        {
+            if (!cfg.TryGetValue(key, out string value))
+                return defaultValue;
+
+            try
+            {
+                return ColorTranslator.FromHtml(value);
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
 
         private void LoadConfig()
         {
             LoadFavorites();
+
             if (!File.Exists(config))
-            {
                 return;
-            }
+
             UncheckAllModes();
 
-            var sr = new StreamReader(config);
+            Dictionary<string, string> cfg = ReadConfigDictionary(config);
+
+            if (cfg.Count == 0) return;
+
             try
             {
-                PlayerConsole = Tools.GetConfigString(sr.ReadLine());
+                PlayerConsole = GetString(cfg, "PlayerConsole", PlayerConsole);
+
                 xbox360.Checked = false;
                 pS3.Checked = false;
                 rb4PS4.Checked = false;
@@ -6346,206 +7920,219 @@ namespace cPlayer
                 fortNite.Checked = false;
                 powerGig.Checked = false;
                 bandFuse.Checked = false;
-                chartSnippet.Checked = false;
-                chartFull.Checked = false;
-                nautilusToolStripMenuItem.Visible = true;
-                setNautilusPath.Enabled = true;
-                sendToVisualizer.Enabled = true;
-                var enabled = false;
-                switch (PlayerConsole)
-                {
-                    case "xbox":
-                        xbox360.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | Xbox 360";
-                        enabled = true;
-                        break;
-                    case "ps3":
-                        pS3.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | PlayStation 3";
-                        break;
-                    case "wii":
-                        wii.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | Wii";
-                        break;
-                    case "ps4":
-                        rb4PS4.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Rock Band 4 | PlayStation 4";
-                        break;
-                    case "yarg":
-                        yarg.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: YARG / Clone Hero / Fret Smasher | PC";
-                        break;
-                    case "rocksmith":
-                        rockSmith.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Rocksmith 2014 | PC";
-                        break;
-                    case "guitarhero":
-                        guitarHero.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: GHWT:DE | PC";
-                        break;
-                    case "fortnite":
-                        fortNite.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Fortnite Festival | PC";
-                        break;
-                    case "bandfuse":
-                        bandFuse.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: BandFuse | Xbox 360";
-                        break;
-                    case "powergig":
-                        powerGig.Checked = true;
-                        consoleToolStripMenuItem.Text = "Game | Console: Power Gig | PC";
-                        break;
-                }
-                sendToFileAnalyzer.Enabled = enabled;
-                sendToAudioAnalyzer.Enabled = enabled;
-                sendToCONExplorer.Enabled = enabled;
-                var loop = sr.ReadLine().Contains("True");
-                picLoop.Tag = !loop ? "noloop" : "loop";
+
+                ApplyConsoleFromConfig();
+
+                bool loop = GetBool(cfg, "LoopPlayback", picLoop.Tag != null && picLoop.Tag.ToString() == "loop");
+                picLoop.Tag = loop ? "loop" : "noloop";
                 toolTip1.SetToolTip(picLoop, loop ? "Disable track looping" : "Enable track looping");
-                if (picLoop.Tag.ToString() == "loop")
-                {
-                    picLoop.Image = Resources.icon_loop_enabled;
-                }
-                var shuffle = sr.ReadLine().Contains("True");
-                picShuffle.Tag = !shuffle ? "noshuffle" : "shuffle";
+                picLoop.Image = loop ? Resources.icon_loop_enabled : Resources.icon_loop_disabled1;
+
+                bool shuffle = GetBool(cfg, "ShufflePlayback", picShuffle.Tag != null && picShuffle.Tag.ToString() == "shuffle");
+                picShuffle.Tag = shuffle ? "shuffle" : "noshuffle";
                 toolTip1.SetToolTip(picShuffle, shuffle ? "Disable track shuffling" : "Enable track shuffling");
-                if (picShuffle.Tag.ToString() == "shuffle")
+                picShuffle.Image = shuffle ? Resources.icon_shuffle_enabled : Resources.icon_shuffle_disabled;
+
+                autoloadLastPlaylist.Checked = GetBool(cfg, "AutoloadPlaylist", autoloadLastPlaylist.Checked);
+                PlaylistPath = GetString(cfg, "LastPlaylist", PlaylistPath);
+                autoPlay.Checked = GetBool(cfg, "AutoPlay", autoPlay.Checked);
+                doAudioCrowd = GetBool(cfg, "PlayCrowdTrack", doAudioCrowd);
+
+                showPracticeSections.Checked = GetBool(cfg, "ShowPracticeSessions", showPracticeSections.Checked);
+
+                doStaticLyrics = GetBool(cfg, "ShowLyrics", doStaticLyrics);
+                doWholeWordsLyrics = GetBool(cfg, "WholeWords", doWholeWordsLyrics);
+
+                masterVol = GetFloat(cfg, "VolumeLevel", masterVol);
+
+                doMIDIChart = GetBool(cfg, "DrawSnippet", doMIDIChart);
+
+                for (int i = 0; i < 5; i++)
                 {
-                    picShuffle.Image = Resources.icon_shuffle_enabled;
+                    string playlist = GetString(cfg, "RecentPlaylist" + (i + 1), RecentPlaylists[i]);
+
+                    if (!string.IsNullOrEmpty(playlist) && File.Exists(playlist))
+                        RecentPlaylists[i] = playlist;
                 }
-                autoloadLastPlaylist.Checked = sr.ReadLine().Contains("True");
-                PlaylistPath = Tools.GetConfigString(sr.ReadLine());
-                autoPlay.Checked = sr.ReadLine().Contains("True");
-                doAudioCrowd = sr.ReadLine().Contains("True");
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                showPracticeSections.Checked = sr.ReadLine().Contains("True");
-                doHarmonyLyrics = !sr.ReadLine().Contains("True");
-                doWholeWordsLyrics = sr.ReadLine().Contains("True");
-                sr.ReadLine(); //no longer need this
-                chartVisualsToolStripMenuItem.Checked = sr.ReadLine().Contains("True");
-                sr.ReadLine(); //openSideWindow.Checked = sr.ReadLine().Contains("True");
-                VolumeLevel = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                chartFull.Checked = sr.ReadLine().Contains("True");
-                chartSnippet.Checked = sr.ReadLine().Contains("True") && chartVisualsToolStripMenuItem.Checked;
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                sr.ReadLine(); //no longer need this
-                var playlists = new List<string>();
-                for (var i = 0; i < 5; i++)
-                {
-                    var line = Tools.GetConfigString(sr.ReadLine());
-                    if (!string.IsNullOrEmpty(line) && File.Exists(line))
-                    {
-                        playlists.Add(line);
-                    }
-                }
-                for (var i = 0; i < playlists.Count; i++)
-                {
-                    RecentPlaylists[i] = playlists[i];
-                }
-                sr.ReadLine(); //no longer need this
-                displayAudioSpectrum.Checked = sr.ReadLine().Contains("True");
-                SpectrumID = Convert.ToInt16(Tools.GetConfigString(sr.ReadLine()));
-                displayAlbumArt.Checked = sr.ReadLine().Contains("True");
-                doHarmonyLyrics = sr.ReadLine().Contains("True");
-                var no_lyrics = sr.ReadLine().Contains("True");
-                doKaraokeLyrics = sr.ReadLine().Contains("True");
-                doScrollingLyrics = sr.ReadLine().Contains("True");
-                if (no_lyrics)
+
+                displayAudioSpectrum = GetBool(cfg, "DrawSpectrum", displayAudioSpectrum);
+                SpectrumID = GetInt(cfg, "SpectrumID", SpectrumID);
+                displayAlbumArt = GetBool(cfg, "DisplayAlbumArt", displayAlbumArt);
+                doHarmonyLyrics = GetBool(cfg, "DisplayHarmonies", doHarmonyLyrics);
+
+                bool noLyrics = GetBool(cfg, "DontDisplayLyrics", false);
+                doKaraokeLyrics = GetBool(cfg, "KaraokeLyrics", doKaraokeLyrics);
+                doScrollingLyrics = GetBool(cfg, "ScrollingLyrics", doScrollingLyrics);
+
+                if (noLyrics)
                 {
                     doKaraokeLyrics = false;
                     doScrollingLyrics = false;
                 }
-                doMIDINameTracks = sr.ReadLine().Contains("True");
-                PlaybackWindow = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
-                NoteSizingType = Convert.ToInt16(Tools.GetConfigString(sr.ReadLine()));
-                doMIDINameProKeys = sr.ReadLine().Contains("True");
-                doMIDINameVocals = sr.ReadLine().Contains("True");
-                displayBackgroundVideo.Checked = sr.ReadLine().Contains("True");
-                playBGVideos.Checked = displayBackgroundVideo.Checked;
-                if (sr.ReadLine().Contains("True"))
-                {
-                    WindowState = FormWindowState.Maximized;
-                }
-                doMIDIHighlightSolos = sr.ReadLine().Contains("True");
-                uploadScreenshots.Checked = sr.ReadLine().Contains("True");
-                doMIDIBWKeys = sr.ReadLine().Contains("True");
-                doMIDIHarm1onVocals = sr.ReadLine().Contains("True");
-                displayKaraokeMode.Checked = sr.ReadLine().Contains("True");
-                selectBackgroundColor.Visible = displayKaraokeMode.Checked;
-                selectLyricColor.Visible = displayKaraokeMode.Checked;
-                selectHighlightColor.Visible = displayKaraokeMode.Checked;
-                restoreDefaultsToolStripMenuItem.Visible = displayKaraokeMode.Checked;
-                skipIntroOutroSilence.Checked = sr.ReadLine().Contains("True");
-                SilenceThreshold = float.Parse(Tools.GetConfigString(sr.ReadLine()));
-                FadeLength = Convert.ToDouble(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeBackgroundColor = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm1Text = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm1Highlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm2Text = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm2Highlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm3Text = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                KaraokeModeHarm3Highlight = ColorTranslator.FromHtml(Tools.GetConfigString(sr.ReadLine()));
-                rockBandKaraoke.Checked = sr.ReadLine().Contains("True") && chartVisualsToolStripMenuItem.Checked;
-                classicKaraokeMode.Checked = sr.ReadLine().Contains("True");
-                cPlayerStyle.Checked = sr.ReadLine().Contains("True");
-                chartVertical.Checked = sr.ReadLine().Contains("True") && chartVisualsToolStripMenuItem.Checked;
-                animatedBackground.Checked = sr.ReadLine().Contains("True");
-                staticBackground.Checked = sr.ReadLine().Contains("True");
-                solidColorBackground.Checked = sr.ReadLine().Contains("True");
-                staticBackground2.Checked = sr.ReadLine().Contains("True");
-                animatedBackground2.Checked = sr.ReadLine().Contains("True");
-                doMIDINoKeys = sr.ReadLine().Contains("True");
-                doMIDINoVocals = sr.ReadLine().Contains("True");
-                useBackgroundVideos.Checked = sr.ReadLine().Contains("True");
-                useBackgroundImages.Checked = sr.ReadLine().Contains("True") && !useBackgroundVideos.Checked;
-                doUseBackgroundVideos = useBackgroundVideos.Checked;
-                doUseBackgroundImages = useBackgroundImages.Checked;
-                rBStyle.Checked = sr.ReadLine().Contains("True");
-                enableBTAVOffsetSync = sr.ReadLine().Contains("True");
-                BTAVOffsetSync = Convert.ToInt16(Tools.GetConfigString(sr.ReadLine()));
-                nautilusPath = Tools.GetConfigString(sr.ReadLine());
+
+                doMIDINameTracks = GetBool(cfg, "LabelTracks", doMIDINameTracks);
+                PlaybackWindow = GetDouble(cfg, "PlaybackWindow", PlaybackWindow);
+                NoteSizingType = GetInt(cfg, "NoteSizingType", NoteSizingType);
+                doMIDINameProKeys = GetBool(cfg, "NameProKeysNotes", doMIDINameProKeys);
+                doMIDINameVocals = GetBool(cfg, "NameVocalNotes", doMIDINameVocals);
+
+                enableYARGCHVideos = GetBool(cfg, "DisplayBackgroundVideo", enableYARGCHVideos);
+                playBGVideos.Checked = enableYARGCHVideos;
+
+                doMIDIHighlightSolos = GetBool(cfg, "HighlightSolos", doMIDIHighlightSolos);
+                uploadScreenshots.Checked = GetBool(cfg, "UploadtoImgur", uploadScreenshots.Checked);
+                doMIDIBWKeys = GetBool(cfg, "BWProKeys", doMIDIBWKeys);
+                doMIDIHarm1onVocals = GetBool(cfg, "UseHarm1ColorOnVocals", doMIDIHarm1onVocals);
+
+                skipIntroOutroSilence.Checked = GetBool(cfg, "SkipIntroOutroSilence", skipIntroOutroSilence.Checked);
+                SilenceThreshold = GetFloat(cfg, "SilenceThreshold", SilenceThreshold);
+                FadeLength = GetDouble(cfg, "FadeInLength", FadeLength);
+
+                KaraokeModeBackgroundColor = GetColor(cfg, "KaraokeModeBackground", KaraokeModeBackgroundColor);
+                KaraokeModeHarm1Text = GetColor(cfg, "KaraokeModeLyric", KaraokeModeHarm1Text);
+                KaraokeModeHarm1Highlight = GetColor(cfg, "KaraokeModeHighlight", KaraokeModeHarm1Highlight);
+                KaraokeModeHarm2Text = GetColor(cfg, "KaraokeModeHarmony", KaraokeModeHarm2Text);
+                KaraokeModeHarm2Highlight = GetColor(cfg, "KaraokeModeHarmonyHighlight", KaraokeModeHarm2Highlight);
+                KaraokeModeHarm3Text = GetColor(cfg, "KaraokeModeHarmony2", KaraokeModeHarm3Text);
+                KaraokeModeHarm3Highlight = GetColor(cfg, "KaraokeModeHarmony2Highlight", KaraokeModeHarm3Highlight);
+
+                doRockBandKaraoke = GetBool(cfg, "DoRockBandKaraokeMode", doRockBandKaraoke);
+                doModernKaraokeMode = GetBool(cfg, "DoClassicKaraokeMode", doModernKaraokeMode);
+                doCPlayerStyleKaraoke = GetBool(cfg, "DocPlayerStyleKaraoke", doCPlayerStyleKaraoke);
+                doVerticalChart = GetBool(cfg, "DoGameChartMode", doVerticalChart);
+
+                doAnimatedBackground = GetBool(cfg, "UseAnimatedBackground", doAnimatedBackground);
+                doStaticBackground = GetBool(cfg, "UseStaticBackground", doStaticBackground);
+                doSolidColorBackground = GetBool(cfg, "UseSolidColorBackground", doSolidColorBackground);
+                doStaticBackground2 = GetBool(cfg, "UseStaticBackground2", doStaticBackground2);
+                doAnimatedBackground2 = GetBool(cfg, "UseAnimatedBackground2", doAnimatedBackground2);
+
+                doMIDINoKeys = GetBool(cfg, "DoNoKeys", doMIDINoKeys);
+                doMIDINoVocals = GetBool(cfg, "DoNoVocals", doMIDINoVocals);
+
+                doUseBackgroundVideos = GetBool(cfg, "UseBackgroundVideos", doUseBackgroundVideos);
+                doUseBackgroundImages = GetBool(cfg, "UseBackgroundImages", doUseBackgroundImages) && !enableYARGCHVideos;
+
+                doRockBandChart = GetBool(cfg, "DoRockBandChartMode", doRockBandChart);
+
+                enableBTAVOffsetSync = GetBool(cfg, "EnableAVSync", enableBTAVOffsetSync);
+                BTAVOffsetSync = GetInt(cfg, "BTAVOffset", BTAVOffsetSync);
+
+                nautilusPath = GetString(cfg, "NautilusPath", nautilusPath);
                 ValidateNautilusPath();
+
+                doFocusMode = GetBool(cfg, "DoFocusMode", doFocusMode);
+                doMIDIVocals = GetBool(cfg, "DoMIDIVocals", doMIDIVocals);
+                doMIDIHarmonies = GetBool(cfg, "DoMIDIHarmonies", doMIDIHarmonies);
+                doAnimatedSpectrum = GetBool(cfg, "DoAnimSpectrum", doAnimatedSpectrum);
+                doSpectrumColors = GetBool(cfg, "DoSpectrumColors", doSpectrumColors);
+
+                NormalizeBackgroundModeSettings();
             }
             catch (Exception ex)
-            { }
-
-            if (solidColorBackground.Checked)
             {
-                animatedBackground2.Checked = false;
-                staticBackground2.Checked = false;
-                picVisuals.Image = Resources.gradient;
+                File.AppendAllText(
+                    Path.Combine(Application.StartupPath, "ConfigLoadErrors.txt"),
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + Environment.NewLine +
+                    ex + Environment.NewLine + Environment.NewLine);
             }
-            if (animatedBackground2.Checked)
-            {
-                staticBackground2.Checked = false;
-                solidColorBackground.Checked = false;
-            }
-            if (staticBackground2.Checked)
-            {
-                solidColorBackground.Checked = false;
-                animatedBackground2.Checked = false;
-            }
-            if (staticBackground.Checked)
-            {
-                animatedBackground.Checked = false;
-            }
-            if (animatedBackground.Checked)
-            {
-                staticBackground.Checked = false;
-            }
-
-            sr.Dispose();       
         }
+
+        private void NormalizeBackgroundModeSettings()
+        {
+            if (!doUseBackgroundImages && !doUseBackgroundVideos && !doAnimatedSpectrum)
+            {
+                doUseBackgroundImages = true;
+            }
+
+            if (doSolidColorBackground)
+            {
+                doAnimatedBackground2 = false;
+                doStaticBackground2 = false;
+                SafeVisualsSetter(null);
+            }
+
+            if (doAnimatedBackground2)
+            {
+                doStaticBackground2 = false;
+                doSolidColorBackground = false;
+            }
+
+            if (doStaticBackground2)
+            {
+                doSolidColorBackground = false;
+                doAnimatedBackground2 = false;
+            }
+
+            if (doStaticBackground)
+                doAnimatedBackground = false;
+
+            if (doAnimatedBackground)
+                doStaticBackground = false;
+        }
+
+        private void ApplyConsoleFromConfig()
+        {
+            var enabled = false;
+
+            switch (PlayerConsole)
+            {
+                case "xbox":
+                    xbox360.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | Xbox 360";
+                    enabled = true;
+                    break;
+
+                case "ps3":
+                    pS3.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | PlayStation 3";
+                    break;
+
+                case "wii":
+                    wii.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Rock Band 1/2/3 | Wii";
+                    break;
+
+                case "ps4":
+                    rb4PS4.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Rock Band 4 | PlayStation 4";
+                    break;
+
+                case "yarg":
+                    yarg.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: YARG / Clone Hero / Fret Smasher | PC";
+                    break;
+
+                case "rocksmith":
+                    rockSmith.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Rocksmith 2014 | PC";
+                    break;
+
+                case "guitarhero":
+                    guitarHero.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: GHWT:DE | PC";
+                    break;
+
+                case "fortnite":
+                    fortNite.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Fortnite Festival | PC";
+                    break;
+
+                case "bandfuse":
+                    bandFuse.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: BandFuse | Xbox 360";
+                    break;
+
+                case "powergig":
+                    powerGig.Checked = true;
+                    consoleToolStripMenuItem.Text = "Game | Console: Power Gig | PC";
+                    break;
+            }
+
+            sendToFileAnalyzer.Enabled = enabled;
+            sendToAudioAnalyzer.Enabled = enabled;
+            sendToCONExplorer.Enabled = enabled;
+        }        
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -6559,17 +8146,7 @@ namespace cPlayer
 
         private void picVolume_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left) return;
-            var Volume = new Volume(this, new Point(panelPlaying.Width - 100, Cursor.Position.Y));
-            Volume.Show();
-        }
-
-        public void UpdateVolume(double volume)
-        {
-            if (PlayingSong == null) return;
-            var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * volume), 1.0);
-            Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, track_vol);
-            VolumeLevel = volume;
+            audioMixerTool.PerformClick();
         }
 
         private void markAsUnplayed_Click(object sender, EventArgs e)
@@ -6730,7 +8307,7 @@ namespace cPlayer
                     NextSong.yargPath = "";
                     loadDTA(NextSong.Location, false, false, true);
                 }
-            }            
+            }
         }
 
         private string DecryptExtractYARG(string inFile, bool message = false, bool scanning = true, bool next = false, bool prep = false)
@@ -6812,49 +8389,25 @@ namespace cPlayer
         }
 
         private void frmMain_Resize(object sender, EventArgs e)
-        {            
-            if (WindowState != FormWindowState.Minimized)
-            {
-                if (Width != 412)
-                {
-                    Width = 412;
-                }
-                if (Height < 400)
-                {
-                    Height = 400;
-                }
-                if (lastWindowState == WindowState) return;
-                lastWindowState = WindowState;                
-            }         
-            if (WindowState == FormWindowState.Maximized)
-            {
-                openSideWindow.Checked = true;
-                UpdateDisplay();
-                UpdateStats();                
-                FormBorderStyle = FormBorderStyle.FixedSingle;
-                if (!PlaybackTimer.Enabled)
-                {
-                    picVisuals.Image = Resources.logo;
-                }
+        {
+            lblFPS.Parent = picVisuals;
+            lblFPS.Left = picVisuals.Width - lblFPS.Width;
+            lblFPS.Top = 0;
+            UpdateDisplay();            
+            UpdateActiveRenderingResolution();
+        }
 
-            }
-            else if (WindowState == FormWindowState.Normal)
-            {
-                openSideWindow.Checked = false;
-                UpdateDisplay();
-                UpdateStats();                
-                FormBorderStyle = FormBorderStyle.FixedSingle;                
-            }
-            UpdateOverlayPosition();
-            videoView.Height = picVisuals.Height - GetHeightDiff();
-            videoView.Width = picVisuals.Width;            
-            if (WindowState != FormWindowState.Minimized) return;
-            NotifyTray.ShowBalloonTip(250);
-            Hide();
-            if (secondScreen != null)
-            {
-                secondScreen.Hide();
-            }
+        private static bool IsOriginalStageKit(HidDevice device)
+        {
+            return device.VendorID == 0x0E6F &&
+                   device.ProductID == 0x0103;
+        }
+
+        private static bool IsFatsCoLight(HidDevice device)
+        {
+            return device.VendorID == 0x1209 &&
+                   device.ProductID == 0x2882 &&
+                   device.ReleaseNumberBcd == 0x0900;
         }
 
         private void NotifyTray_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -6881,7 +8434,7 @@ namespace cPlayer
                         _mediaPlayer.Play();
                         if (_mediaPlayer.IsSeekable)
                         {
-                            _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+                            _mediaPlayer.Time = GetBASSTimeForVideo();
                         }
                     }
                     if (secondScreen != null)
@@ -6891,7 +8444,7 @@ namespace cPlayer
                             secondScreen._mediaPlayer.Play();
                             if (secondScreen._mediaPlayer.IsSeekable)
                             {
-                                secondScreen._mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+                                secondScreen._mediaPlayer.Time = GetBASSTimeForVideo();
                             }
                         }
                     }
@@ -6920,7 +8473,7 @@ namespace cPlayer
                     }
                 }
                 catch
-                {}
+                { }
                 WindowState = FormWindowState.Minimized;
             }
         }
@@ -6970,7 +8523,7 @@ namespace cPlayer
                     break;
                 case PlaylistSorting.Shuffle:
                     Shuffle(Playlist);
-                   break;
+                    break;
             }
             ReloadPlaylist(Playlist, true, true, false);
             txtSearch.Text = strSearchPlaylist;
@@ -6996,68 +8549,23 @@ namespace cPlayer
             if (txtSearch.Text.Trim() != strSearchPlaylist) return;
             txtSearch.Text = "";
         }
-
-        private bool lastWordWasDash;
-        private bool IsMiddleOfWord(string line)
-        {
-            line = line.Replace("^", "").Replace("#", "").Replace("$", "").Trim();
-            if (line == "+")
-            {
-                return lastWordWasDash;
-            }
-            lastWordWasDash = line.EndsWith("-", StringComparison.Ordinal);
-            return lastWordWasDash;
-        }
-
+                
         public int GetKaraokeCurrentLineTop()
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
             return (int)(renderSize.Height * 0.05);
         }
 
         public int GetKaraokeNextLineTop()
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
             return (int)(renderSize.Height * 0.95);
-        }
-
-        public static (string line1, string line2) SplitLineForKaraoke(Graphics g, string fullText, Font font, int maxWidth)
-        {
-            var words = fullText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (words.Length == 0) return ("", "");
-
-            List<string> line1Words = new List<string>();
-            List<string> line2Words = new List<string>();
-
-            string testLine = "";
-            foreach (var word in words)
-            {
-                string tempLine = (testLine == "") ? word : testLine + " " + word;
-                var size = TextRenderer.MeasureText(g, tempLine, font);
-
-                if (size.Width <= maxWidth)
-                {
-                    testLine = tempLine;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            line1Words = testLine.Split(' ').ToList();
-            line2Words = words.Skip(line1Words.Count).ToList();
-
-            return (
-                string.Join(" ", line1Words),
-                string.Join(" ", line2Words)
-            );
         }
 
         void DrawAnimatedNotes(Graphics graphics, int noteCounter, int spawnFrequency, int screenWidth, int screenHeight)
         {
             string[] musicNotes = new[] { "🎵", "🎶", "♫", "♬" };
-            int multiplier = 1;
+            int multiplier = (Size.Width / activeRenderingResolution.Width) < 1 ? 1 : (Size.Width / activeRenderingResolution.Width);
             Color[] colors = new[]
             {
             Color.FromArgb(255, 255, 105, 97),   // pastel red
@@ -7110,6 +8618,7 @@ namespace cPlayer
                     activeNotes.RemoveAt(i);
             }
         }
+        
         class AnimatedNote
         {
             public string Note;
@@ -7136,58 +8645,120 @@ namespace cPlayer
             }
         }
 
-        private List<AnimatedNote> activeNotes = new List<AnimatedNote>();
-        private Random rand = new Random();
-        private bool doSoloVocals = false;
-        private bool doHarm2 = false;
-        private bool doHarm3 = true;
-        private double highlightDelay = 1.5;
-        private double timeGap = 5.0;
-        private bool doShowAnimatedNotes = true;
-        private bool doEnableHighlightAnimation = true;
-        private bool doShowLoadingBar = true;
-        private const string loadingBarXL = "████████████████████████████████";
-        const int spawnFrequency = 30;
-        private int noteCounter = spawnFrequency;
+        private void PrepareLoadingBarAssets(int multiplier)
+        {
+            DisposeLoadingBarAssets();
 
-        private void DoModernKaraoke(Size screenSize, Graphics graphics, IList<LyricPhrase> vocalPhrases, IEnumerable<Lyric> vocalLyrics, 
-            IList<LyricPhrase> harm1Phrases, IEnumerable<Lyric> harm1Lyrics, 
-            IList<LyricPhrase> harm2Phrases, IEnumerable<Lyric> harm2Lyrics, 
+            loadingBarFont = new Font("Arial", 24f * multiplier, FontStyle.Bold, GraphicsUnit.Point);
+
+            loadingBarSize = TextRenderer.MeasureText(loadingBarXL, loadingBarFont);
+
+            loadingBarBaseBmp = new Bitmap(loadingBarSize.Width, loadingBarSize.Height, PixelFormat.Format32bppArgb);
+            loadingBarHighlightBmp = new Bitmap(loadingBarSize.Width, loadingBarSize.Height, PixelFormat.Format32bppArgb);
+
+            using (Graphics gBase = Graphics.FromImage(loadingBarBaseBmp))
+            {
+                gBase.Clear(Color.Transparent);
+                TextRenderer.DrawText(
+                    gBase,
+                    loadingBarXL,
+                    loadingBarFont,
+                    new Point(0, 0),
+                    KaraokeModeHarm1Text,
+                    Color.Transparent);
+            }
+
+            using (Graphics gHi = Graphics.FromImage(loadingBarHighlightBmp))
+            {
+                gHi.Clear(Color.Transparent);
+                TextRenderer.DrawText(
+                    gHi,
+                    loadingBarXL,
+                    loadingBarFont,
+                    new Point(0, 0),
+                    KaraokeModeHarm1Highlight,
+                    Color.Transparent);
+            }
+        }
+
+        private void DisposeLoadingBarAssets()
+        {
+            if (loadingBarBaseBmp != null)
+            {
+                loadingBarBaseBmp.Dispose();
+                loadingBarBaseBmp = null;
+            }
+
+            if (loadingBarHighlightBmp != null)
+            {
+                loadingBarHighlightBmp.Dispose();
+                loadingBarHighlightBmp = null;
+            }
+
+            if (loadingBarFont != null)
+            {
+                loadingBarFont.Dispose();
+                loadingBarFont = null;
+            }
+
+            loadingBarSize = Size.Empty;
+        }
+
+        private void DoModernKaraoke(Size screenSize, Graphics graphics, IList<LyricPhrase> vocalPhrases, IEnumerable<Lyric> vocalLyrics,
+            IList<LyricPhrase> harm1Phrases, IEnumerable<Lyric> harm1Lyrics,
+            IList<LyricPhrase> harm2Phrases, IEnumerable<Lyric> harm2Lyrics,
             IList<LyricPhrase> harm3Phrases, IEnumerable<Lyric> harm3Lyrics)
         {
+            var vocalLyricsList = vocalLyrics as IList<Lyric> ?? vocalLyrics.ToList();
+            var harm1LyricsList = harm1Lyrics as IList<Lyric> ?? harm1Lyrics.ToList();
+            var harm2LyricsList = harm2Lyrics as IList<Lyric> ?? harm2Lyrics.ToList();
+            var harm3LyricsList = harm3Lyrics as IList<Lyric> ?? harm3Lyrics.ToList();
+
+            bool hasHarm2 = harm2LyricsList.Count > 0;
+            bool hasHarm3 = harm3LyricsList.Count > 0;
+
             var time = GetCorrectedTime();
             var AvgBPM = PlayingSong.BPM;
-            const int spawnFrequency = 30;
+            //const int spawnFrequency = 30;
             noteCounter++;
             int resolutionX = screenSize.Width;
             int resolutionY = screenSize.Height;
             int multiplier = 1;
-            double vertOffset = 0;         
+            double vertOffset = 0;
             int coverWidth = 512 * multiplier;
             int coverHeight = 512 * multiplier;
 
-            doSoloVocals = forceSoloVocals.Checked || !harm2Lyrics.Any();
-            doHarm2 = !doSoloVocals || forceTwoPartHarmonies.Checked;
-            doHarm3 = !forceSoloVocals.Checked && !forceTwoPartHarmonies.Checked && harm3Lyrics.Any();
+            doSoloVocals = doForceSoloVocals || !hasHarm2;
+            doHarm2 = !doSoloVocals || doForceTwoPartHarmonies;
+            doHarm3 = !doForceSoloVocals && !doForceTwoPartHarmonies && hasHarm3;
 
             try
             {
-                if (staticBackground2.Checked)
+                try
                 {
-                    graphics.DrawImage(stageBackground, 0, 0, resolutionX, resolutionY);
-                }
-                else
-                {
-                    if (secondScreen != null)
+                    if (DoYargVideo())
                     {
-                        secondScreen.ChangeBackgroundColor(KaraokeModeBackgroundColor);
-                        picVisuals.BackColor = Color.AliceBlue;
+                        graphics.Clear(Color.Transparent);
+                        if (secondScreen != null)
+                        {
+                            SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+                        }
                     }
-                    else
+                    else if (doStaticBackground2)
                     {
-                        picVisuals.BackColor = KaraokeModeBackgroundColor;
+                        var size = new Size(resolutionX, resolutionY);
+                        DrawCachedRBKaraokeStaticBackground(graphics, size);
+                    }
+                    else if (doSolidColorBackground)
+                    {
+                        graphics.Clear(KaraokeModeBackgroundColor);
+                        if (secondScreen != null)
+                        {
+                            SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+                        }
                     }
                 }
+                catch { }
 
                 LyricPhrase actualNextLineHarmony = null;
                 LyricPhrase actualLastLineHarmony = null;
@@ -7198,8 +8769,8 @@ namespace cPlayer
                 LyricPhrase actualNextLineLead = null;
                 bool hasInlineGap = false;
 
-                var phrasesLead = harm2Lyrics.Any() && (doHarm2 || doHarm3) ? harm1Phrases : vocalPhrases;
-                var lyricsLead = harm2Lyrics.Any() && (doHarm2 || doHarm3) ? harm1Lyrics : vocalLyrics;
+                var phrasesLead = hasHarm2 && (doHarm2 || doHarm3) ? harm1Phrases : vocalPhrases;
+                var lyricsLead = hasHarm2 && (doHarm2 || doHarm3) ? harm1LyricsList : vocalLyricsList;
 
                 double previewTime = time + highlightDelay;
                 int lastPhraseIndex = 0;
@@ -7295,7 +8866,7 @@ namespace cPlayer
                 LyricPhrase lastLineHarm2 = null;
                 if (doHarm2 || doHarm3)
                 {
-                    for (var i = 0; i < harm2Phrases.Count(); i++)
+                    for (var i = 0; i < harm2Phrases.Count; i++)
                     {
                         var phrase = harm2Phrases[i];
                         lastLineHarm2 = i > 0 ? harm2Phrases[i - 1] : null;
@@ -7303,7 +8874,7 @@ namespace cPlayer
                         if (phrase.PhraseEnd <= time)
                         {
                             actualLastLineHarmony = harm2Phrases[i];
-                            if (i < harm2Phrases.Count() - 1)
+                            if (i < harm2Phrases.Count - 1)
                             {
                                 actualNextLineHarmony = harm2Phrases[i + 1];
                             }
@@ -7329,7 +8900,7 @@ namespace cPlayer
                 LyricPhrase lastLineHarm3 = null;
                 if (doHarm3)
                 {
-                    for (var i = 0; i < harm3Phrases.Count(); i++)
+                    for (var i = 0; i < harm3Phrases.Count; i++)
                     {
                         var phrase = harm3Phrases[i];
                         lastLineHarm3 = i > 0 ? harm3Phrases[i - 1] : null;
@@ -7352,14 +8923,14 @@ namespace cPlayer
                 var harm3LineTop1 = 0;
                 var harm3LineTop2 = 0;
 
-                if (doSoloVocals || !harm2Lyrics.Any()) //do solo vocals
+                if (doSoloVocals || !hasHarm2) //do solo vocals
                 {
                     harm1LineTop1 = (int)(lineHeight * (2.5 + vertOffset));
                     harm1LineTop2 = (int)(lineHeight * (4.0 + vertOffset));
                     harm1LineTop3 = (int)(lineHeight * 5.5);
                     harm1LineTop4 = (int)(lineHeight * 7.0);
                 }
-                if (doHarm3 && harm3Lyrics.Any())
+                if (doHarm3 && hasHarm3)
                 {
                     harm1LineTop1 = lineHeight * 0;
                     harm1LineTop2 = (int)(lineHeight * 1.5);
@@ -7368,7 +8939,7 @@ namespace cPlayer
                     harm3LineTop1 = lineHeight * 8;
                     harm3LineTop2 = (int)(lineHeight * 9.5);
                 }
-                else if ((doHarm2 || doHarm3) && harm2Lyrics.Any())
+                else if ((doHarm2 || doHarm3) && hasHarm2)
                 {
                     harm1LineTop1 = lineHeight * 2;
                     harm1LineTop2 = (int)(lineHeight * 3.5);
@@ -7381,30 +8952,23 @@ namespace cPlayer
                     var title = "\"" + PlayingSong.Name.Replace("&", "&&").Replace("feat.", "ft.").Replace("featuring", "ft.") + "\"";
                     var artist = PlayingSong.Artist.Replace("&", "&&").Replace("feat.", "ft.").Replace("featuring", "ft.");
                     var album = PlayingSong.Album.Replace("&", "&&");
-                    var bpm = AvgBPM == 0 ? "" : "🎚️ Tempo: " + Math.Round(AvgBPM, 0, MidpointRounding.AwayFromZero) + " BPM";
+                    var bpm = AvgBPM == 0 ? "" : "Tempo: " + Math.Round(AvgBPM, 0, MidpointRounding.AwayFromZero) + " BPM";
                     var parts = 1;
-                    if ((doHarm2 || doHarm3) && harm2Lyrics.Any())
+                    if ((doHarm2 || doHarm3) && hasHarm2)
                     {
                         parts++;
                     }
-                    if (doHarm3 && harm3Lyrics.Any())
+                    if (doHarm3 && hasHarm3)
                     {
                         parts++;
                     }
-                    var vocalParts = "🎙️ Vocals: " + ((doHarm2 || doHarm3) && harm2Lyrics.Any() ? parts + "-part harmony" : "Solo");                    
+                    var vocalParts = "Vocals: " + ((doHarm2 || doHarm3) && hasHarm2 ? parts + "-part harmony" : "Solo");
                     var songKey = "";//GetSongKey(); - need to add detection of official HMX stuff vs customs before this is usable
                     var genre = Parser.doGenre(Parser.Songs[0].Genre).Replace("&", "&&");
                     if (!string.IsNullOrEmpty(genre))
                     {
-                        genre = "🎧 Genre: " + genre;
+                        genre = "Genre: " + genre;
                     }
-
-                    //optimal quality settings only for the title card
-                    graphics.SmoothingMode = SmoothingMode.HighQuality;
-                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 
                     var offset = 0;
                     if (OriginalAlbumArt != null)
@@ -7437,12 +9001,12 @@ namespace cPlayer
                     var charter = PlayingSong.Charter.Replace("&", "&&");
                     if (!string.IsNullOrEmpty(charter))
                     {
-                        charter = $"✍️ Charted by {charter}";
+                        charter = $"Charted by {charter}";
                     }
                     else
                     {
                         charter = "";
-                    }                                       
+                    }
 
                     // 1–3: Title, Artist, Album (same as now)
                     DrawCenteredLine(graphics, title, resolutionX, lineHeight * 3, 72f * multiplier, offset);
@@ -7477,7 +9041,6 @@ namespace cPlayer
                         .OrderBy(lyr => lyr.Start)
                         .Select(lyr => lyr.Start)
                         .FirstOrDefault(); // returns 0.0 if none found
-
                 }
                 double GetLastLyricEnd(IEnumerable<Lyric> lyrics, double phraseStart, double phraseEnd)
                 {
@@ -7487,7 +9050,7 @@ namespace cPlayer
                         .Select(lyr => lyr.End)
                         .LastOrDefault(); // returns 0.0 if none found
                 }
-                // where JoinWordsForDisplay merges hyphen/sustain chains into visible words:
+                
                 IEnumerable<string> JoinWordsForDisplay(List<Lyric> syls)
                 {
                     var words = new List<string>();
@@ -7517,7 +9080,7 @@ namespace cPlayer
 
                 UpdateTextQuality(graphics);
                 var drewText = false;
-                var baseFont = new Font("Arial", 24f);
+                var baseFont = _karaokeBaseFont;
                 if ((currentLineLead != null && !string.IsNullOrEmpty(currentLineLead.PhraseText)) ||
                     (nextLineLead != null && !string.IsNullOrEmpty(nextLineLead.PhraseText)))
                 {
@@ -7530,7 +9093,7 @@ namespace cPlayer
                         string rawPhraseText = string.Join(" ", phraseSyllables
                         .Where(s => !string.IsNullOrWhiteSpace(s.Text) && s.Text != "+" && s.Text != "-")
                         .Select(s => s.Text.Replace("‿", " ")));
-                                             
+
                         var (line1Syllables, line2Syllables) = SplitSyllablesByPixelWidth(phraseSyllables, baseFont, graphics);
 
                         // For display strings:
@@ -7539,9 +9102,9 @@ namespace cPlayer
 
                         string widestLine = (line1Text.Length > line2Text.Length) ? line1Text : line2Text;
                         float scaledFontSize = GetScaledFontSize(graphics, widestLine, baseFont, 100f * multiplier, resolutionX);
-                        var displayFont = new Font(baseFont.FontFamily, scaledFontSize);                                            
+                        var displayFont = new Font(baseFont.FontFamily, scaledFontSize);
 
-                        RectangleF tight = MeasureTight(graphics, line1Text.Replace("‿", " "), displayFont);                                               
+                        RectangleF tight = MeasureTight(graphics, line1Text.Replace("‿", " "), displayFont);
                         float posXf = (resolutionX - tight.Width) / 2f - tight.Left;
                         float posX = posXf;
 
@@ -7583,7 +9146,7 @@ namespace cPlayer
                             harm1LineTop1,
                             KaraokeModeHarm1Text,
                             KaraokeModeHarm1Highlight,
-                            time
+                            time, multiplier
                         );
 
                         DrawSyllableAccurateLine(
@@ -7594,11 +9157,11 @@ namespace cPlayer
                             harm1LineTop2,
                             KaraokeModeHarm1Text,
                             KaraokeModeHarm1Highlight,
-                            time
+                            time, multiplier
                         );
                     }
 
-                    if ((doSoloVocals || !harm2Lyrics.Any()) && nextLineLead != null && !string.IsNullOrEmpty(nextLineLead.PhraseText))
+                    if ((doSoloVocals || !hasHarm2) && nextLineLead != null && !string.IsNullOrEmpty(nextLineLead.PhraseText))
                     {
                         var phraseSyllables = lyricsLead
                         .Where(s => s.End > nextLineLead.PhraseStart && s.Start <= nextLineLead.PhraseEnd)
@@ -7607,7 +9170,7 @@ namespace cPlayer
                         string rawPhraseText = string.Join(" ", phraseSyllables
                         .Where(s => !string.IsNullOrWhiteSpace(s.Text) && s.Text != "+" && s.Text != "-")
                         .Select(s => s.Text.Replace("‿", " ")));
-                                  
+
                         // Build phraseSyllables (time-windowed, ordered).
                         var (line3Syllables, line4Syllables) = SplitSyllablesByPixelWidth(phraseSyllables, baseFont, graphics);
 
@@ -7651,7 +9214,7 @@ namespace cPlayer
                                 time: time,
                                 leadInSeconds: leadInSeconds
                             );
-                        }                        
+                        }
 
                         DrawSyllableAccurateLine(
                             graphics,
@@ -7661,7 +9224,7 @@ namespace cPlayer
                             harm1LineTop3,
                             KaraokeModeHarm1Text,
                             KaraokeModeHarm1Highlight,
-                            time
+                            time, multiplier
                         );
 
                         DrawSyllableAccurateLine(
@@ -7672,7 +9235,7 @@ namespace cPlayer
                             harm1LineTop4,
                             KaraokeModeHarm1Text,
                             KaraokeModeHarm1Highlight,
-                            time
+                            time, multiplier
                         );
                     }
                     drewText = true;
@@ -7687,7 +9250,7 @@ namespace cPlayer
                     string rawPhraseText = string.Join(" ", phraseSyllables
                     .Where(s => !string.IsNullOrWhiteSpace(s.Text) && s.Text != "+" && s.Text != "-")
                     .Select(s => s.Text.Replace("‿", " ")));
-                                        
+
                     // Build phraseSyllables (time-windowed, ordered).
                     var (line1Syllables, line2Syllables) = SplitSyllablesByPixelWidth(phraseSyllables, baseFont, graphics);
 
@@ -7741,7 +9304,7 @@ namespace cPlayer
                             harm2LineTop1,
                             KaraokeModeHarm2Text,
                             KaraokeModeHarm2Highlight,
-                            time
+                            time, multiplier
                         );
 
                     DrawSyllableAccurateLine(
@@ -7752,7 +9315,7 @@ namespace cPlayer
                         harm2LineTop2,
                         KaraokeModeHarm2Text,
                         KaraokeModeHarm2Highlight,
-                        time
+                        time, multiplier
                     );
                     drewText = true;
                 }
@@ -7771,7 +9334,7 @@ namespace cPlayer
                     string rawPhraseText = string.Join(" ", phraseSyllables
                     .Where(s => !string.IsNullOrWhiteSpace(s.Text) && s.Text != "+" && s.Text != "-")
                     .Select(s => s.Text.Replace("‿", " ")));
-                                        
+
                     // Build phraseSyllables (time-windowed, ordered).
                     var (line1Syllables, line2Syllables) = SplitSyllablesByPixelWidth(phraseSyllables, baseFont, graphics);
 
@@ -7815,7 +9378,7 @@ namespace cPlayer
                             time: time,
                             leadInSeconds: leadInSeconds
                         );
-                    }                    
+                    }
 
                     DrawSyllableAccurateLine(
                             graphics,
@@ -7825,7 +9388,7 @@ namespace cPlayer
                             harm3LineTop1,
                             KaraokeModeHarm3Text,
                             KaraokeModeHarm3Highlight,
-                            time
+                            time, multiplier
                      );
 
                     DrawSyllableAccurateLine(
@@ -7836,12 +9399,11 @@ namespace cPlayer
                         harm3LineTop2,
                         KaraokeModeHarm3Text,
                         KaraokeModeHarm3Highlight,
-                        time
+                        time, multiplier
                     );
                     displayFont.Dispose();
                     drewText = true;
                 }
-                baseFont.Dispose();
                 if (drewText) return;
 
                 if (time > phrasesLead.Last().PhraseEnd)
@@ -7913,28 +9475,42 @@ namespace cPlayer
 
                     if (gap >= timeGap && wait > 0)
                     {
-                        baseFont = new Font("Arial", 24f * multiplier);
-                        var lineSize = TextRenderer.MeasureText(loadingBarXL, baseFont);
-                        var posX = (resolutionX - lineSize.Width) / 2;
-                        TextRenderer.DrawText(graphics, loadingBarXL, baseFont, new Point(posX, (resolutionY - lineSize.Height) / 2), KaraokeModeHarm1Text, Color.Transparent);
+                        PrepareLoadingBarAssets(multiplier);
+                        int posX = (resolutionX - loadingBarSize.Width) / 2;
+                        int posY = (resolutionY - loadingBarSize.Height) / 2;
 
-                        var scaledLoadingBar = loadingBarXL.Substring(0, loadingBarXL.Length - (int)(loadingBarXL.Length * (wait / gap)));
-                        TextRenderer.DrawText(graphics, scaledLoadingBar, baseFont, new Point(posX, (resolutionY - lineSize.Height) / 2), KaraokeModeHarm1Highlight, Color.Transparent);
+                        graphics.DrawImageUnscaled(loadingBarBaseBmp, posX, posY);
 
-                        if (doShowAnimatedNotes)
+                        double progress = 1.0 - (double)(wait / gap);
+                        progress = Math.Max(0.0, Math.Min(1.0, progress));
+
+                        int highlightWidth = (int)Math.Round(loadingBarSize.Width * progress);
+
+                        if (highlightWidth > 0)
                         {
-                            DrawAnimatedNotes(graphics, noteCounter, spawnFrequency, resolutionX, resolutionY);
+                            Rectangle src = new Rectangle(0, 0, Math.Min(highlightWidth, loadingBarHighlightBmp.Width), loadingBarHighlightBmp.Height);
+                            Rectangle dest = new Rectangle(posX, posY, src.Width, src.Height);
+                            graphics.DrawImage(loadingBarHighlightBmp, dest, src, GraphicsUnit.Pixel);
                         }
-                        baseFont.Dispose();
+                        if (wait <= 5.5 && wait > 1.0)
+                        {
+                            string waitString = ((int)wait).ToString();
+                            DrawCenteredLine(
+                                graphics,
+                                waitString,
+                                resolutionX,
+                                (resolutionY - TextRenderer.MeasureText(waitString, new Font("Arial", 80f * multiplier, FontStyle.Bold)).Height) / 2,
+                                80f * multiplier);
+                        }
                     }
                 }
                 catch { }
             }
-            catch (Exception ex)
+            catch// (Exception ex)
             {
                 //MessageBox.Show("Error: " + ex.Message + " \n" + ex.StackTrace);
-            }  
-        }
+            }
+        }               
 
         public static List<MergedSyllable> MergeSustainedSyllables(List<Lyric> input)
         {
@@ -8013,13 +9589,74 @@ namespace cPlayer
             public float Width { get; set; }
         }
 
-        private string GetVisibleTextForSyllable(MergedSyllable s)
+        private void DrawSyllableAccurateHighlightFromBitmap(
+            Graphics g,
+            Bitmap highlightBitmap,
+            int posX,
+            int posY,
+            int textHeight,
+            List<SyllablePixelSpan> pixelmap,
+            double adjustedTime)
         {
-            // Make this mirror the logic in ReconstructPhraseTextFromSyllables
-            // as closely as possible.
-            var raw = s.Lyric?.Trim() ?? string.Empty;
-            var clean = CleanSyllable(raw);
-            return clean.Replace("‿", " ");
+            if (highlightBitmap == null || pixelmap == null || pixelmap.Count == 0)
+                return;
+
+            int revealRight = 0;
+
+            for (int i = 0; i < pixelmap.Count; i++)
+            {
+                var syllable = pixelmap[i];
+
+                int syllableWidth = syllable.Right - syllable.Left;
+
+                if (syllableWidth <= 0)
+                    continue;
+
+                if (adjustedTime >= syllable.End)
+                {
+                    // Fully sung syllable.
+                    revealRight = Math.Max(revealRight, syllable.Right);
+                    continue;
+                }
+
+                if (adjustedTime > syllable.Start)
+                {
+                    // Currently active syllable.
+                    double duration = syllable.End - syllable.Start;
+
+                    double progress = duration <= 0
+                        ? 1.0
+                        : (adjustedTime - syllable.Start) / duration;
+
+                    progress = Math.Max(0.0, Math.Min(1.0, progress));
+
+                    int partialWidth = (int)Math.Floor(syllableWidth * progress);
+
+                    revealRight = Math.Max(revealRight, syllable.Left + partialWidth);
+                }
+
+                // If we reached a future or active syllable, stop.
+                break;
+            }
+
+            if (revealRight <= 0)
+                return;
+
+            revealRight = Math.Min(revealRight, highlightBitmap.Width);
+
+            Rectangle src = new Rectangle(
+                0,
+                0,
+                Math.Min(revealRight, highlightBitmap.Width),
+                Math.Min(textHeight, highlightBitmap.Height));
+
+            Rectangle dest = new Rectangle(
+                posX,
+                posY,
+                src.Width,
+                src.Height);
+
+            g.DrawImage(highlightBitmap, dest, src, GraphicsUnit.Pixel);
         }
 
         public void DrawSyllableAccurateLine(
@@ -8030,107 +9667,333 @@ namespace cPlayer
             int y,
             Color baseColor,
             Color highlightColor,
-            double adjustedTime)
+            double adjustedTime,
+            int multiplier)
         {
-            if (syllablesForThisLine.Count == 0)
+            if (syllablesForThisLine == null || syllablesForThisLine.Count == 0)
                 return;
 
-            var merged = MergeSustainedSyllables(syllablesForThisLine);
+            int strokeWidth = 5 * multiplier;
 
-            string displayText = ReconstructPhraseTextFromSyllables(merged);
-            
-            ApplyTextRenderingSettings(g);
-            
-            SizeF visualSizeF = g.MeasureString(displayText, font);
-
-            int textWidth = (int)Math.Ceiling((double)visualSizeF.Width);
-            int textHeight = (int)Math.Ceiling((double)visualSizeF.Height);
-
-            int posX = (resolutionX - textWidth) / 2;
-
-            var pixelmap = BuildSyllablePixelMap(merged, font, g, displayText, textWidth);
-
-            float highlightWidth = GetHighlightedPixelWidth(pixelmap, adjustedTime);
-
-            highlightWidth = Math.Max(0f, Math.Min(highlightWidth, textWidth));
-
-            Color strokeCol = Color.Black;
-
-            DrawTextWithStroke(
+            CachedKaraokeLine cached = GetOrCreateCachedKaraokeLine(
                 g,
-                displayText,
+                syllablesForThisLine,
                 font,
-                new Point(posX, y),
+                resolutionX,
                 baseColor,
-                strokeCol,
-                3
-            );
+                highlightColor,
+                strokeWidth);
 
-            //using (Bitmap bmp = new Bitmap(visualSize.Width, visualSize.Height))
-            using (Bitmap bmp = new Bitmap(textWidth, textHeight))
-            using (Graphics gBmp = Graphics.FromImage(bmp))
+            if (cached == null || cached.BaseBitmap == null || cached.HighlightBitmap == null)
+                return;
+
+            // Draw base text from cache.
+            g.DrawImageUnscaled(cached.BaseBitmap, cached.PosX, y);
+
+            // Draw highlighted/revealed text from cached highlight bitmap.
+            DrawSyllableAccurateHighlightFromBitmap(
+                g,
+                cached.HighlightBitmap,
+                cached.PosX,
+                y,
+                cached.TextHeight,
+                cached.PixelMap,
+                adjustedTime);
+        }
+
+        public class SyllablePixelSpan
+        {
+            public double Start { get; set; }
+            public double End { get; set; }
+            public int Left { get; set; }
+            public int Right { get; set; }
+        }
+                
+        private static void ApplyTextRenderingSettings(Graphics g)
+        {            
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+        }
+                
+        private class CachedKaraokeLine : IDisposable
+        {
+            public string CacheKey;
+            public string DisplayText;
+            public List<MergedSyllable> MergedSyllables;
+            public List<SyllablePixelSpan> PixelMap;
+
+            public int TextWidth;
+            public int TextHeight;
+            public int PosX;
+
+            public int PaddingX;
+            public int PaddingY;
+
+            public Bitmap BaseBitmap;
+            public Bitmap HighlightBitmap;
+
+            public void Dispose()
             {
-                gBmp.Clear(Color.Transparent);
+                BaseBitmap?.Dispose();
+                HighlightBitmap?.Dispose();
 
-                // Draw stroked highlight into bitmap
-                DrawTextWithStroke(
-                    gBmp,
-                    displayText,
-                    font,
-                    new Point(0, 0),
-                    highlightColor,
-                    strokeCol,
-                    3
-                );
-
-                // Slice highlight region
-                Rectangle src = new Rectangle(0, 0, (int)highlightWidth, bmp.Height);
-                Rectangle dest = new Rectangle(posX, y, (int)highlightWidth, bmp.Height);
-
-                if (src.Width > 0)
-                {
-                    g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
-                }
+                BaseBitmap = null;
+                HighlightBitmap = null;
             }
         }
 
-        private static void ApplyTextRenderingSettings(Graphics g)
+        public void ClearKaraokeLineCache()
         {
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            foreach (var item in _karaokeLineCache.Values)
+                item.Dispose();
+
+            _karaokeLineCache.Clear();
+        }
+
+        private CachedKaraokeLine GetOrCreateCachedKaraokeLine(
+            Graphics g,
+            List<Lyric> syllablesForThisLine,
+            Font font,
+            int resolutionX,
+            Color baseColor,
+            Color highlightColor,
+            int strokeWidth)
+        {
+            if (syllablesForThisLine == null || syllablesForThisLine.Count == 0)
+                return null;
+
+            // Build a stable key            
+            string rawKey = string.Join("|", syllablesForThisLine.Select(s =>
+                (s.Text ?? "") + "@" + s.Start.ToString("0.000") + "-" + s.End.ToString("0.000")));
+
+            string cacheKey =
+                rawKey +
+                "|font=" + font.Name +
+                "|size=" + font.SizeInPoints.ToString("0.###") +
+                "|style=" + ((int)font.Style) +
+                "|resX=" + resolutionX +
+                "|base=" + baseColor.ToArgb() +
+                "|hi=" + highlightColor.ToArgb() +
+                "|stroke=" + strokeWidth;
+
+            if (_karaokeLineCache.TryGetValue(cacheKey, out CachedKaraokeLine cached))
+                return cached;
+
+            cached = new CachedKaraokeLine();
+            cached.CacheKey = cacheKey;
+
+            cached.MergedSyllables = MergeSustainedSyllables(syllablesForThisLine);
+            cached.DisplayText = ReconstructPhraseTextFromSyllables(cached.MergedSyllables);
+
+            ApplyTextRenderingSettings(g);
+
+            SizeF visualSizeF = g.MeasureString(cached.DisplayText, font);
+            int padX = strokeWidth + 8;
+            int padY = strokeWidth + 4;
+
+            int measuredWidth = Math.Max(1, (int)Math.Ceiling(visualSizeF.Width));
+            int measuredHeight = Math.Max(1, (int)Math.Ceiling(visualSizeF.Height));
+
+            cached.TextWidth = measuredWidth + (padX * 2);
+            cached.TextHeight = measuredHeight + (padY * 2);
+
+            // Center based on the visible measured text, not the padded bitmap.
+            cached.PosX = (resolutionX - measuredWidth) / 2 - padX;
+
+            cached.PaddingX = padX;
+            cached.PaddingY = padY;
+
+            cached.PixelMap = BuildSyllablePixelMap(
+                cached.MergedSyllables,
+                font,
+                g,
+                cached.DisplayText,
+                measuredWidth);
+
+            foreach (var span in cached.PixelMap)
+            {
+                span.Left += padX;
+                span.Right += padX;
+            }
+
+            cached.BaseBitmap = new Bitmap(cached.TextWidth, cached.TextHeight);
+            cached.HighlightBitmap = new Bitmap(cached.TextWidth, cached.TextHeight);
+
+            using (Graphics gBase = Graphics.FromImage(cached.BaseBitmap))
+            {
+                gBase.Clear(Color.Transparent);
+                ApplyTextRenderingSettings(gBase);
+
+                DrawTextWithStroke(
+                    gBase,
+                    cached.DisplayText,
+                    font,
+                    new Point(padX, padY),
+                    baseColor,
+                    Color.Black,
+                    strokeWidth);
+            }
+
+            using (Graphics gHighlight = Graphics.FromImage(cached.HighlightBitmap))
+            {
+                gHighlight.Clear(Color.Transparent);
+                ApplyTextRenderingSettings(gHighlight);
+
+                DrawTextWithStroke(
+                    gHighlight,
+                    cached.DisplayText,
+                    font,
+                    new Point(padX, padY),
+                    highlightColor,
+                    Color.Black,
+                    strokeWidth);
+            }
+
+            _karaokeLineCache[cacheKey] = cached;
+
+            return cached;
         }
 
         private void DrawTextWithStroke(Graphics g, string text, Font font, Point pos, Color fill, Color stroke, int strokeWidth)
         {
-            ApplyTextRenderingSettings(g);
-                   
-            using (var sf = (StringFormat)StringFormat.GenericDefault.Clone())
+            using (var stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone())
             using (var path = new GraphicsPath())
             using (var pen = new Pen(stroke, strokeWidth) { LineJoin = LineJoin.Round })
             using (var fillBrush = new SolidBrush(fill))
             {
+                stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                stringFormat.Trimming = StringTrimming.None;
+
                 float emSize = g.DpiY * font.SizeInPoints / 72f;
 
-                // Build outline path at the same position
                 path.AddString(
                     text,
                     font.FontFamily,
                     (int)font.Style,
                     emSize,
-                    pos,
-                    sf);
+                    new PointF(pos.X, pos.Y),
+                    stringFormat);
 
-                // Stroke behind
                 g.DrawPath(pen, path);
-
-                // Fill using DrawString
-                g.DrawString(text, font, fillBrush, pos, sf);
+                g.FillPath(fillBrush, path);
             }
         }
-        
-        public List<MergedSyllable> BuildSyllablePixelMap(
+
+        private string GetVisibleTextForSyllable(MergedSyllable s)
+        {
+            var raw = s.Lyric?.Trim() ?? string.Empty;
+            var clean = CleanSyllable(raw);
+            return clean.Replace("‿", " ");
+        }
+
+        private void DrawSyllableAccurateHighlightIsolated(
+            Graphics g,
+            List<MergedSyllable> pixelmap,
+            Font font,
+            int posX,
+            int posY,
+            Color highlightColor,
+            Color strokeColor,
+            double adjustedTime,
+            int multiplier)
+        {
+            if (pixelmap == null || pixelmap.Count == 0)
+                return;
+
+            float currentX = 0f;
+
+            using (var stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone())
+            {
+                stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                stringFormat.Trimming = StringTrimming.None;
+
+                for (int i = 0; i < pixelmap.Count; i++)
+                {
+                    var syllable = pixelmap[i];
+                    if (syllable == null)
+                        continue;
+
+                    string visible = GetVisibleTextForSyllable(syllable);
+                    if (string.IsNullOrWhiteSpace(visible))
+                    {
+                        currentX += syllable.Width;
+                        continue;
+                    }
+
+                    int left = (int)Math.Round(currentX);
+                    int syllableWidth = Math.Max(1, (int)Math.Round(syllable.Width));
+
+                    double duration = syllable.End - syllable.Start;
+
+                    if (adjustedTime >= syllable.End)
+                    {
+                        using (var bmp = new Bitmap(syllableWidth + 8 * multiplier, font.Height + 8 * multiplier))
+                        using (var gBmp = Graphics.FromImage(bmp))
+                        {
+                            gBmp.Clear(Color.Transparent);
+                            ApplyTextRenderingSettings(gBmp);
+
+                            DrawTextWithStroke(
+                                gBmp,
+                                visible,
+                                font,
+                                new Point(0, 0),
+                                highlightColor,
+                                strokeColor,
+                                5 * multiplier);
+
+                            g.DrawImageUnscaled(bmp, posX + left, posY);
+                        }
+                    }
+                    else if (adjustedTime > syllable.Start)
+                    {
+                        double progress = duration <= 0
+                            ? 1.0
+                            : (adjustedTime - syllable.Start) / duration;
+
+                        progress = Math.Max(0.0, Math.Min(1.0, progress));
+
+                        int partialWidth = (int)Math.Round(syllableWidth * progress);
+                        if (partialWidth > 0)
+                        {
+                            using (var bmp = new Bitmap(syllableWidth + 8 * multiplier, font.Height + 8 * multiplier))
+                            using (var gBmp = Graphics.FromImage(bmp))
+                            {
+                                gBmp.Clear(Color.Transparent);
+                                ApplyTextRenderingSettings(gBmp);
+
+                                DrawTextWithStroke(
+                                    gBmp,
+                                    visible,
+                                    font,
+                                    new Point(0, 0),
+                                    highlightColor,
+                                    strokeColor,
+                                    5 * multiplier);
+
+                                Rectangle src = new Rectangle(0, 0, Math.Min(partialWidth, bmp.Width), bmp.Height);
+                                Rectangle dest = new Rectangle(posX + left, posY, src.Width, src.Height);
+
+                                g.DrawImage(bmp, dest, src, GraphicsUnit.Pixel);
+                            }
+                        }
+
+                        break;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    currentX += syllable.Width;
+                }
+            }
+        }
+
+        public List<SyllablePixelSpan> BuildSyllablePixelMap(
             List<MergedSyllable> syllables,
             Font font,
             Graphics g,
@@ -8139,82 +10002,64 @@ namespace cPlayer
         {
             ApplyTextRenderingSettings(g);
 
-            int searchIndex = 0;
-            float prevPrefixWidth = 0f;
+            var result = new List<SyllablePixelSpan>();
 
-            foreach (var syllable in syllables)
+            using (var format = (StringFormat)StringFormat.GenericTypographic.Clone())
             {
-                string visible = GetVisibleTextForSyllable(syllable);
+                format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                format.Trimming = StringTrimming.None;
 
-                if (string.IsNullOrWhiteSpace(visible))
+                int searchIndex = 0;
+                float prevRight = 0f;
+
+                for (int i = 0; i < syllables.Count; i++)
                 {
-                    syllable.Width = 0f;
-                    continue;
-                }
+                    var syllable = syllables[i];
+                    string visible = GetVisibleTextForSyllable(syllable);
 
-                // Find this syllable's visible text in the final display string,
-                // starting from where the last one left off.
-                int idx = displayText.IndexOf(visible, searchIndex, StringComparison.Ordinal);
-                if (idx < 0)
-                {
-                    // Fallback: if we can’t find it (weird cleaning / markers),
-                    // at least measure it in isolation so we don't crash.
-                    SizeF sizeFallback = g.MeasureString(visible, font);
-                    syllable.Width = sizeFallback.Width;
-                    continue;
-                }
+                    if (string.IsNullOrWhiteSpace(visible))
+                        continue;
 
-                int endIdx = idx + visible.Length;
+                    int idx = displayText.IndexOf(visible, searchIndex, StringComparison.Ordinal);
+                    if (idx < 0)
+                        continue;
 
-                // Measure prefix up to the end of this syllable in the final string
-                string prefixText = displayText.Substring(0, endIdx);
-                SizeF prefixSize = g.MeasureString(prefixText, font);
-                float prefixWidth = prefixSize.Width;
+                    RectangleF layoutRect = new RectangleF(0, 0, totalTextWidth * 2f + 100f, font.Height * 4f);
 
-                syllable.Width = prefixWidth - prevPrefixWidth;
+                    format.SetMeasurableCharacterRanges(new[]
+                    {
+                new CharacterRange(0, idx + visible.Length)
+            });
 
-                prevPrefixWidth = prefixWidth;
-                searchIndex = endIdx;
-            }
+                    Region[] regions = g.MeasureCharacterRanges(displayText, font, layoutRect, format);
+                    RectangleF bounds = regions[0].GetBounds(g);
 
-            // Optional but recommended: normalize widths so they sum exactly
-            // to the measured total text width.
-            float sumWidths = syllables.Sum(s => s.Width);
-            if (sumWidths > 0.1f && Math.Abs(sumWidths - totalTextWidth) > 0.5f)
-            {
-                float scale = totalTextWidth / sumWidths;
-                foreach (var s in syllables)
-                {
-                    s.Width *= scale;
-                }
-            }
+                    float rightF = bounds.Right;
+                    float leftF = prevRight;
 
-            return syllables;
-        }
+                    int left = (int)Math.Round(leftF);
+                    int right = (int)Math.Round(rightF);
 
-        public static float GetHighlightedPixelWidth(List<MergedSyllable> syllables, double currentTime)
-        {
-            float total = 0f;
+                    if (right < left)
+                        right = left;
 
-            foreach (var s in syllables)
-            {
-                if (currentTime < s.Start)
-                    break;
+                    result.Add(new SyllablePixelSpan
+                    {
+                        Start = syllable.Start,
+                        End = syllable.End,
+                        Left = left,
+                        Right = right
+                    });
 
-                if (currentTime >= s.End)
-                {
-                    total += s.Width;
-                }
-                else
-                {
-                    double progress = (currentTime - s.Start) / (s.End - s.Start);
-                    progress = MathHelper.Clamp(progress, 0.0, 1.0);
-                    total += (float)(progress * s.Width);
-                    break;
+                    prevRight = rightF;
+                    searchIndex = idx + visible.Length;
+
+                    foreach (var region in regions)
+                        region.Dispose();
                 }
             }
 
-            return total;
+            return result;
         }
 
         public string ReconstructPhraseTextFromSyllables(List<MergedSyllable> phraseSyllables)
@@ -8283,7 +10128,7 @@ namespace cPlayer
                 .Replace("#", "")
                 .Replace("^", "")
                 .Replace("$", "")
-                .Replace("+", "^")
+                .Replace("+", "")
                 .Replace("§", "‿")
                 .Trim();
         }
@@ -8312,7 +10157,7 @@ namespace cPlayer
             // Measure the dot so we can stop at the left edge of the first letter.
             // MeasureString can add a little extra; measuring a single glyph is usually fine for this purpose.
             float dotWidth = g.MeasureString(cursor, f).Width;
-            
+
             // Target: dot's RIGHT edge sits just left of the first character.
             //float targetX = textStartX - dotWidth + padding;
             float targetX = textStartX - dotWidth + 10f;
@@ -8437,25 +10282,88 @@ namespace cPlayer
             return (line1, line2);
         }
 
-        private void DrawCenteredLine(Graphics g, string text, int resolutionX, int y, float maxFontSize, int offset = 0)
+        private void DrawCenteredLine(
+            Graphics g,
+            string text,
+            int resolutionX,
+            int y,
+            float maxFontSize,
+            int offset = 0,
+            int shadowOffsetX = 1,
+            int shadowOffsetY = 1,
+            int shadowBlur = 3,
+            float shadowOpacity = 0.20f
+            )
         {
-            var baseFont = new Font("Arial", 16f);
-            float scaledFontSize = GetScaledFontSize(g, text, baseFont, maxFontSize, resolutionX - offset);
-            Font font = null;
+            using (var baseFont = new Font("Arial", maxFontSize))
+            {
+                float scaledFontSize = GetScaledFontSize(g, text, baseFont, maxFontSize, resolutionX - offset);
 
-            try
-            {
-                font = new Font("Arial", scaledFontSize);
-                var size = TextRenderer.MeasureText(g, text, font);
-                int x = (resolutionX + offset - size.Width) / 2;
-                TextRenderer.DrawText(g, text, font, new Point(x, y), KaraokeModeHarm1Text, Color.Transparent);
+                using (var font = new Font("Arial", scaledFontSize))
+                {
+                    ApplyTextRenderingSettings(g);
+
+                    // measure for centering
+                    var size = TextRenderer.MeasureText(g, text, font);
+                    int x = (resolutionX + offset - size.Width) / 2;
+
+                    Color textColor = Color.White;
+
+                    // Create an offscreen bitmap for blur
+                    /*using (Bitmap shadowBmp = new Bitmap(size.Width + shadowBlur * 2, size.Height + shadowBlur * 2))
+                    using (Graphics shadowG = Graphics.FromImage(shadowBmp))
+                    {
+                        shadowG.Clear(Color.Transparent);
+                        shadowG.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+
+                        // Shadow color (same shape as text)
+                        using (Brush shadowBrush = new SolidBrush(Color.FromArgb((int)(255 * shadowOpacity), 0, 0, 0)))
+                        {
+                            shadowG.DrawString(text, font, shadowBrush, shadowBlur, shadowBlur);
+                        }
+
+                        // Apply a simple blur approximation by redrawing the bitmap slightly offset
+                        for (int dx = -shadowBlur; dx <= shadowBlur; dx++)
+                        {
+                            for (int dy = -shadowBlur; dy <= shadowBlur; dy++)
+                            {
+                                if (dx == 0 && dy == 0) continue;
+                                float weight = 1f - (float)Math.Sqrt(dx * dx + dy * dy) / shadowBlur;
+                                if (weight <= 0) continue;
+
+                                using (var tempBrush = new TextureBrush(shadowBmp))
+                                {
+                                    ColorMatrix cm = new ColorMatrix
+                                    {
+                                        Matrix33 = weight * 0.2f // blur transparency falloff
+                                    };
+                                    using (ImageAttributes ia = new ImageAttributes())
+                                    {
+                                        ia.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                                        g.DrawImage(shadowBmp,
+                                            new Rectangle(x + shadowOffsetX + dx, y + shadowOffsetY + dy,
+                                                          shadowBmp.Width, shadowBmp.Height),
+                                            0, 0, shadowBmp.Width, shadowBmp.Height,
+                                            GraphicsUnit.Pixel, ia);
+                                    }
+                                }
+                            }
+                        }
+                    }*/
+
+                    Color strokeCol = Color.Black;
+
+                    DrawTextWithStroke(
+                        g,
+                        text,
+                        font,
+                        new Point(x, y),
+                        textColor,
+                        strokeCol,
+                        3
+                    );
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error on frame: text='{text}' | scaledFontSize={scaledFontSize} | maxFontSize={maxFontSize} | Exception={ex.Message}\n");
-            }
-            baseFont.Dispose();
-            font.Dispose();
         }
 
         public float GetScaledFontSize(Graphics g, string line, Font preferedFont, float maxSize, int frameWidth)
@@ -8481,30 +10389,35 @@ namespace cPlayer
 
             return (float)scaledSize;
         }
-                
+
         private void DoKaraokeMode(Graphics graphics, IList<LyricPhrase> phrases, IEnumerable<Lyric> lyrics)
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
 
-            var time = GetCorrectedTime();
+            double time = GetCorrectedTime();
             LyricPhrase currentLine = null;
             LyricPhrase nextLine = null;
             LyricPhrase lastLine = null;
-            //get active and next phrase, and store last used phrase
-            for (var i = 0; i < phrases.Count(); i++)
+
+            // get active and next phrase, and store last used phrase
+            for (int i = 0; i < phrases.Count; i++)
             {
                 var phrase = phrases[i];
-                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (string.IsNullOrEmpty(phrase.PhraseText))
+                    continue;
+
                 if (phrase.PhraseEnd < time)
                 {
-                    lastLine = phrases[i];
+                    lastLine = phrase;
                     continue;
                 }
+
                 if (phrase.PhraseStart > time)
                 {
-                    nextLine = phrases[i];
+                    nextLine = phrase;
                     break;
                 }
+
                 currentLine = phrase;
                 if (i < phrases.Count - 1)
                 {
@@ -8512,180 +10425,264 @@ namespace cPlayer
                 }
                 break;
             }
-            var currentLineTop = GetKaraokeCurrentLineTop();
-            var nextLineTop = GetKaraokeNextLineTop();
-            string lineText;
-            Font lineFont;
-            Size lineSize;
-            int posX;            
-            picVisuals.BackColor = secondScreen == null ? KaraokeModeBackgroundColor : Color.AliceBlue;
-            if (currentLine != null && !string.IsNullOrEmpty(currentLine.PhraseText))
+
+            graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            int currentLineTop = GetKaraokeCurrentLineTop();
+            int nextLineTop = GetKaraokeNextLineTop();
+
+            try
             {
-                //draw entire current phrase on top
-                lineText = ProcessLine(currentLine.PhraseText, true).Replace("‿", " ");
-                lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
-                lineSize = TextRenderer.MeasureText(lineText, lineFont);
-                posX = (renderSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, currentLineTop), KaraokeModeHarm1Text, KaraokeBackgroundColor);
-
-                //draw portion of current phrase that's already been sung
-                var line2 = lyrics.Where(lyr => !(lyr.Start < currentLine.PhraseStart)).TakeWhile(lyr => !(lyr.Start > time)).Aggregate("", (current, lyr) => current + " " + lyr.Text);
-                line2 = ProcessLine(line2, true).Replace("‿", " ");
-                if (!string.IsNullOrEmpty(line2))
+                if (DoYargVideo())
                 {
-                    TextRenderer.DrawText(graphics, line2, lineFont, new Point(posX, currentLineTop), KaraokeModeHarm1Highlight, KaraokeBackgroundColor);
-                }
-
-                var lyricsList = lyrics.ToList();
-                var wordList = new List<ActiveWord>();
-                if (currentLine.PhraseStart <= time - 0.1)
-                {
-                    var word = "";
-                    double wordStart = 0, wordEnd = 0;
-                    var activeWord = new ActiveWord(word, wordStart, wordEnd);
-
-                    for (int i = 0; i < lyricsList.Count(); i++)
+                    graphics.Clear(Color.Transparent);
+                    if (secondScreen != null)
                     {
-                        var lyric = lyricsList[i];
+                        SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+                    }
+                }
+                else
+                {
+                    if (secondScreen != null)
+                    {
+                        graphics.Clear(KaraokeModeBackgroundColor);
+                        SetPicVisualsBackColorIfChanged(Color.AliceBlue);
+                    }
+                    else
+                    {
+                        graphics.Clear(KaraokeModeBackgroundColor);
+                    }
+                    SetPicVisualsBackColorIfChanged(secondScreen == null ? KaraokeModeBackgroundColor : Color.AliceBlue);
+                }
+            }
+            catch { }
 
-                        // Skip lyrics outside the proper time
-                        if (lyric.Start < currentLine.PhraseStart || lyric.Start > currentLine.PhraseEnd)
-                        {
-                            continue;
-                        }
-                        if (string.IsNullOrEmpty(word))
-                        {
-                            wordStart = lyric.Start;
-                        }
-                        if (lyric.Text.Contains("-")) //is a syllable
-                        {
-                            word += ProcessLine(lyric.Text, true);
-                            wordEnd = lyric.End;
-                            continue;
-                        }
-                        // Handle sustains
-                        else if (!string.IsNullOrEmpty(word) && lyric.Text.Contains("+"))
-                        {
-                            //word += "+";
-                            wordEnd = lyric.End;
+            List<Lyric> lyricsList = lyrics as List<Lyric> ?? lyrics.ToList();
 
-                            // Extend for consecutive sustains
-                            for (var a = i + 1; a < lyricsList.Count; a++)
+            using (var stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone())
+            using (var textBrush = new SolidBrush(KaraokeModeHarm1Text))
+            using (var highlightBrush = new SolidBrush(KaraokeModeHarm1Highlight))
+            {
+                stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                stringFormat.Trimming = StringTrimming.None;
+
+                if (currentLine != null && !string.IsNullOrEmpty(currentLine.PhraseText))
+                {
+                    // draw entire current phrase on top
+                    string lineText = ProcessLine(currentLine.PhraseText, true).Replace("‿", " ");
+
+                    using (var baseFont = new Font("Tahoma", 12f))
+                    using (var lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, baseFont, 120)))
+                    {
+                        SizeF lineSizeF = MeasureDrawString(graphics, lineText, lineFont, stringFormat);
+                        int lineWidth = (int)Math.Ceiling(lineSizeF.Width);
+                        int lineHeight = (int)Math.Ceiling(lineSizeF.Height);
+                        int posX = (renderSize.Width - lineWidth) / 2;
+
+                        //graphics.DrawString(lineText, lineFont, textBrush, posX, currentLineTop, stringFormat);
+                        DrawTextWithStroke(graphics, lineText, lineFont, new Point(posX, currentLineTop), KaraokeModeHarm1Text, Color.Black, 5);
+
+                        // draw portion of current phrase that's already been sung
+                        string sungLine = string.Join(" ",
+                            lyricsList
+                                .Where(lyr => lyr.Start >= currentLine.PhraseStart && lyr.Start <= time)
+                                .Select(lyr => lyr.Text));
+
+                        sungLine = ProcessLine(sungLine, true).Replace("‿", " ");
+
+                        if (!string.IsNullOrEmpty(sungLine))
+                        {
+                            //graphics.DrawString(sungLine, lineFont, highlightBrush, posX, currentLineTop, stringFormat);
+                            DrawTextWithStroke(graphics, sungLine, lineFont, new Point(posX, currentLineTop), KaraokeModeHarm1Highlight, Color.Black, 5);
+                        }
+
+                        if (currentLine.PhraseStart <= time - 0.1)
+                        {
+                            var wordList = new List<ActiveWord>();
+                            string word = "";
+                            double wordStart = 0;
+                            double wordEnd = 0;
+
+                            for (int i = 0; i < lyricsList.Count; i++)
                             {
-                                if (lyricsList[a].Text.Contains("+"))
-                                {
-                                    //word += "+"; // Append the sustain
-                                    wordEnd = lyricsList[a].End;
-                                    i = a; // Update `i` to skip processed sustain notes
-                                }
-                                else
-                                {
-                                    break; // Exit sustain processing
-                                }
-                            }
-                            continue; // Continue to process the next lyric
-                        }
-                        else
-                        {
-                            // Append regular lyrics to the word
-                            word += ProcessLine(lyric.Text, true).Replace("‿", " ");
-                            wordEnd = lyric.End;
+                                var lyric = lyricsList[i];
 
-                            //look ahead to double check next lyric(s) aren't + sustains
-                            for (var z = i + 1; z < lyricsList.Count - i - 1; z++)
-                            {
-                                if (lyricsList[z].Text.Contains("+"))
+                                // Skip lyrics outside the proper time
+                                if (lyric.Start < currentLine.PhraseStart || lyric.Start > currentLine.PhraseEnd)
+                                    continue;
+
+                                if (string.IsNullOrEmpty(word))
+                                    wordStart = lyric.Start;
+
+                                if (lyric.Text.Contains("-")) // is a syllable
                                 {
-                                    //word += "+"; // Append the sustain
-                                    wordEnd = lyricsList[z].End;
-                                    i = z;
+                                    word += ProcessLine(lyric.Text, true);
+                                    wordEnd = lyric.End;
+                                    continue;
+                                }
+                                // Handle sustains
+                                else if (!string.IsNullOrEmpty(word) && lyric.Text.Contains("+"))
+                                {
+                                    wordEnd = lyric.End;
+
+                                    // Extend for consecutive sustains
+                                    for (int a = i + 1; a < lyricsList.Count; a++)
+                                    {
+                                        if (lyricsList[a].Text.Contains("+"))
+                                        {
+                                            wordEnd = lyricsList[a].End;
+                                            i = a;
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
                                     continue;
                                 }
                                 else
                                 {
-                                    i = z - 1;
-                                    break;
+                                    // Append regular lyrics to the word
+                                    word += ProcessLine(lyric.Text, true).Replace("‿", " ");
+                                    wordEnd = lyric.End;
+
+                                    // look ahead to double check next lyric(s) aren't + sustains
+                                    for (int z = i + 1; z < lyricsList.Count; z++)
+                                    {
+                                        if (lyricsList[z].Text.Contains("+"))
+                                        {
+                                            wordEnd = lyricsList[z].End;
+                                            i = z;
+                                        }
+                                        else
+                                        {
+                                            i = z - 1;
+                                            break;
+                                        }
+                                    }
+
+                                    // Finalize the word if it’s not a middle syllable
+                                    if (!string.IsNullOrEmpty(word))
+                                    {
+                                        wordList.Add(new ActiveWord(word.Trim(), wordStart, wordEnd));
+                                        word = "";
+                                    }
                                 }
                             }
 
-                            // Finalize the word if it’s not a middle syllable
-                            if (!string.IsNullOrEmpty(word))
+                            // Find the active word matching playback time
+                            var activeWord = wordList.FirstOrDefault(w => w.WordStart <= time && w.WordEnd > time);
+
+                            if (activeWord != null && !string.IsNullOrEmpty(activeWord.Text))
                             {
-                                wordList.Add(new ActiveWord(word.Trim(), wordStart, wordEnd));
-                                word = ""; // Reset the word
+                                activeWord.Text = activeWord.Text.Replace("‿", " ");
+
+                                using (var activeBaseFont = new Font("Tahoma", 12f))
+                                using (var activeWordFont = new Font("Tahoma", GetScaledFontSize(graphics, activeWord.Text, activeBaseFont, 200)))
+                                {
+                                    SizeF activeSizeF = MeasureDrawString(graphics, activeWord.Text, activeWordFont, stringFormat);
+                                    int activeWidth = (int)Math.Ceiling(activeSizeF.Width);
+                                    int activeHeight = (int)Math.Ceiling(activeSizeF.Height);
+
+                                    int activeX = (renderSize.Width - activeWidth) / 2;
+                                    int activeY = (renderSize.Height - activeHeight) / 2;
+
+                                    // Draw the entire word in normal color
+                                    //graphics.DrawString(activeWord.Text, activeWordFont, textBrush, activeX, activeY, stringFormat);
+                                    DrawTextWithStroke(graphics, activeWord.Text, activeWordFont, new Point(activeX, activeY), KaraokeModeHarm1Text, Color.Black, 5);
+                                    // Calculate progress for the sung portion
+                                    double duration = activeWord.WordEnd - activeWord.WordStart;
+                                    float progress = duration <= 0
+                                        ? 1f
+                                        : Clamp((float)((time - activeWord.WordStart) / duration), 0.0f, 1.0f);
+
+                                    int numCharsToHighlight = (int)Math.Ceiling(progress * activeWord.Text.Length);
+                                    numCharsToHighlight = Math.Min(numCharsToHighlight, activeWord.Text.Length);
+
+                                    string sungPortion = activeWord.Text.Substring(0, numCharsToHighlight);
+
+                                    if (!string.IsNullOrEmpty(sungPortion))
+                                    {
+                                        //graphics.DrawString(sungPortion, activeWordFont, highlightBrush, activeX, activeY, stringFormat);
+                                        DrawTextWithStroke(graphics, sungPortion, activeWordFont, new Point(activeX, activeY), KaraokeModeHarm1Highlight, Color.Black, 5);
+                                    }
+                                }
                             }
                         }
                     }
+                }
 
-                    // Find the active word matching playback time
-                    activeWord = wordList.FirstOrDefault(w => w.WordStart <= time && w.WordEnd > time);
-                    
-                    if (activeWord != null && !string.IsNullOrEmpty(activeWord.Text))
+                if (nextLine != null && !string.IsNullOrEmpty(nextLine.PhraseText))
+                {
+                    // draw entire next phrase on bottom
+                    string lineText = ProcessLine(nextLine.PhraseText, true).Replace("‿", " ");
+
+                    using (var baseFont = new Font("Tahoma", 12f))
+                    using (var lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, baseFont, 120)))
                     {
-                        activeWord.Text = activeWord.Text.Replace("‿", " ");
+                        SizeF lineSizeF = MeasureDrawString(graphics, lineText, lineFont, stringFormat);
+                        int lineWidth = (int)Math.Ceiling(lineSizeF.Width);
+                        int lineHeight = (int)Math.Ceiling(lineSizeF.Height);
+                        int posX = (renderSize.Width - lineWidth) / 2;
 
-                        // Measure the word size for centering
-                        lineFont = new Font("Tahoma", GetScaledFontSize(graphics, activeWord.Text, new Font("Tahoma", (float)12.0), 200));
-                        lineSize = TextRenderer.MeasureText(activeWord.Text, lineFont);
-                        posX = (renderSize.Width - lineSize.Width) / 2;
-                        var posY = (renderSize.Height - lineSize.Height) / 2;
-
-                        // Draw the entire word in white
-                        TextRenderer.DrawText(graphics, activeWord.Text, lineFont, new Point(posX, posY), KaraokeModeHarm1Text, KaraokeBackgroundColor);
-
-                        // Calculate progress for the sung portion
-                        var timeElapsed = time - activeWord.WordStart;
-                        var progress = Clamp((float)(timeElapsed / (activeWord.WordEnd - activeWord.WordStart)), 0.0f, 1.0f);
-
-                        // Determine the portion of the word to highlight
-                        var numCharsToHighlight = (int)Math.Ceiling(progress * activeWord.Text.Length); // Ensure rounding up
-                        numCharsToHighlight = Math.Min(numCharsToHighlight, activeWord.Text.Length);
-
-                        // Extract the sung portion
-                        var sungPortion = activeWord.Text.Substring(0, numCharsToHighlight);
-
-                        // Overlay the sung portion in blue
-                        if (!string.IsNullOrEmpty(sungPortion))
-                        {
-                            TextRenderer.DrawText(graphics, sungPortion, lineFont, new Point(posX, posY), KaraokeModeHarm1Highlight, KaraokeBackgroundColor);
-                        }
+                        //graphics.DrawString(lineText, lineFont, textBrush, posX, nextLineTop - lineHeight, stringFormat);
+                        DrawTextWithStroke(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineHeight), KaraokeModeHarm1Text, Color.Black, 6);
                     }
                 }
-            }
-            if (nextLine != null && !string.IsNullOrEmpty(nextLine.PhraseText))
-            {
-                //draw entire next phrase on bottom
-                lineText = ProcessLine(nextLine.PhraseText, true).Replace("‿", " ");
-                lineFont = new Font("Tahoma", GetScaledFontSize(graphics, lineText, new Font("Tahoma", (float)12.0), 120));
-                lineSize = TextRenderer.MeasureText(lineText, lineFont);
-                posX = (renderSize.Width - lineSize.Width) / 2;
-                TextRenderer.DrawText(graphics, lineText, lineFont, new Point(posX, nextLineTop - lineSize.Height), KaraokeModeHarm1Text, KaraokeBackgroundColor);
-            }
 
-            //draw waiting/countdown info
-            if (currentLine != null && nextLine != null) return;
-            if (lastLine != null && nextLine != null)
-            {
-                var difference = nextLine.PhraseStart - lastLine.PhraseEnd;
-                if (difference < 5) return;
+                // draw waiting/countdown info
+                if (currentLine != null && nextLine != null)
+                    return;
+
+                if (lastLine != null && nextLine != null)
+                {
+                    double difference = nextLine.PhraseStart - lastLine.PhraseEnd;
+                    if (difference < 5)
+                        return;
+                }
+
+                string middleText = "";
+                Color middleColor = KaraokeModeHarm1Text;
+
+                if (currentLine == null && nextLine != null)
+                {
+                    double wait = nextLine.PhraseStart - time;
+                    if (wait < 1.5)
+                        return;
+
+                    middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
+                    middleColor = wait <= 5 ? KaraokeModeHarm1Highlight : KaraokeModeHarm1Text;
+                }
+                else if (currentLine == null)
+                {
+                    middleText = "[fin]";
+                }
+
+                using (var middleBrush = new SolidBrush(middleColor))
+                using (var baseFont = new Font("Tahoma", 12f))
+                using (var lineFont = new Font("Tahoma", GetScaledFontSize(graphics, middleText, baseFont, 200)))
+                {
+                    SizeF lineSizeF = MeasureDrawString(graphics, middleText, lineFont, stringFormat);
+                    int lineWidth = (int)Math.Ceiling(lineSizeF.Width);
+                    int lineHeight = (int)Math.Ceiling(lineSizeF.Height);
+                    int posX = (renderSize.Width - lineWidth) / 2;
+                    int posY = (renderSize.Height - lineHeight) / 2;
+
+                    //graphics.DrawString(middleText, lineFont, middleBrush, posX, posY, stringFormat);
+                    DrawTextWithStroke(graphics, middleText, lineFont, new Point(posX, posY), middleColor, Color.Black, 6);
+                }
             }
-            var middleText = "";
-            var textColor = KaraokeModeHarm1Text;
-            if (currentLine == null && nextLine != null)
-            {
-                var wait = nextLine.PhraseStart - time;
-                if (wait < 1.5) return;
-                middleText = wait <= 5 ? "[GET READY]" : "[WAIT: " + ((int)(wait + 0.5)) + "]";
-                textColor = wait <= 5 ? KaraokeModeHarm1Highlight : KaraokeModeHarm1Text;// Color.FromArgb(185, 216, 76) : Color.FromArgb(255, 187, 52);
-            }
-            else if (currentLine == null)
-            {
-                middleText = "[fin]";
-            }
-            lineFont = new Font("Tahoma", GetScaledFontSize(graphics, middleText, new Font("Tahoma", (float)12.0), 200));
-            lineSize = TextRenderer.MeasureText(middleText, lineFont);
-            posX = (renderSize.Width - lineSize.Width) / 2;
-            TextRenderer.DrawText(graphics, middleText, lineFont, new Point(posX, (renderSize.Height - lineSize.Height) / 2), textColor, KaraokeBackgroundColor);
+        }
+
+        private SizeF MeasureDrawString(Graphics graphics, string text, Font font, StringFormat format)
+        {
+            if (string.IsNullOrEmpty(text))
+                return SizeF.Empty;
+
+            return graphics.MeasureString(text, font, int.MaxValue, format);
         }
 
         public float Clamp(float value, float min, float max)
@@ -8697,7 +10694,7 @@ namespace cPlayer
 
         public float GetScaledFontSize(Graphics g, string line, Font PreferedFont, float maxSize)
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
             var maxWidth = renderSize.Width * 0.95;
             var RealSize = g.MeasureString(line, PreferedFont);
             var ScaleRatio = maxWidth / RealSize.Width;
@@ -8711,6 +10708,8 @@ namespace cPlayer
 
         public double GetCorrectedTime()
         {
+            if (PlayingSong == null) return 0;
+
             var time = PlaybackSeconds - ((double)BassBuffer / 1000) - ((double)PlayingSong.PSDelay / 1000);
             if (enableBTAVOffsetSync)
             {
@@ -8723,25 +10722,25 @@ namespace cPlayer
         {
             if (clear_chart && Chart != null)
             {
-                Chart.Clear(chartSnippet.Checked ? TrackBackgroundColor1 : GetNoteColor(100));
+                Chart.Clear(doMIDIChart ? TrackBackgroundColor1 : GetNoteColor(100));
             }
         }
 
-        private void UpdateVisualStyle(object sender)
+        private void UpdateVisualStyle()
         {
             Image image = null;
             if (secondScreen != null)
             {
-                secondScreen.ChangeBackgroundImage(image);
+                secondScreen.ChangeVisualsImage(image);
             }
             else
             {
-                picVisuals.Image = image;
+                SafeVisualsSetter(image);
+                //picVisuals.Image = image;
             }
-            stageTimer.Enabled = false;
             ClearVisuals();
             PrepareForDrawing();
-        }        
+        }
 
         private void UpdateConsole(object sender, EventArgs e)
         {
@@ -8757,7 +10756,7 @@ namespace cPlayer
 
             var sentBy = (ToolStripMenuItem)sender;
             string newConsole;
-            nautilusToolStripMenuItem.Visible = true;
+            nautilusToolStripMenuItem.Enabled = true;
             setNautilusPath.Enabled = true;
             sendToVisualizer.Enabled = true;
             var enabled = false;
@@ -8787,7 +10786,7 @@ namespace cPlayer
             {
                 newConsole = "yarg";
                 consoleToolStripMenuItem.Text = "Game | Console: YARG / Clone Hero | PC";
-            }            
+            }
             else if (sentBy == rockSmith)
             {
                 newConsole = "rocksmith";
@@ -8839,465 +10838,1125 @@ namespace cPlayer
             StartNew(false);
         }
 
-        private static readonly Random Rng = new Random();
-        private double _nextFogEligible = 0;
+        private int GetCurrentBeatMarkerIndex(double correctedTime)
+        {
+            if (_beatMarkers == null || _beatMarkers.Count == 0)
+                return -1;
 
-        private void RandomizeStageKit(double songTimeSec)
-        {            
-            double bpm = PlayingSong.BPM > 0 ? PlayingSong.BPM : 120;
-            double pMin = 1.0 / 16.0;  // ≈6.25% at 80 BPM
-            double pMax = 0.8;         // 100% at 200+ BPM (use e.g. 0.6 if we want to cap it)
-            double t = (bpm - 80.0) / 120.0; // 0 at 80, 1 at 200
-            if (t < 0) t = 0; else if (t > 1) t = 1;
+            int lo = 0;
+            int hi = _beatMarkers.Count - 1;
 
-            double p = pMin + (pMax - pMin) * t;
-            bool activate = Rng.NextDouble() < p;
-            if (!activate) return;
-
-            if (useLEDs.Checked)
+            while (lo <= hi)
             {
-                var doRedCircle = Rng.NextDouble() < 0.50;
-                var doRedLaser = Rng.NextDouble() < 0.50;
-                var doRedRandom = Rng.NextDouble() < 0.50;
+                int mid = lo + ((hi - lo) / 2);
 
-                if (doRedCircle)
-                {
-                    redSKIndex = (redSKIndex + 1) & 7;
-                    update_red_led_state(redSKIndex, true, ref ledDisplay, ref stageKit);
-                    update_red_led_state(redSKIndex == 0 ? 7 : redSKIndex - 1, false, ref ledDisplay, ref stageKit);
-                }
-                else if (doRedLaser)
-                {
-                    update_red_led_state(redSKIndex, false, ref ledDisplay, ref stageKit);
-                    redSKIndex = Rng.Next(0, 8);
-                    update_red_led_state(redSKIndex, true, ref ledDisplay, ref stageKit);
-                }
-                else if (doRedRandom)
-                {
-                    var index = Rng.Next(0, 8);
-                    update_red_led_state(index, !CurrentStateRed[index], ref ledDisplay, ref stageKit);
-                }
-
-                var doBlueCircle = Rng.NextDouble() < 0.50;
-                var doBlueLaser = Rng.NextDouble() < 0.50;
-                var doBlueRandom = Rng.NextDouble() < 0.50;
-
-                if (doBlueCircle)
-                {
-                    blueSKIndex = (blueSKIndex + 1) & 7;
-                    update_blue_led_state(blueSKIndex, true, ref ledDisplay, ref stageKit);
-                    update_blue_led_state(blueSKIndex == 0 ? 7 : blueSKIndex - 1, false, ref ledDisplay, ref stageKit);
-                }
-                else if (doBlueLaser)
-                {
-                    update_blue_led_state(blueSKIndex, false, ref ledDisplay, ref stageKit);
-                    blueSKIndex = Rng.Next(0, 8);
-                    update_blue_led_state(blueSKIndex, true, ref ledDisplay, ref stageKit);
-                }
-                else if (doBlueRandom)
-                {
-                    var index = Rng.Next(0, 8);
-                    update_blue_led_state(index, !CurrentStateBlue[index], ref ledDisplay, ref stageKit);
-                }
-
-                var doGreenCircle = Rng.NextDouble() < 0.50;
-                var doGreenLaser = Rng.NextDouble() < 0.50;
-                var doGreenRandom = Rng.NextDouble() < 0.50;
-
-                if (doGreenCircle)
-                {
-                    greenSKIndex = (greenSKIndex + 1) & 7;
-                    update_green_led_state(greenSKIndex, true, ref ledDisplay, ref stageKit);
-                    update_green_led_state(greenSKIndex == 0 ? 7 : greenSKIndex - 1, false, ref ledDisplay, ref stageKit);
-                }
-                else if (doGreenLaser)
-                {
-                    update_green_led_state(greenSKIndex, false, ref ledDisplay, ref stageKit);
-                    greenSKIndex = Rng.Next(0, 8);
-                    update_green_led_state(greenSKIndex, true, ref ledDisplay, ref stageKit);
-                }
-                else if (doGreenRandom)
-                {
-                    var index = Rng.Next(0, 8);
-                    update_green_led_state(index, !CurrentStateGreen[index], ref ledDisplay, ref stageKit);
-                }
-
-                var doYellowCircle = Rng.NextDouble() < 0.50;
-                var doYellowLaser = Rng.NextDouble() < 0.50;
-                var doYellowRandom = Rng.NextDouble() < 0.50;
-
-                if (doYellowCircle)
-                {
-                    yellowSKIndex = (yellowSKIndex + 1) & 7;
-                    update_yellow_led_state(yellowSKIndex, true, ref ledDisplay, ref stageKit);
-                    update_yellow_led_state(yellowSKIndex == 0 ? 7 : yellowSKIndex - 1, false, ref ledDisplay, ref stageKit);
-                }
-                else if (doYellowLaser)
-                {
-                    update_yellow_led_state(yellowSKIndex, false, ref ledDisplay, ref stageKit);
-                    yellowSKIndex = Rng.Next(0, 8);
-                    update_yellow_led_state(yellowSKIndex, true, ref ledDisplay, ref stageKit);
-                }
-                else if (doYellowRandom)
-                {
-                    var index = Rng.Next(0, 8);
-                    update_yellow_led_state(index, !CurrentStateYellow[index], ref ledDisplay, ref stageKit);
-                }
+                if (_beatMarkers[mid].TimeSeconds <= correctedTime)
+                    lo = mid + 1;
+                else
+                    hi = mid - 1;
             }
 
-            if (useStrobe.Checked)
+            return hi; // last beat marker at or before correctedTime
+        }
+
+        private void AnimateStageKits(double songTimeSec)
+        {
+            if (_beatMarkers == null || _beatMarkers.Count < 2)
+                return;
+
+            // Compensate for worker/packet spacing.
+            // Tune between 0.015 and 0.040 if needed.
+            const double stageKitLeadSeconds = 0.025;
+            double stageKitTime = songTimeSec + stageKitLeadSeconds;
+
+            int beatIndex = GetCurrentBeatMarkerIndex(stageKitTime);
+            if (beatIndex < 0 || beatIndex >= _beatMarkers.Count)
+                return;
+
+            BeatMarker beat = _beatMarkers[beatIndex];
+
+            double bpm = PlayingSong != null && PlayingSong.BPM > 0 ? PlayingSong.BPM : 120.0;
+
+            double beatDuration;
+            if (beatIndex + 1 < _beatMarkers.Count)
+                beatDuration = _beatMarkers[beatIndex + 1].TimeSeconds - _beatMarkers[beatIndex].TimeSeconds;
+            else if (beatIndex > 0)
+                beatDuration = _beatMarkers[beatIndex].TimeSeconds - _beatMarkers[beatIndex - 1].TimeSeconds;
+            else
+                beatDuration = 60.0 / bpm;
+
+            if (beatDuration <= 0.0001)
+                beatDuration = 60.0 / bpm;
+
+            const int subdivisions = 2;
+
+            double beatStart = _beatMarkers[beatIndex].TimeSeconds;
+            double phaseWithinBeat = (stageKitTime - beatStart) / beatDuration;
+
+            if (phaseWithinBeat < 0.0) phaseWithinBeat = 0.0;
+            if (phaseWithinBeat > 0.9999) phaseWithinBeat = 0.9999;
+
+            int subBeat = (int)Math.Floor(phaseWithinBeat * subdivisions);
+            int subBeatIndex = (beatIndex * subdivisions) + subBeat;
+
+            if (subBeatIndex == _lastStageKitSubBeatIndex)
+                return;
+
+            _lastStageKitSubBeatIndex = subBeatIndex;
+
+            bool newBeat = beatIndex != _lastStageKitBeatIndex;
+            if (newBeat)
+                _lastStageKitBeatIndex = beatIndex;
+
+            bool newMeasure = false;
+            if (beat.IsMeasure && beatIndex != _lastStageKitMeasureIndex)
+            {
+                newMeasure = true;
+                _lastStageKitMeasureIndex = beatIndex;
+            }                     
+                    
+            if (useLEDs.Checked || useFatsCoLEDs.Checked)
+            {
+                ApplyStageKitLedPattern(subBeatIndex);
+            }
+
+            if ((useStrobe.Checked || useFatsCoStrobe.Checked) && PlayingSong != null)
             {
                 try
                 {
-                    var turnOnStrobe = Rng.NextDouble() < 0.20;
-                    var speed = PlayingSong.BPM < 80 ? StrobeSpeed.Slow
-                             : PlayingSong.BPM < 140 ? StrobeSpeed.Medium
-                             : StrobeSpeed.Faster;
+                    if (newBeat)
+                    {
+                        //on at beat 1 and 3, otherwise off
+                        bool turnOnStrobe = newMeasure || beatIndex % 3 == 0; 
 
-                    if (turnOnStrobe)
-                    {
-                        stageKit.TurnStrobeOn(speed);
-                    }
-                    else
-                    {
-                        stageKit.TurnStrobeOff();
+                        var speed = bpm < 80 ? StrobeSpeed.Slow
+                                 : bpm < 140 ? StrobeSpeed.Medium
+                                 : bpm < 190 ? StrobeSpeed.Faster
+                                 : StrobeSpeed.Fastest;
+
+                        if (stageKitToolStripMenuItem.Checked && useStrobe.Checked)
+                        {
+                            foreach (var stageKit in stageKits)
+                            {
+                                if (turnOnStrobe)
+                                {
+                                    stageKit.TurnStrobeOn(speed);
+                                }
+                                else
+                                {
+                                    stageKit.TurnStrobeOff();
+                                }
+                            }
+                        }
+                        if (enableFatsCoLights.Checked && useFatsCoStrobe.Checked)
+                        {
+                            foreach (var fatsCo in fatsCoLights)
+                            {
+                                if (turnOnStrobe)
+                                {
+                                    switch (speed)
+                                    {
+                                        case StrobeSpeed.Slow:
+                                            fatsCo.StrobeOnSlowest();
+                                            break;
+                                        case StrobeSpeed.Medium:
+                                            fatsCo.StrobeOnMedium();
+                                            break;
+                                        case StrobeSpeed.Faster:
+                                            fatsCo.StrobeOnFast();
+                                            break;
+                                        case StrobeSpeed.Fastest:
+                                            fatsCo.StrobeOnFastest();
+                                            break;
+                                        default:
+                                            fatsCo.StrobeOnMedium();
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    fatsCo.TurnOffStrobe();
+                                }
+                            }
+                        }
                     }
                 }
-                catch (Exception e) { }
+                catch
+                { }
             }
 
             if (useFogger.Checked)
             {
                 try
                 {
-                    if (songTimeSec >= _nextFogEligible && Rng.Next(0, 200) == 0) // ~1–2 per 4–5 min song
+                    if (newMeasure &&
+                        songTimeSec >= _nextFogEligible &&
+                        Rng.NextDouble() < 0.015)
                     {
-                        var fogInterval = Rng.Next(500, 2001); //0.5 to 2 seconds
+                        var fogInterval = Rng.Next(500, 2001);
                         foggerTimer.Interval = fogInterval;
-                        _nextFogEligible = songTimeSec + 60 + Rng.Next(0, 21);    // 60–81s cooldown
-                        stageKit.TurnFogOn();
+
+                        _nextFogEligible = songTimeSec + 60 + Rng.Next(0, 21);
+
+                        foreach (var stageKit in stageKits)
+                            stageKit.TurnFogOn();
+
                         foggerTimer.Enabled = true;
                     }
                 }
-                catch (Exception ex) { }
-            }
-        }
-
-        private void update_yellow_led_state(int ledIndex, bool ledState, ref LedDisplay display_panel, ref StageKitController controller_ref)
-        {
-            try
-            {
-                switch (ledIndex)
+                catch
                 {
-                    case 0:
-                        controller_ref.DisplayYellowLed1(ref display_panel, ledState);
-                        break;
-                    case 1:
-                        controller_ref.DisplayYellowLed2(ref display_panel, ledState);
-                        break;
-                    case 2:
-                        controller_ref.DisplayYellowLed3(ref display_panel, ledState);
-                        break;
-                    case 3:
-                        controller_ref.DisplayYellowLed4(ref display_panel, ledState);
-                        break;
-                    case 4:
-                        controller_ref.DisplayYellowLed5(ref display_panel, ledState);
-                        break;
-                    case 5:
-                        controller_ref.DisplayYellowLed6(ref display_panel, ledState);
-                        break;
-                    case 6:
-                        controller_ref.DisplayYellowLed7(ref display_panel, ledState);
-                        break;
-                    case 7:
-                        controller_ref.DisplayYellowLed8(ref display_panel, ledState);
-                        break;
-                    default:
-                        return;
                 }
-                CurrentStateYellow[ledIndex] = ledState;
             }
-            catch (Exception ex) { }
         }
 
-        private void update_blue_led_state(int ledIndex, bool ledState, ref LedDisplay display_panel, ref StageKitController controller_ref)
+        private void ApplyStageKitLedPattern(int globalStep)
         {
-            try
+            int localStep = UpdateStageKitPatternSelection(globalStep);
+            int patternStep = localStep * 2;
+
+            StageKitLedFrame frame;
+
+            switch (_currentStageKitPattern)
             {
-                switch (ledIndex)
+                case StageKitLedPattern.OneEachAlternatingDirections:
+                    frame = BuildPattern_OneEachAlternatingDirections(patternStep);
+                    break;
+
+                case StageKitLedPattern.BuildColorsThenReverse:
+                    frame = BuildPattern_BuildColorsThenReverse(patternStep);
+                    break;
+
+                case StageKitLedPattern.ThreeEachStaggered:
+                    frame = BuildPattern_ThreeEachStaggered(patternStep);
+                    break;
+
+                case StageKitLedPattern.LaserOpposites:
+                    frame = BuildPattern_LaserOpposites(patternStep);
+                    break;
+
+                case StageKitLedPattern.OneEachSameDirection:
+                default:
+                    frame = BuildPattern_OneEachSameDirection(patternStep);
+                    break;
+            }
+
+            SendStageKitLedFrame(frame);
+        }
+
+        private void ResetStageKitPatternState(int currentGlobalStep = 0)
+        {
+            _currentStageKitPattern = PickRandomStageKitPattern();
+            _previousStageKitPattern = _currentStageKitPattern;
+            _stageKitPatternStartStep = currentGlobalStep;
+            _stageKitPatternLength = GetStageKitPatternLength(_currentStageKitPattern);
+
+        }
+
+        private void SetOne(bool[] bank, int index)
+        {
+            if (bank == null || bank.Length < 8)
+                return;
+
+            bank[index & 7] = true;
+        }
+
+        private void SetRun(bool[] bank, int startIndex, int count, int direction = 1)
+        {
+            if (bank == null || bank.Length < 8)
+                return;
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = direction >= 0
+                    ? (startIndex + i) & 7
+                    : (startIndex - i) & 7;
+
+                bank[index] = true;
+            }
+        }
+
+        private StageKitLedFrame BuildPattern_OneEachSameDirection(int step)
+        {
+            var frame = new StageKitLedFrame();
+
+            int baseIndex = step & 7;
+
+            SetOne(frame.Red, baseIndex + 0);
+            SetOne(frame.Blue, baseIndex + 2);
+            SetOne(frame.Green, baseIndex + 4);
+            SetOne(frame.Yellow, baseIndex + 6);
+
+            return frame;
+        }
+
+        private StageKitLedFrame BuildPattern_OneEachAlternatingDirections(int step)
+        {
+            var frame = new StageKitLedFrame();
+
+            int forward = step & 7;
+            int backward = (-step) & 7;
+
+            SetOne(frame.Red, forward + 0);
+            SetOne(frame.Blue, backward + 2);
+            SetOne(frame.Green, forward + 4);
+            SetOne(frame.Yellow, backward + 6);
+
+            return frame;
+        }
+
+        private StageKitLedFrame BuildPattern_BuildColorsThenReverse(int step)
+        {
+            var frame = new StageKitLedFrame();
+
+            const int ledsPerColor = 8;
+            const int colors = 4;
+            const int buildSteps = ledsPerColor * colors; // 32
+            const int cycleSteps = buildSteps * 2;        // 64
+
+            int s = step % cycleSteps;
+            if (s < 0) s += cycleSteps;
+
+            bool reversing = s >= buildSteps;
+
+            if (reversing)
+                s = cycleSteps - 1 - s;
+
+            // s is now 0..31 for the build state, whether forward or reverse.
+            int completedColors = s / ledsPerColor;
+            int partialCount = (s % ledsPerColor) + 1;
+
+            // Color order: Red -> Yellow -> Blue -> Green.
+            // Fully completed colors stay on.
+            if (completedColors > 0)
+                SetRun(frame.Red, 0, 8);
+
+            if (completedColors > 1)
+                SetRun(frame.Yellow, 0, 8);
+
+            if (completedColors > 2)
+                SetRun(frame.Green, 0, 8);
+
+            if (completedColors > 3)
+                SetRun(frame.Blue, 0, 8);
+
+            // Current partial color.
+            switch (completedColors)
+            {
+                case 0:
+                    SetRun(frame.Red, 0, partialCount);
+                    break;
+
+                case 1:
+                    SetRun(frame.Red, 0, 8);
+                    SetRun(frame.Yellow, 0, partialCount);
+                    break;
+
+                case 2:
+                    SetRun(frame.Red, 0, 8);
+                    SetRun(frame.Yellow, 0, 8);
+                    SetRun(frame.Green, 0, partialCount);
+                    break;
+
+                case 3:
+                    SetRun(frame.Red, 0, 8);
+                    SetRun(frame.Yellow, 0, 8);
+                    SetRun(frame.Green, 0, 8);
+                    SetRun(frame.Blue, 0, partialCount);
+                    break;
+            }
+
+            return frame;
+        }
+
+        private StageKitLedFrame BuildPattern_ThreeEachStaggered(int step)
+        {
+            var frame = new StageKitLedFrame();
+
+            int baseIndex = step & 7;
+
+            SetRun(frame.Red, baseIndex + 0, 3);
+            SetRun(frame.Blue, baseIndex + 2, 3);
+            SetRun(frame.Green, baseIndex + 4, 3);
+            SetRun(frame.Yellow, baseIndex + 6, 3);
+
+            return frame;
+        }
+
+        private void SendStageKitLedFrame(StageKitLedFrame frame)
+        {
+            if (frame == null)
+                return;
+
+            //Stage Kit
+            if (stageKits != null && stageKits.Count > 0 && stageKitToolStripMenuItem.Checked && useLEDs.Checked)
+            {
+                SendColorDiff(
+                    CurrentStateRed,
+                    frame.Red,
+                    (stageKit, index, state) => stageKit.DisplayRedLed(ref ledDisplay, index, state)
+                );
+
+                SendColorDiff(
+                    CurrentStateBlue,
+                    frame.Blue,
+                    (stageKit, index, state) => stageKit.DisplayBlueLed(ref ledDisplay, index, state)
+                );
+
+                SendColorDiff(
+                    CurrentStateGreen,
+                    frame.Green,
+                    (stageKit, index, state) => stageKit.DisplayGreenLed(ref ledDisplay, index, state)
+                );
+
+                SendColorDiff(
+                    CurrentStateYellow,
+                    frame.Yellow,
+                    (stageKit, index, state) => stageKit.DisplayYellowLed(ref ledDisplay, index, state)
+                );
+            }
+
+            //FatsCo
+            if (fatsCoLights != null && fatsCoLights.Count > 0 && enableFatsCoLights.Checked && useFatsCoLEDs.Checked)
+            {
+                byte redMask = ToLedMask(frame.Red);
+                byte blueMask = ToLedMask(frame.Blue);
+                byte greenMask = ToLedMask(frame.Green);
+                byte yellowMask = ToLedMask(frame.Yellow);
+
+                QueueStageKitCommand(() =>
                 {
-                    case 0:
-                        controller_ref.DisplayBlueLed1(ref display_panel, ledState);
-                        break;
-                    case 1:
-                        controller_ref.DisplayBlueLed2(ref display_panel, ledState);
-                        break;
-                    case 2:
-                        controller_ref.DisplayBlueLed3(ref display_panel, ledState);
-                        break;
-                    case 3:
-                        controller_ref.DisplayBlueLed4(ref display_panel, ledState);
-                        break;
-                    case 4:
-                        controller_ref.DisplayBlueLed5(ref display_panel, ledState);
-                        break;
-                    case 5:
-                        controller_ref.DisplayBlueLed6(ref display_panel, ledState);
-                        break;
-                    case 6:
-                        controller_ref.DisplayBlueLed7(ref display_panel, ledState);
-                        break;
-                    case 7:
-                        controller_ref.DisplayBlueLed8(ref display_panel, ledState);
-                        break;
-                    default:
-                        return;
-                }
-                CurrentStateBlue[ledIndex] = ledState;
+                    foreach (var fatsCo in fatsCoLights)
+                    {
+                        fatsCo.SetLedMasks(
+                            redMask,
+                            blueMask,
+                            greenMask,
+                            yellowMask);
+                    }
+                });
             }
-            catch (Exception e) { }
         }
 
-        private void update_green_led_state(int ledIndex, bool ledState, ref LedDisplay display_panel, ref StageKitController controller_ref)
+        private static byte ToLedMask(bool[] leds)
         {
-            try
+            if (leds == null)
+                return 0x00;
+
+            byte mask = 0x00;
+
+            int count = Math.Min(8, leds.Length);
+
+            for (int i = 0; i < count; i++)
             {
-                switch (ledIndex)
+                if (leds[i])
+                    mask |= (byte)(1 << i);
+            }
+
+            return mask;
+        }
+
+        private void SendColorDiff(
+            bool[] current,
+            bool[] desired,
+            Action<StageKitController, int, bool> sendAction)
+        {
+            if (current == null || desired == null || sendAction == null)
+                return;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (current[i] == desired[i])
+                    continue;
+
+                int ledIndex = i;
+                bool newState = desired[i];
+
+                QueueStageKitCommand(() =>
                 {
-                    case 0:
-                        controller_ref.DisplayGreenLed1(ref display_panel, ledState);
-                        break;
-                    case 1:
-                        controller_ref.DisplayGreenLed2(ref display_panel, ledState);
-                        break;
-                    case 2:
-                        controller_ref.DisplayGreenLed3(ref display_panel, ledState);
-                        break;
-                    case 3:
-                        controller_ref.DisplayGreenLed4(ref display_panel, ledState);
-                        break;
-                    case 4:
-                        controller_ref.DisplayGreenLed5(ref display_panel, ledState);
-                        break;
-                    case 5:
-                        controller_ref.DisplayGreenLed6(ref display_panel, ledState);
-                        break;
-                    case 6:
-                        controller_ref.DisplayGreenLed7(ref display_panel, ledState);
-                        break;
-                    case 7:
-                        controller_ref.DisplayGreenLed8(ref display_panel, ledState);
-                        break;
-                    default:
-                        return;
-                }
-                CurrentStateGreen[ledIndex] = ledState;
+                    foreach (var stageKit in stageKits)
+                        sendAction(stageKit, ledIndex, newState);
+                });
+
+                current[i] = newState;
             }
-            catch (Exception e)
-            { }
         }
 
-        private void update_red_led_state(int ledIndex, bool ledState, ref LedDisplay display_panel, ref StageKitController controller_ref)
+        private int GetStageKitPatternLength(StageKitLedPattern pattern)
         {
-            try
+            const int speedMultiplier = 1;
+
+            switch (pattern)
             {
-                switch (ledIndex)
+                case StageKitLedPattern.OneEachSameDirection:
+                    return 16 * speedMultiplier; // two full 8-LED rotations
+
+                case StageKitLedPattern.OneEachAlternatingDirections:
+                    return 16 * speedMultiplier; // two full rotations/crossovers
+
+                case StageKitLedPattern.BuildColorsThenReverse:
+                    return 64 * speedMultiplier; // full build + full reverse
+
+                case StageKitLedPattern.ThreeEachStaggered:
+                    return 16 * speedMultiplier; // two full rotations
+
+                default:
+                    return 16 * speedMultiplier;
+
+                case StageKitLedPattern.LaserOpposites:
+                    return 16 * speedMultiplier;
+            }
+        }
+
+        private StageKitLedPattern PickRandomStageKitPattern()
+        {
+            var values = (StageKitLedPattern[])Enum.GetValues(typeof(StageKitLedPattern));
+
+            if (values.Length <= 1)
+                return values[0];
+
+            StageKitLedPattern next;
+
+            do
+            {
+                next = values[Rng.Next(values.Length)];
+            }
+            while (next == _currentStageKitPattern);
+
+            return next;
+        }
+
+        private int UpdateStageKitPatternSelection(int globalStep)
+        {
+            int localStep = globalStep - _stageKitPatternStartStep;
+
+            if (localStep < 0)
+            {
+                _stageKitPatternStartStep = globalStep;
+                localStep = 0;
+            }
+
+            if (localStep >= _stageKitPatternLength)
+            {
+                _previousStageKitPattern = _currentStageKitPattern;
+                _currentStageKitPattern = PickRandomStageKitPattern();
+
+                _stageKitPatternStartStep = globalStep;
+                _stageKitPatternLength = GetStageKitPatternLength(_currentStageKitPattern);
+
+                localStep = 0;
+            }
+
+            return localStep;
+        }
+
+        private void StartStageKitCommandWorker()
+        {
+            if (_stageKitCommandWorkerRunning)
+                return;
+
+            _stageKitCommandWorkerRunning = true;
+
+            _stageKitCommandThread = new Thread(StageKitCommandWorkerLoop);
+            _stageKitCommandThread.IsBackground = true;
+            _stageKitCommandThread.Name = "Stage Kit Command Worker";
+            _stageKitCommandThread.Start();
+        }
+
+        private void StopStageKitCommandWorker()
+        {
+            _stageKitCommandWorkerRunning = false;
+            _stageKitCommandSignal.Set();
+
+            if (_stageKitCommandThread != null && _stageKitCommandThread.IsAlive)
+                _stageKitCommandThread.Join(500);
+        }
+
+        private void QueueStageKitCommand(Action action)
+        {
+            if (action == null)
+                return;
+
+            lock (_stageKitCommandLock)
+            {
+                _stageKitCommandQueue.Enqueue(action);
+            }
+
+            _stageKitCommandSignal.Set();
+        }
+
+        private void StageKitCommandWorkerLoop()
+        {
+            while (_stageKitCommandWorkerRunning)
+            {
+                _stageKitCommandSignal.WaitOne();
+
+                if (!_stageKitCommandWorkerRunning)
+                    break;
+
+                while (true)
                 {
-                    case 0:
-                        controller_ref.DisplayRedLed1(ref display_panel, ledState);
+                    Action action = null;
+
+                    lock (_stageKitCommandLock)
+                    {
+                        if (_stageKitCommandQueue.Count > 0)
+                            action = _stageKitCommandQueue.Dequeue();
+                    }
+
+                    if (action == null)
                         break;
-                    case 1:
-                        controller_ref.DisplayRedLed2(ref display_panel, ledState);
-                        break;
-                    case 2:
-                        controller_ref.DisplayRedLed3(ref display_panel, ledState);
-                        break;
-                    case 3:
-                        controller_ref.DisplayRedLed4(ref display_panel, ledState);
-                        break;
-                    case 4:
-                        controller_ref.DisplayRedLed5(ref display_panel, ledState);
-                        break;
-                    case 5:
-                        controller_ref.DisplayRedLed6(ref display_panel, ledState);
-                        break;
-                    case 6:
-                        controller_ref.DisplayRedLed7(ref display_panel, ledState);
-                        break;
-                    case 7:
-                        controller_ref.DisplayRedLed8(ref display_panel, ledState);
-                        break;
-                    default:
-                        return;
+
+                    try
+                    {
+                        action();
+                    }
+                    catch
+                    {
+                        // Do not let Stage Kit failures affect playback.
+                    }
                 }
-                CurrentStateRed[ledIndex] = ledState;
             }
-            catch (Exception ex)
-            { }
         }
 
-        private void EnsureScaled(Size displaySize)
+        private void ResetStageKitAnimation()
         {
-            if (_scaledFrame == null || _scaledFrame.Width != displaySize.Width || _scaledFrame.Height != displaySize.Height)
+            ResetStageKitPatternState(0);
+
+            _lastStageKitBeatIndex = -1;
+            _lastStageKitSubBeatIndex = -1;
+            _lastStageKitMeasureIndex = -1;
+            _nextFogEligible = 0;
+
+            redSKIndex = 0;
+            blueSKIndex = 1;
+            greenSKIndex = 2;
+            yellowSKIndex = 3;
+
+            Array.Clear(CurrentStateRed, 0, CurrentStateRed.Length);
+            Array.Clear(CurrentStateBlue, 0, CurrentStateBlue.Length);
+            Array.Clear(CurrentStateGreen, 0, CurrentStateGreen.Length);
+            Array.Clear(CurrentStateYellow, 0, CurrentStateYellow.Length);
+
+            QueueStageKitCommand(() =>
             {
-                _scaledFrame?.Dispose();
-                _scaledFrame = new Bitmap(displaySize.Width, displaySize.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                foreach (var stageKit in stageKits)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        stageKit.DisplayRedLed(ref ledDisplay, i, false);
+                        stageKit.DisplayBlueLed(ref ledDisplay, i, false);
+                        stageKit.DisplayGreenLed(ref ledDisplay, i, false);
+                        stageKit.DisplayYellowLed(ref ledDisplay, i, false);
+                    }
+
+                    stageKit.DisplayRedLed(ref ledDisplay, redSKIndex, true);
+                    stageKit.DisplayBlueLed(ref ledDisplay, blueSKIndex, true);
+                    stageKit.DisplayGreenLed(ref ledDisplay, greenSKIndex, true);
+                    stageKit.DisplayYellowLed(ref ledDisplay, yellowSKIndex, true);
+                }
+
+                CurrentStateRed[redSKIndex] = true;
+                CurrentStateBlue[blueSKIndex] = true;
+                CurrentStateGreen[greenSKIndex] = true;
+                CurrentStateYellow[yellowSKIndex] = true;
+            });
+        }
+
+        private void SetRedLedStateOnly(int index, bool state)
+        {
+            if (index < 0 || index > 7)
+                return;
+
+            switch (index)
+            {
+                case 0: ledDisplay.RedLedArray.Led1 = state; break;
+                case 1: ledDisplay.RedLedArray.Led2 = state; break;
+                case 2: ledDisplay.RedLedArray.Led3 = state; break;
+                case 3: ledDisplay.RedLedArray.Led4 = state; break;
+                case 4: ledDisplay.RedLedArray.Led5 = state; break;
+                case 5: ledDisplay.RedLedArray.Led6 = state; break;
+                case 6: ledDisplay.RedLedArray.Led7 = state; break;
+                case 7: ledDisplay.RedLedArray.Led8 = state; break;
             }
         }
 
-        //private bool videoOverlayShown;
-        private int _advancing;
-        private Bitmap _scaledFrame;
+        private void SyncVideoToAudio()
+        {
+            if (_mediaPlayer == null || !_mediaPlayer.IsPlaying)
+                return;
+            if (!yarg.Checked) return; //only worry about this for YARG/Clone Hero lipsynced videos
+
+            long bassMs = GetBASSTimeForVideo();
+            long videoMs = _mediaPlayer.Time + VLCBuffer;
+            long driftMs = bassMs - videoMs;
+
+            // Ongoing correction when needed
+            if (driftMs > 100)
+            {
+                _mediaPlayer.Time = bassMs;
+            }
+            //DEBUG ONLY
+            //debugText.Text = "Synced by " + driftMs + "ms";
+        }
+
+        private void UpdateActiveRenderingResolution()
+        {            
+            if (isResizing) return;
+            Size currentSize = activeRenderingResolution;
+            Size newSize;
+            if (secondScreen != null)
+            {
+                newSize = new Size(secondScreen.Width, secondScreen.Height);
+            }
+            else
+            {
+                newSize = isFullScreen ? new Size(Width, Height) : new Size(picVisuals.Width, picVisuals.Height);
+            }
+            if (currentSize != newSize)
+            {
+                _rbLaneCacheKey = ""; //force rebuild due to new size
+                activeRenderingResolution = newSize;
+                videoOverlay.Size = newSize;
+            }
+        }
 
         private void PlaybackTimer_Tick(object sender, EventArgs e)
         {
-            if (isChoosingStems) return;            
             try
             {
-                if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
-                {                                                       
-                    // the stream is still playing...                    
-                    var pos = Bass.BASS_ChannelGetPosition(BassStream); // position in bytes
-                    PlaybackSeconds = Bass.BASS_ChannelBytes2Seconds(BassStream, pos); // the elapsed time length                   
+                var mixerState = Bass.BASS_ChannelIsActive(BassMixer);
+                if (mixerState != BASSActive.BASS_ACTIVE_PLAYING)
+                {
+                    if (mixerState != BASSActive.BASS_ACTIVE_STOPPED)
+                        return;
 
-                    //calculate how many seconds are left to play
-                    var time_left = ((double)PlayingSong.Length / 1000) - PlaybackSeconds;
-                    if ((((!skipIntroOutroSilence.Checked || OutroSilence == 0.0) && time_left <= FadeLength) ||
-                        (skipIntroOutroSilence.Checked && OutroSilence > 0.0 && PlaybackSeconds + FadeLength >= OutroSilence)) && !AlreadyFading) //skip to next song
-                    {
-                        Bass.BASS_ChannelSlideAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, 0, (int)FadeLength * 1000);
-                        AlreadyFading = true;
-                    }
-                    if (skipIntroOutroSilence.Checked && OutroSilence > 0.0)
-                    {
-                        if (PlaybackSeconds >= OutroSilence)
-                        {
-                            goto GoToNextSong;
-                        }
-                    }
-                    else if (PlaybackSeconds * 1000 >= PlayingSong.Length && picShuffle.Tag.ToString() == "shuffle")
+                    goto GoToNextSong;
+                }
+
+                SyncVideoToAudio();
+
+                long pos = Bass.BASS_ChannelGetPosition(BassStream);
+                PlaybackSeconds = Bass.BASS_ChannelBytes2Seconds(BassStream, pos);
+
+                double songLengthSeconds = PlayingSong.Length / 1000.0;
+                double timeLeft = songLengthSeconds - PlaybackSeconds;
+
+                bool shouldFade =
+                    ((!skipIntroOutroSilence.Checked || OutroSilence == 0.0) && timeLeft <= FadeLength) ||
+                    (skipIntroOutroSilence.Checked && OutroSilence > 0.0 && PlaybackSeconds + FadeLength >= OutroSilence);
+
+                if (shouldFade && !AlreadyFading)
+                {
+                    Bass.BASS_ChannelSlideAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, 0, (int)(FadeLength * 1000));
+                    AlreadyFading = true;
+                }
+
+                if (skipIntroOutroSilence.Checked && OutroSilence > 0.0)
+                {
+                    if (PlaybackSeconds >= OutroSilence)
+                        goto GoToNextSong;
+                }
+                else
+                {
+                    bool isShuffle = string.Equals(picShuffle.Tag as string, "shuffle", StringComparison.Ordinal);
+                    if (PlaybackSeconds * 1000 >= PlayingSong.Length && isShuffle)
                     {
                         PlaybackTimer.Enabled = false;
-                        StopPlayback();                        
-                        StopStageKit();
+                        StopPlayback();
+                        StopStageKits();
+
                         if (continuousPlayback.Checked)
-                        {
                             DoShuffleSongs();
-                        }                        
+
                         return;
                     }
-                    UpdateTime();
-                    DoPracticeSessions();
-                    if ((displayAlbumArt.Checked && File.Exists(CurrentSongArt)) || (!File.Exists(CurrentSongArt) && !displayAudioSpectrum.Checked))
-                    {
-                        /*if ((secondScreen == null && VideoIsPlaying) || (secondScreen != null && secondScreen.VideoIsPlaying))
-                        {
-                            StopAllVideoPlayback();
-                        }*/
-                        picPreview.Invalidate();
-                    }
-                    if (openSideWindow.Checked || secondScreen != null)
-                    {   
-                        videoOverlay.Visible = secondScreen == null;
-                        if (secondScreen != null)
-                        {
-                            secondScreen.videoOverlay.Visible = true;
-                        }
+                }
 
-                        var displaySize = (secondScreen != null ? secondScreen.videoOverlay.Size : videoOverlay.Size);
-                        if (displaySize.Width <= 0 || displaySize.Height <= 0) return;
-                        
-                        //let's force a 1080p internal resolution, then upscale
-                        var renderSize = new Size(1920, 1080);
-                        EnsureFrame(renderSize);
-                        EnsureScaled(displaySize);
+                UpdateTime();
+                DoPracticeSessions(GetCorrectedTime());
 
-                        if (WindowState == FormWindowState.Minimized)// || !MonitorApplicationFocus())
-                        {
-                            if (secondScreen != null)
-                            {
-                                secondScreen.ClearOverlayFrame();
-                            }
-                            else
-                            {
-                                ClearOverlayFrame();
-                            }
-                            return;//don't waste resources drawing if not visible
-                        }
+                bool shouldInvalidatePreview =
+                    (displayAlbumArt && File.Exists(CurrentSongArt)) ||
+                    (!File.Exists(CurrentSongArt) && !displayAudioSpectrum);
 
-                        using (var g = Graphics.FromImage(_renderedFrame))
-                        {
-                            g.Clear(Color.Transparent);
-                            UpdateTextQuality(g);
-                            if (chartVisualsToolStripMenuItem.Checked && rBStyle.Checked && !changedBackground)
-                            {
-                                ChangeRBStyleBackground();
-                                changedBackground = true;
-                            }
-                            if (rBStyle.Checked && doUseBackgroundImages && RBStyleBackground != null)
-                            {
-                                g.DrawImage(RBStyleBackground, 0, 0, renderSize.Width, renderSize.Height);
-                            }
-                            RenderVisuals(renderSize, g);
-                        }
+                if (shouldInvalidatePreview)
+                {
+                    picPreview.Invalidate();
+                }
 
-                        //resize visuals to actual screen size
-                        using (var g = Graphics.FromImage(_scaledFrame))
-                        {
-                            g.CompositingMode = CompositingMode.SourceCopy; // overwrite
-                            g.Clear(Color.Transparent);
-                            g.DrawImage(_renderedFrame, new Rectangle(0, 0, displaySize.Width, displaySize.Height));
-                        }
+                if (openSideWindow.Checked || secondScreen != null)
+                {
+                    RenderOverlayFrame();
 
-                        if (_scaledFrame != null)
-                        {
-                            if (secondScreen != null)
-                            {
-                                secondScreen.videoOverlay.UpdateVisuals(_scaledFrame);
-                                picVisuals.Image = Resources.logo;
-                            }
-                            else
-                            {
-                                videoOverlay.UpdateVisuals(_scaledFrame);
-                            }
-                        }  
-                    }
+                    long now = _frameWatch.ElapsedMilliseconds;
+                    frameMs = now - _lastFrameTick;
+                    _lastFrameTick = now;
+                    ShowFPSCounter();
+
                     return;
                 }
-                if (Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_STOPPED) return;
+
+                return;
             }
             catch (Exception)
             {
                 return;
             }
-           
-            if (Interlocked.Exchange(ref _advancing, 1) == 1) return;
 
-            GoToNextSong:
+        GoToNextSong:
             try
             {
-                StopStageKit();
+                StopStageKits();
+
                 if (!continuousPlayback.Checked)
                 {
                     StopPlayback();
                     return;
                 }
+
                 PlaybackTimer.Enabled = false;
-                if (picLoop.Tag.ToString() == "loop")
+
+                string loopMode = picLoop.Tag as string;
+                string shuffleMode = picShuffle.Tag as string;
+
+                if (string.Equals(loopMode, "loop", StringComparison.Ordinal))
                 {
                     DoLoop();
                     return;
                 }
-                if (picShuffle.Tag.ToString() == "shuffle")
+
+                if (string.Equals(shuffleMode, "shuffle", StringComparison.Ordinal))
                 {
                     DoShuffleSongs();
                     return;
                 }
+
                 picNext_MouseClick(null, null);
             }
-            catch { }
+            catch
+            { }
         }
+                        
+        private void RenderOverlayFrame()
+        {
+            Size scaleSize = activeRenderingResolution; //avoid scaling for now, just render at scale resolution
+            Size renderSize = activeRenderingResolution;//seems to have sped up performance quite a bit
+            EnsureRenderedFrame(renderSize);
+
+            using (var g = Graphics.FromImage(_renderedFrame))
+            {
+                g.Clear(doFocusMode ? Color.Black : Color.Transparent);
+                UpdateTextQuality(g);
+
+                if (!doFocusMode)
+                {
+                    if ((doModernKaraokeMode && doAnimatedBackground2) ||
+                        (doRockBandKaraoke && doAnimatedBackground))
+                    {
+                        var backgroundFrame = GetAnimatedKaraokeFrame(
+                            new Size(renderSize.Width / 2, renderSize.Height / 2));
+
+                        if (backgroundFrame != null)
+                        {
+                            g.CompositingMode = CompositingMode.SourceCopy;
+                            g.CompositingQuality = CompositingQuality.HighSpeed;
+                            g.InterpolationMode = InterpolationMode.Bilinear;
+                            g.SmoothingMode = SmoothingMode.None;
+                            g.PixelOffsetMode = PixelOffsetMode.Half;
+
+                            g.DrawImage(
+                                backgroundFrame,
+                                new Rectangle(0, 0, renderSize.Width, renderSize.Height),
+                                0,
+                                0,
+                                backgroundFrame.Width,
+                                backgroundFrame.Height,
+                                GraphicsUnit.Pixel);
+
+                            // Restore for foreground drawing
+                            g.CompositingMode = CompositingMode.SourceOver;
+                            UpdateTextQuality(g);
+                        }
+                    }
+                    else if (doAnimatedSpectrum && !DoYargVideo())
+                    {
+                        DrawFFTWaveform(g, new Rectangle(0, 0, renderSize.Width, renderSize.Height));
+                    }
+                    else
+                    {
+                        if (doRockBandChart && !changedBackground && !DoYargVideo())
+                        {
+                            ChangeRBStyleBackground();
+                            changedBackground = true;
+                        }
+
+                        if (doRockBandChart &&
+                            doUseBackgroundImages &&
+                            RBStyleBackgroundScaled != null &&
+                            !DoYargVideo())
+                        {
+                            if (RBStyleBackgroundScaled.Size != activeRenderingResolution)
+                            {
+                                //should already be scaled but isn't, let's fix it
+                                RBStyleBackgroundScaled = ScaleBackgroundImage(RBStyleBackgroundScaled);
+                            }
+                            g.DrawImageUnscaled(RBStyleBackgroundScaled, 0, 0);                            
+                        }
+                    }
+                }
+
+                g.CompositingMode = CompositingMode.SourceOver;
+                UpdateTextQuality(g);
+
+                RenderVisuals(renderSize, g);
+            }
+
+            Bitmap frameToDisplay;
+
+            if (scaleSize != renderSize)
+            {
+                frameToDisplay = ScaleBackgroundImage(_renderedFrame);
+            }
+            else
+            {
+                // No scaling needed
+                frameToDisplay = _renderedFrame;
+            }            
+
+            if (secondScreen != null)
+            {
+                if ((doUseBackgroundVideos || DoYargVideo()) && !doFocusMode)
+                {
+                    if (!secondScreen.videoOverlay.Visible)
+                    {
+                        secondScreen.videoOverlay.Visible = true;
+                    }
+                    secondScreen.videoOverlay.UpdateVisuals(frameToDisplay);
+                    if (!ReferenceEquals(picVisuals.Image, Resources.logo))
+                    {
+                        SafeVisualsSetter(Resources.logo);
+                    }
+                }
+                else
+                {
+                    if (secondScreen.videoOverlay.Visible)
+                    {
+                        secondScreen.videoOverlay.Visible = false;
+                    }
+                    secondScreen.ChangeVisualsImage(frameToDisplay);
+                }
+                secondScreen.InvalidateVisuals();
+            }
+            else
+            {
+                if ((doUseBackgroundVideos || DoYargVideo()) && !doFocusMode)
+                {
+                    if (!videoOverlay.Visible)
+                    {
+                        videoOverlay.Visible = true;
+                    }
+                    videoOverlay.UpdateVisuals(frameToDisplay);
+                }
+                else
+                {
+                    if (videoOverlay.Visible)
+                    {
+                        videoOverlay.Visible = false;
+                    }                    
+                    if (!ReferenceEquals(picVisuals.Image, frameToDisplay))
+                    {
+                        SafeVisualsSetter(frameToDisplay);
+                    }                    
+                }
+                picVisuals.Invalidate();
+            }
+        }
+
+        private void SafeVisualsSetter(Image newImage)
+        {
+            var pb = picVisuals;
+            if (pb.InvokeRequired)
+            {
+                pb.BeginInvoke(new Action(() => SafeVisualsSetter(newImage)));
+                return;
+            }
+
+            if (newImage == null)
+            {
+                picVisuals.Image = null;
+                return;
+            }
+
+            try
+            {
+                int w = newImage.Width;
+                int h = newImage.Height;
+
+                if (w <= 0 || h <= 0)
+                    return;
+            }
+            catch
+            {
+                newImage.Dispose();
+                return;
+            }
+
+            try
+            {
+                Image oldImage = pb.Image;
+
+                pb.Image = newImage;
+
+                if (oldImage != null && !ReferenceEquals(oldImage, _renderedFrame) && !ReferenceEquals(oldImage, _scaledFrame))
+                {
+                    oldImage.Dispose();
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show("Error setting visual:\n\n" + ex.Message + "\n\nStack Trace:\n\n" + ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }    
+        }
+
+        private void ClearRBKaraokeAnimatedFrameCache()
+        {
+            if (_cachedRBKaraokeAnimatedFrames != null)
+            {
+                foreach (Bitmap bmp in _cachedRBKaraokeAnimatedFrames)
+                    bmp?.Dispose();
+
+                _cachedRBKaraokeAnimatedFrames.Clear();
+            }
+
+            _cachedRBKaraokeAnimatedFrames = null;
+            _cachedRBKaraokeAnimatedFrameSize = Size.Empty;
+            _cachedRBKaraokeAnimatedSourceCount = -1;
+            _cachedRBKaraokeAnimatedSourceRef = null;
+        }
+
+        private void EnsureRBKaraokeAnimatedFrameCache(Size size)
+        {
+            if (stageFrames == null || stageFrames.Count == 0)
+                return;
+
+            bool needsRebuild =
+                _cachedRBKaraokeAnimatedFrames == null ||
+                _cachedRBKaraokeAnimatedFrameSize != size ||
+                _cachedRBKaraokeAnimatedSourceCount != stageFrames.Count ||
+                !ReferenceEquals(_cachedRBKaraokeAnimatedSourceRef, stageFrames);
+
+            if (!needsRebuild)
+                return;
+
+            ClearRBKaraokeAnimatedFrameCache();
+
+            _cachedRBKaraokeAnimatedFrames = new List<Bitmap>(stageFrames.Count);
+
+            for (int i = 0; i < stageFrames.Count; i++)
+            {
+                Image source = stageFrames[i];
+
+                if (source == null)
+                    continue;
+
+                Bitmap resized = new Bitmap(
+                    size.Width,
+                    size.Height, PixelFormat.Format32bppPArgb);
+
+                using (Graphics g = Graphics.FromImage(resized))
+                {
+                    g.Clear(Color.Black);
+
+                    g.CompositingMode = CompositingMode.SourceOver;
+                    g.CompositingQuality = CompositingQuality.HighSpeed;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.SmoothingMode = SmoothingMode.HighSpeed;
+
+                    g.DrawImage(source, 0, 0, size.Width, size.Height);
+                }
+
+                _cachedRBKaraokeAnimatedFrames.Add(resized);
+            }
+
+            _cachedRBKaraokeAnimatedFrameSize = size;
+            _cachedRBKaraokeAnimatedSourceCount = stageFrames.Count;
+            _cachedRBKaraokeAnimatedSourceRef = stageFrames;
+        }
+                
+        private Image GetAnimatedKaraokeFrame(Size targetSize)
+        {
+            bool animated =
+                (doRockBandKaraoke && doAnimatedBackground) ||
+                (doModernKaraokeMode && doAnimatedBackground2);
+
+            if (!animated)
+                return null;
+
+            if (targetSize.Width <= 0 || targetSize.Height <= 0)
+                return null;
+
+            if (stageFrames == null || stageFrames.Count == 0)
+            {
+                return doRockBandKaraoke ? stageBackground : null;
+            }
+
+            EnsureRBKaraokeAnimatedFrameCache(targetSize);
+
+            if (_cachedRBKaraokeAnimatedFrames == null || _cachedRBKaraokeAnimatedFrames.Count == 0)
+                return null;
+
+            if (stageCounter < 0 || stageCounter >= _cachedRBKaraokeAnimatedFrames.Count)
+                stageCounter = 0;
+
+            Image frame = _cachedRBKaraokeAnimatedFrames[stageCounter++];
+
+            if (stageCounter >= _cachedRBKaraokeAnimatedFrames.Count)
+                stageCounter = 0;
+
+            return frame;
+        }
+        
+        private void ShowFPSCounter()
+        {
+            if (!enableDebugFPS.Checked) return;
+            _fpsFrameCount++;
+
+            if (_fpsWatch.ElapsedMilliseconds >= 1000)
+            {
+                _currentFps = _fpsFrameCount;
+                _fpsFrameCount = 0;
+                _fpsWatch.Restart();
+
+                int scaleX = secondScreen != null ? secondScreen.Width : picVisuals.Width;
+                int scaleY = secondScreen != null ? secondScreen.Height : picVisuals.Height;
+
+                debugText.Text = $"DEBUG [Render: {activeRenderingResolution.Width}x{activeRenderingResolution.Height} | Scale: {scaleX}x{scaleY} | BPM: {PlayingSong.BPM} | Actual FPS: {_currentFps} | Frame: {frameMs} ms | Timer Interval: {PlaybackTimer.Interval}]";
+
+                if (_currentFps >= 30)
+                {
+                    lblFPS.ForeColor = Color.LimeGreen;
+                }
+                else if (_currentFps >= 20 && _currentFps < 30)
+                {
+                    lblFPS.ForeColor = Color.Orange;
+                }
+                else
+                {
+                    lblFPS.ForeColor = Color.Red;
+                }
+                lblFPS.Text = _currentFps.ToString();
+            }
+
+            if (_currentFps != _lastFps)
+            {
+                Debug.WriteLine($"CURRENT FPS: {_currentFps}");
+                _lastFps = _currentFps;
+            }
+        }
+
+        private long _lastFps = 0;
 
         private string RemoveCloneHeroColor(string author)
         {
@@ -9354,19 +12013,70 @@ namespace cPlayer
             PlaybackTimer.Enabled = false;
             StopPlayback();
             PlaybackSeconds = 0;
-            StartPlayback(true, false);
+            _ = StartPlaybackAsync(true, false);
         }
-
-        private void DoPracticeSessions()
+                
+        private void DoPracticeSessions(double time)
         {
-            lblSections.Visible = showPracticeSections.Checked && MIDITools.PracticeSessions.Any() && !chartVertical.Checked;
-            if (!openSideWindow.Checked) return;
-            if (!showPracticeSections.Checked || !MIDITools.PracticeSessions.Any())
+            bool hasPracticeSections = MIDITools.PracticeSessions != null && MIDITools.PracticeSessions.Count > 0;
+            bool shouldShow = showPracticeSections.Checked && hasPracticeSections && !doVerticalChart;
+
+            if (_lastPracticeSectionVisible != shouldShow)
             {
-                lblSections.Text = "";
+                lblSections.Visible = shouldShow;
+                _lastPracticeSectionVisible = shouldShow;
+            }
+
+            if (!openSideWindow.Checked)
+                return;
+
+            if (!showPracticeSections.Checked || !hasPracticeSections)
+            {
+                if (_lastPracticeSectionText != "")
+                {
+                    lblSections.Text = "";
+                    _lastPracticeSectionText = "";
+                }
+
+                _lastPracticeSectionIndex = -1;
                 return;
             }
-            lblSections.Text = GetCurrentSection(GetCorrectedTime());
+
+            string currentSection = GetCurrentSectionFast(time);
+
+            if (!string.Equals(_lastPracticeSectionText, currentSection, StringComparison.Ordinal))
+            {
+                lblSections.Text = currentSection;
+                _lastPracticeSectionText = currentSection;
+            }
+        }
+        
+        private string GetCurrentSectionFast(double time)
+        {
+            if (MIDITools.PracticeSessions == null || MIDITools.PracticeSessions.Count == 0)
+                return "";
+
+            if (_lastPracticeSectionIndex < 0)
+                _lastPracticeSectionIndex = 0;
+
+            // Move forward while time has passed the next section start
+            while (_lastPracticeSectionIndex + 1 < MIDITools.PracticeSessions.Count &&
+                   MIDITools.PracticeSessions[_lastPracticeSectionIndex + 1].SectionStart <= time)
+            {
+                _lastPracticeSectionIndex++;
+            }
+
+            // If user seeks backward, walk back
+            while (_lastPracticeSectionIndex > 0 &&
+                   MIDITools.PracticeSessions[_lastPracticeSectionIndex].SectionStart > time)
+            {
+                _lastPracticeSectionIndex--;
+            }
+
+            if (MIDITools.PracticeSessions[_lastPracticeSectionIndex].SectionStart <= time)
+                return MIDITools.PracticeSessions[_lastPracticeSectionIndex].SectionName ?? "";
+
+            return "";
         }
 
         private string GetCurrentSection(double time)
@@ -9379,22 +12089,14 @@ namespace cPlayer
             return curr_session;
         }
 
-        private const double depthPower = 1.50;
-        private const float horizonPercent = 0.40f;
-        private const float overshootPx = 40f;
-
-        private void DrawFillsRB(Graphics graphics, MIDITrack instrument, int posY, int posX, int track_width)
+        private void DrawFillsRB(Graphics graphics, MIDITrack instrument, int posY, int posX, int track_width, bool isProKeys = false)
         {
             if ((instrument.Fills == null || instrument.Fills.Count == 0) &&
                 (instrument.Overdrive == null || instrument.Overdrive.Count == 0))
                 return;
 
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
             var correctedTime = GetCorrectedTime();
-
-            // ===== Perspective tuning =====
-            const double minScale = 0.35;       // far
-            const double maxScale = 1.00;       // near
 
             // Near plane
             float hitboxY = renderSize.Height - 50f;
@@ -9415,17 +12117,18 @@ namespace cPlayer
                     graphics,
                     fill.MarkerBegin,
                     fill.MarkerEnd,
-                    correctedTime,
+                    GetCorrectedTime(),
                     posX,
                     track_width,
                     fillColor,
                     horizonY,
                     hitboxY,
                     PlaybackWindowRB,
-                    minScale,
-                    maxScale,
+                    HighwayAngleFactor,
+                    1.0,
                     depthPower,
-                    50f
+                    overshootPx,
+                    isProKeys
                 );
                 break;
             }
@@ -9442,22 +12145,22 @@ namespace cPlayer
                     graphics,
                     od.MarkerBegin,
                     od.MarkerEnd,
-                    correctedTime,
+                    GetCorrectedTime(),
                     posX,
                     track_width,
                     fillColor,
                     horizonY,
                     hitboxY,
                     PlaybackWindowRB,
-                    minScale,
-                    maxScale,
+                    HighwayAngleFactor,
+                    1.0,
                     depthPower,
-                    50f
+                    overshootPx,
+                    isProKeys
                 );
                 break;
             }
-        }
-
+        }        
 
         // Draw a time-span band (fill/OD) in the same perspective space
         // begin/end are in song seconds (same units as correctedTime and PlaybackWindowRB).
@@ -9475,7 +12178,8 @@ namespace cPlayer
             double minScale,
             double maxScale,
             double depthPower,
-            float overshootPx
+            float overshootPx,
+            bool isProKeys
         )
         {
             // Helpers
@@ -9528,7 +12232,7 @@ namespace cPlayer
             float left1 = (float)(centerX - (span1 / 2.0));
             float right1 = (float)(centerX + (span1 / 2.0));
 
-            // ---- Clamp the fill so it never renders below the hitbox ----
+            // Clamp the fill so it never renders below the hitbox
             if (y1 > hitboxY)
             {
                 // If the entire band starts below the hitbox, nothing to draw
@@ -9547,11 +12251,13 @@ namespace cPlayer
                 y1 = hitboxY;
             }
 
+            var proKeysPadding = isProKeys ? 5 : 0;
+
             // Build trapezoid polygon
             var pts = new[]
             {
-                new PointF(left0,  y0),
-                new PointF(right0, y0),
+                new PointF(left0 - proKeysPadding,  y0),
+                new PointF(right0 + proKeysPadding, y0),
                 new PointF(right1, y1),
                 new PointF(left1,  y1)
             };
@@ -9587,7 +12293,8 @@ namespace cPlayer
 
         private void DrawFill(Graphics graphics, SpecialMarker marker, double correctedTime, Color fillColor, int posY, int posX, int trackWidth)
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;
+
             // Calculate the chart goal relative to the given posY
             ChartGoal = renderSize.Height - posY - 50; // Pre-calculated
 
@@ -9623,83 +12330,7 @@ namespace cPlayer
             }
         }
 
-        private void DrawProKeysLaneFillsPerspective(
-            Graphics g,
-            int chartLeft,
-            int trackWidth,          // MUST match notes/highway width (e.g. track_width * 2)
-            float horizonY,
-            float hitboxY,
-            float overshootPx,       // same overshoot you use for notes
-            double minScale,
-            double maxScale,
-            Func<int, Color> laneColorFunc,  // keyIndex 0..24 -> base color
-            int strips = 220,
-            int keyCount = 25,
-            int alpha = 30           // 20–60 is a good range
-        )
-        {
-            float bottomY = hitboxY;
-            float spanY = bottomY - horizonY;
-            if (spanY < 2f) return;
-
-            float trackCenterX = chartLeft + (trackWidth / 2f);
-
-            // Helpers
-            double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
-            double Lerp(double a, double b, double t) => a + (b - a) * t;
-
-            double PFromY(float y)
-            {
-                double t = (y - horizonY) / spanY;  // IMPORTANT: matches your note mapping
-                return Clamp01(t);
-            }
-
-            void SpanAtY(float y, out double span, out double spanLeft)
-            {
-                double p = PFromY(y);
-                double scale = Lerp(minScale, maxScale, p);
-                span = trackWidth * scale;
-                spanLeft = trackCenterX - (span / 2.0);
-            }
-
-            var oldInterp = g.InterpolationMode;
-            var oldPixel = g.PixelOffsetMode;
-            g.InterpolationMode = InterpolationMode.HighQualityBilinear;
-            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-            // Draw lane fills as horizontal strips so they stay perfectly aligned in perspective
-            for (int s = 0; s < strips; s++)
-            {
-                float t0 = (float)s / strips;
-                float t1 = (float)(s + 1) / strips;
-
-                float y0 = horizonY + (spanY * t0);
-                float y1 = horizonY + (spanY * t1);
-                float h = Math.Max(1f, y1 - y0);
-
-                SpanAtY(y0, out double span, out double spanLeft);
-                double keyW = span / keyCount;
-
-                for (int key = 0; key < keyCount; key++)
-                {
-                    Color baseC = laneColorFunc(key);
-                    if (baseC == Color.Empty) continue;
-
-                    using (var brush = new SolidBrush(Color.FromArgb(alpha, baseC)))
-                    {
-                        float x = (float)(spanLeft + (keyW * key));
-                        float w = (float)Math.Max(1.0, keyW);
-
-                        g.FillRectangle(brush, x, y0, w, h);
-                    }
-                }
-            }
-
-            g.InterpolationMode = oldInterp;
-            g.PixelOffsetMode = oldPixel;
-        }
-
-        private void DrawProKeysSustainTail_WaveAboveHitbox_FollowLane(
+        private void DrawProKeysSustainTail(
             Graphics g,
             MIDINote note,
             Color tailColor,
@@ -9723,7 +12354,7 @@ namespace cPlayer
             const double grace = 0.05;
 
             double endTime = note.NoteStart + note.NoteLength;
-            if (correctedTime > endTime + grace) return;                      
+            if (correctedTime > endTime + grace) return;
 
             double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
             double ClampMin0(double v) => v < 0 ? 0 : v;
@@ -9757,7 +12388,7 @@ namespace cPlayer
             // If sustain end already crossed hitbox, nothing remains above it
             if (yEnd >= hitboxY) return;
 
-            // ✅ Correct inverse for YFromP01: linear
+            // Correct inverse for YFromP01: linear
             double P01FromY(float y)
             {
                 return PFromY != null ? PFromY(y) : Clamp01((y - horizonY) / (hitboxY - horizonY));
@@ -9768,16 +12399,18 @@ namespace cPlayer
                 double p = P01FromY(y);
                 double scale = Lerp(minScale, maxScale, p);
                 double span = trackWidth * scale;
+
+                // Keep the original tail width behavior exactly the same.
                 laneW = span / lanes;
 
-                double spanLeft = trackCenterX - (span / 2.0);
-                return spanLeft + (laneW * (keyIndex + 0.5));
+                // But center the tail on the same X position used by traveling Pro Keys notes.
+                return GetProKeyCenterX(note.NoteNumber, trackCenterX, span);
             }
 
             // Pro keys: skinny tail; tie it to lane width at that Y
             float TailWidthFromLaneW(double laneW)
             {
-                return (float)Math.Max(2.0, Math.Min(4.0, laneW * 0.35));
+                return (float)Math.Max(2.0, Math.Min(4.0, laneW * HighwayAngleFactor));
             }
 
             // Decide vertical extent above hitbox
@@ -9827,7 +12460,7 @@ namespace cPlayer
             for (int i = rightPts.Count - 1; i >= 0; i--)
                 poly.Add(rightPts[i]);
 
-            // ✅ NOW build glow from the actual points
+            // NOW build glow from the actual points
             const float glowPx = 1.5f;
 
             var leftGlow = new List<PointF>(leftPts.Count);
@@ -9879,30 +12512,147 @@ namespace cPlayer
             g.PixelOffsetMode = oldPix;
         }
 
-        private void DrawProKeysNotesRB(Graphics graphics, int startingPosition, int ChartLeft, int trackWidth)
+        private struct ProKeyLayout
+        {
+            public bool IsSharp;
+            public int WhiteIndex;
+            public float CenterWhiteUnits;
+        }
+
+        private ProKeyLayout GetProKeyLayout(int midiNote)
+        {
+            int keyIndex = midiNote - 48; // Rock Band Pro Keys: C3..C5
+
+            switch (keyIndex)
+            {
+                case 0: return new ProKeyLayout { IsSharp = false, WhiteIndex = 0, CenterWhiteUnits = 0.5f }; // C
+                case 1: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 1.0f }; // C#
+                case 2: return new ProKeyLayout { IsSharp = false, WhiteIndex = 1, CenterWhiteUnits = 1.5f }; // D
+                case 3: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 2.0f }; // D#
+                case 4: return new ProKeyLayout { IsSharp = false, WhiteIndex = 2, CenterWhiteUnits = 2.5f }; // E
+
+                case 5: return new ProKeyLayout { IsSharp = false, WhiteIndex = 3, CenterWhiteUnits = 3.5f }; // F
+                case 6: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 4.0f }; // F#
+                case 7: return new ProKeyLayout { IsSharp = false, WhiteIndex = 4, CenterWhiteUnits = 4.5f }; // G
+                case 8: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 5.0f }; // G#
+                case 9: return new ProKeyLayout { IsSharp = false, WhiteIndex = 5, CenterWhiteUnits = 5.5f }; // A
+                case 10: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 6.0f }; // A#
+                case 11: return new ProKeyLayout { IsSharp = false, WhiteIndex = 6, CenterWhiteUnits = 6.5f }; // B
+
+                case 12: return new ProKeyLayout { IsSharp = false, WhiteIndex = 7, CenterWhiteUnits = 7.5f }; // C
+                case 13: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 8.0f }; // C#
+                case 14: return new ProKeyLayout { IsSharp = false, WhiteIndex = 8, CenterWhiteUnits = 8.5f }; // D
+                case 15: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 9.0f }; // D#
+                case 16: return new ProKeyLayout { IsSharp = false, WhiteIndex = 9, CenterWhiteUnits = 9.5f }; // E
+
+                case 17: return new ProKeyLayout { IsSharp = false, WhiteIndex = 10, CenterWhiteUnits = 10.5f }; // F
+                case 18: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 11.0f }; // F#
+                case 19: return new ProKeyLayout { IsSharp = false, WhiteIndex = 11, CenterWhiteUnits = 11.5f }; // G
+                case 20: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 12.0f }; // G#
+                case 21: return new ProKeyLayout { IsSharp = false, WhiteIndex = 12, CenterWhiteUnits = 12.5f }; // A
+                case 22: return new ProKeyLayout { IsSharp = true, WhiteIndex = -1, CenterWhiteUnits = 13.0f }; // A#
+                case 23: return new ProKeyLayout { IsSharp = false, WhiteIndex = 13, CenterWhiteUnits = 13.5f }; // B
+
+                case 24: return new ProKeyLayout { IsSharp = false, WhiteIndex = 14, CenterWhiteUnits = 14.5f }; // C
+            }
+
+            return new ProKeyLayout { IsSharp = false, WhiteIndex = 0, CenterWhiteUnits = 0.5f };
+        }
+
+        private float GetProKeyCenterX(int midiNote, float trackCenterX, double spanWidth)
+        {
+            ProKeyLayout layout = GetProKeyLayout(midiNote);
+
+            double spanLeft = trackCenterX - (spanWidth / 2.0);
+            double whiteKeyW = spanWidth / 15.0;
+
+            return (float)(spanLeft + (whiteKeyW * layout.CenterWhiteUnits));
+        }
+
+        private RectangleF GetProKeyTravelRect(
+            int midiNote,
+            float trackCenterX,
+            double spanHead,
+            float centerY,
+            Image img)
+        {
+            float centerX = GetProKeyCenterX(midiNote, trackCenterX, spanHead);
+
+            // Regular falling notes: white and black notes stay the same size.
+            double noteW = spanHead / 25.0;
+
+            // Make them about 10-15% larger while preserving perspective.
+            noteW *= 1.12;
+
+            double noteH = img.Height * (noteW / img.Width);
+
+            return new RectangleF(
+                (float)(centerX - noteW / 2.0),
+                centerY - (float)(noteH / 2.0),
+                (float)noteW,
+                (float)noteH
+            );
+        }
+
+        private RectangleF GetProKeyGlowRect(
+            int midiNote,
+            float trackCenterX,
+            int trackWidth,
+            float hitboxY,
+            Image glowImg)
+        {
+            // Measured total usable keyboard width from source layout:
+            // C3 starts at 0.000 and C5 ends at 28.000 + 1.625 = 29.625
+            const float sourceKeyboardWidth = 29.458f;
+
+            ProKeyGlowAnchor anchor = GetProKeyGlowAnchor(midiNote);
+
+            float chartLeft = trackCenterX - (trackWidth / 2f);
+            float scaleX = trackWidth / sourceKeyboardWidth;
+
+            float x = chartLeft + (anchor.X * scaleX);
+            float w = anchor.W * scaleX;
+                        
+            float h = (float)(glowImg.Height * (w / glowImg.Width));
+            h *= 0.50f;
+
+            const float glowYOffset = -6f;
+
+            return new RectangleF(
+                x,
+                hitboxY + glowYOffset,
+                w,
+                h
+            );
+        }
+
+        private void DrawProKeysNotesRB(Graphics graphics, int startingPosition, int chartLeft, int trackWidth)
         {
             var track = MIDITools.MIDI_Chart.ProKeys;
-            if (track.ChartedNotes.Count == 0) return;
+            var notes = track.ChartedNotes;
+            int noteCount = notes.Count;
+            if (noteCount == 0) return;
 
-            var renderSize = new Size(1920, 1080);
-            var correctedTime = GetCorrectedTime();
+            var renderSize = activeRenderingResolution;
+            double correctedTime = GetCorrectedTime();
 
-            const double minScale = 0.35;
+            const double passedWindow = 0.025;
+            const double hitTimeWindow = 0.25;
+            const float hitWindowPx = 20f;
+
+            const double minScale = HighwayAngleFactor;
             const double maxScale = 1.00;
-            const double passedWindow = 0.05;
 
             float hitboxY = renderSize.Height - 50f;
             float horizonY = startingPosition + ((hitboxY - startingPosition) * horizonPercent);
 
-            const float hitWindowPx = 10f; // tweak 2..6
-
-            DrawBeatLinesPerspective_FromMarkers(
+            DrawBeatLines(
                 graphics,
                 correctedTime,
                 horizonY,
                 hitboxY,
                 overshootPx,
-                ChartLeft,
+                chartLeft,
                 trackWidth,
                 PlaybackWindowRB,
                 minScale,
@@ -9914,176 +12664,419 @@ namespace cPlayer
             double EaseIn(double t) => Math.Pow(t, depthPower);
             double Lerp(double a, double b, double t) => a + (b - a) * t;
 
-            // We only need notes within the forward window (assumes sorted by NoteStart)
-            var visible = track.ChartedNotes.Where(n => n.NoteStart <= correctedTime + PlaybackWindowRB).ToList();
-            if (visible.Count == 0) return;
-
-            // Group by NoteStart (chords)
-            var grouped = visible.GroupBy(n => n.NoteStart);
-
-            float trackCenterX = ChartLeft + (trackWidth / 2f);
-
-            foreach (var chord in grouped)
+            double PFromY_Notes(float y)
             {
-                var chordNotes = chord.ToList();
-                double startTime = chord.Key;
+                double bottomY = hitboxY + overshootPx;
+                double spanY = bottomY - horizonY;
+                if (spanY <= 1) return 1.0;
 
-                // p for this chord (same shape as 5-lane)
-                double tHead = 1.0 - ((startTime - correctedTime) / PlaybackWindowRB);
+                double p = (y - horizonY) / spanY;
+                if (p < 0) p = 0;
+                else if (p > 1) p = 1;
+
+                return p;
+            }
+
+            float trackCenterX = chartLeft + (trackWidth / 2f);
+            double visibleEnd = correctedTime + PlaybackWindowRB;
+
+            int startIndex = track.ActiveIndex;
+            if (startIndex < 0 || startIndex >= noteCount)
+                startIndex = 0;
+
+            while (startIndex > 0 && notes[startIndex].NoteStart > correctedTime - 0.25)
+                startIndex--;
+
+            while (startIndex < noteCount &&
+                   (notes[startIndex].NoteStart + notes[startIndex].NoteLength) < correctedTime - 0.25)
+            {
+                startIndex++;
+            }
+
+            while (startIndex > 0 &&
+                   Math.Abs(notes[startIndex - 1].NoteStart - notes[startIndex].NoteStart) < 0.0001)
+            {
+                startIndex--;
+            }
+
+            // ============================================================
+            // Pass 1: sustains
+            // ============================================================
+            int sustainIndex = startIndex;
+
+            while (sustainIndex > 0 &&
+                   (notes[sustainIndex - 1].NoteStart + notes[sustainIndex - 1].NoteLength) >= correctedTime - 0.25)
+            {
+                sustainIndex--;
+            }
+
+            for (int s = sustainIndex; s < noteCount; s++)
+            {
+                var note = notes[s];
+
+                if (note.NoteStart > visibleEnd)
+                    break;
+
+                if (note.NoteLength < 1)
+                    continue;
+
+                double noteEnd = note.NoteStart + note.NoteLength;
+
+                if (noteEnd < correctedTime - 0.05)
+                    continue;
+
+                if (note.NoteStart > visibleEnd)
+                    continue;
+
+                if (note.NoteColor == Color.Empty)
+                    note.NoteColor = GetNoteColor(note.NoteNumber);
+
+                int keyIndex = note.NoteNumber - 48;
+                bool isSharp = note.NoteName != null && note.NoteName.Contains("#");
+                Color tailColor = note.hasOD ? Color.LightGoldenrodYellow : (isSharp ? Color.Black : Color.White);
+
+                double tHead = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
                 tHead = ClampMin0(tHead);
-                double pHead = EaseIn(tHead);
 
-                // Perspective span
-                //double scaleHead = Lerp(minScale, maxScale, pHead);
-                //double spanHead = trackWidth * scaleHead;
-                             
-                // Y mapping (same as 5-lane)
-                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHead);
+                double pHeadRaw = EaseIn(tHead);
+                double pHeadDraw = Math.Min(1.0, pHeadRaw);
 
-                double PFromY_Notes(float y)
-                {
-                    double bottomY = hitboxY + overshootPx;  // MUST match your posY mapping
-                    double spanY = bottomY - horizonY;
-                    if (spanY <= 1) return 1.0;
-
-                    double p = (y - horizonY) / spanY; // IMPORTANT: NO EaseIn here
-                    if (p < 0) p = 0;
-                    else if (p > 1) p = 1;
-
-                    return p;
-                }
-
-                double pAtY = PFromY_Notes(posY);
-                double scaleHead = Lerp(minScale, maxScale, pAtY);
+                double scaleHead = Lerp(minScale, maxScale, pHeadDraw);
                 double spanHead = trackWidth * scaleHead;
 
-                // 25 columns
                 double keyWidth = spanHead / 25.0;
-                double spanLeft = trackCenterX - (spanHead / 2.0);
+                double noteHeight = keyWidth;
 
-                // Hitbox proximity flag (for glow)
-                bool isAtHitbox = posY >= hitboxY - hitWindowPx;
+                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHeadDraw);
 
-                // Compute chord bounds in perspective X space (for chord marker)
+                bool sustainHeadIsAtOrPastHitbox =
+                    correctedTime >= note.NoteStart &&
+                    correctedTime <= noteEnd;
+
+                float tailAnchorY = sustainHeadIsAtOrPastHitbox
+                    ? hitboxY
+                    : posY - (float)(noteHeight / 2.0);
+
+                DrawProKeysSustainTail(
+                    graphics,
+                    note,
+                    tailColor,
+                    correctedTime,
+                    keyIndex,
+                    chartLeft,
+                    trackWidth,
+                    horizonY,
+                    hitboxY,
+                    minScale,
+                    maxScale,
+                    depthPower,
+                    tailAnchorY,
+                    PFromY_Notes,
+                    isSharp
+                );
+            }
+
+            // ============================================================
+            // Pass 2: note heads / glow notes / chord markers
+            // ============================================================
+            int i = startIndex;
+
+            while (i < noteCount)
+            {
+                var firstNote = notes[i];
+                double startTime = firstNote.NoteStart;
+
+                if (startTime > visibleEnd)
+                    break;
+
+                int chordStart = i;
+                int chordEnd = i + 1;
+
+                while (chordEnd < noteCount &&
+                       Math.Abs(notes[chordEnd].NoteStart - startTime) < 0.0001)
+                {
+                    chordEnd++;
+                }
+
+                double tHead = 1.0 - ((startTime - correctedTime) / PlaybackWindowRB);
+                tHead = ClampMin0(tHead);
+
+                double pHeadRaw = EaseIn(tHead);
+                double pHeadDraw = Math.Min(1.0, pHeadRaw);
+
+                double scaleHead = Lerp(minScale, maxScale, pHeadDraw);
+                double spanHead = trackWidth * scaleHead;
+
+                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHeadDraw);
+
+                // A "chord" group may be one note or multiple notes.
+                // This keeps glow notes pinned at the hitbox for active sustains.
+                bool groupHasActiveSustain = false;
+
+                for (int c = chordStart; c < chordEnd; c++)
+                {
+                    var sustainCheckNote = notes[c];
+
+                    if (sustainCheckNote.NoteLength >= 1)
+                    {
+                        double sustainEnd = sustainCheckNote.NoteStart + sustainCheckNote.NoteLength;
+
+                        if (correctedTime >= sustainCheckNote.NoteStart &&
+                            correctedTime <= sustainEnd)
+                        {
+                            groupHasActiveSustain = true;
+                            break;
+                        }
+                    }
+                }
+
+                // This is the normal "note just reached the hitbox" window.
+                // Use this for the colored shoot so the shoot does NOT stay on for the whole sustain.
+                bool groupShouldDrawShoot =
+                    correctedTime >= startTime - hitTimeWindow &&
+                    correctedTime <= startTime + hitTimeWindow &&
+                    posY >= hitboxY - hitWindowPx;
+
+                // This controls whether the note head itself becomes/stays a glow note.
+                bool chordIsAtHitbox = groupShouldDrawShoot || groupHasActiveSustain;
+
+                float drawCenterY = chordIsAtHitbox ? hitboxY : posY;
+
+                if (drawCenterY > hitboxY + overshootPx)
+                {
+                    i = chordEnd;
+                    continue;
+                }
+
+                if (!chordIsAtHitbox && correctedTime > startTime + passedWindow)
+                {
+                    LastPlayedIndexHackForProKeys(track, chordStart);
+                    i = chordEnd;
+                    continue;
+                }
+
+                // Chord marker bounds use actual pro-keys center mapping,
+                // but normal traveling note width.
                 double chordLeft = double.MaxValue;
                 double chordRight = double.MinValue;
+                double regularNoteW = spanHead / 25.0;
 
-                foreach (var n in chordNotes)
+                for (int c = chordStart; c < chordEnd; c++)
                 {
-                    int keyIndex = n.NoteNumber - 48; // 0..24
-                    double x = spanLeft + (keyWidth * keyIndex);
+                    var n = notes[c];
+                    float centerX = GetProKeyCenterX(n.NoteNumber, trackCenterX, spanHead);
 
-                    chordLeft = Math.Min(chordLeft, x - (keyWidth * 0.15));
-                    chordRight = Math.Max(chordRight, x + keyWidth + (keyWidth * 0.15));
+                    double left = centerX - (regularNoteW / 2.0);
+                    double right = centerX + (regularNoteW / 2.0);
+
+                    chordLeft = Math.Min(chordLeft, left);
+                    chordRight = Math.Max(chordRight, right);
                 }
 
-                // Chord marker (unchanged)
-                if (chordNotes.Count > 1 && posY <= hitboxY)
+                double chordPadding = regularNoteW * 0.20;
+                chordLeft -= chordPadding;
+                chordRight += chordPadding;
+
+                if (!chordIsAtHitbox && chordEnd - chordStart > 1 && drawCenterY <= hitboxY)
                 {
                     double chordW = chordRight - chordLeft;
-                    graphics.DrawImage(bmpProKeysChordMarker, (float)chordLeft, posY - 4, (float)chordW, 12);
+
+                    if (chordW > 1)
+                    {
+                        graphics.DrawImage(
+                            bmpProKeysChordMarker,
+                            (float)chordLeft,
+                            drawCenterY - 4,
+                            (float)chordW,
+                            12
+                        );
+                    }
                 }
 
-                foreach (var note in chordNotes)
+                for (int c = chordStart; c < chordEnd; c++)
                 {
+                    var note = notes[c];
+
                     if (note.NoteColor == Color.Empty)
                         note.NoteColor = GetNoteColor(note.NoteNumber);
 
-                    int keyIndex = note.NoteNumber - 48; // 0..24
                     bool isSharp = note.NoteName != null && note.NoteName.Contains("#");
 
-                    // Choose gem bitmap AFTER isAtHitbox is known (like 5-lane)
+                    double noteEnd = note.NoteStart + note.NoteLength;
+
+                    bool noteHasActiveSustain =
+                        note.NoteLength >= 1 &&
+                        correctedTime >= note.NoteStart &&
+                        correctedTime <= noteEnd;
+
+                    // This is now per-note, not only per-chord/group.
+                    // Tap notes glow during the hit window.
+                    // Sustain notes keep their own glow pinned while their sustain is active.
+                    bool noteIsAtHitbox = groupShouldDrawShoot || noteHasActiveSustain;
+
                     Image img;
 
-                    if (isSharp)
+                    if (noteIsAtHitbox)
                     {
-                        if (note.hasOD)
-                            img = isAtHitbox ? (bmpProKeysNoteBlackODGlow ?? bmpProKeysNoteBlackOD) : bmpProKeysNoteBlackOD;
-                        else
-                            img = isAtHitbox ? (bmpProKeysNoteBlackGlow ?? bmpProKeysNoteBlack) : bmpProKeysNoteBlack;
+                        img = GetProKeysGlowNote(note.NoteName);
                     }
                     else
                     {
-                        if (note.hasOD)
-                            img = isAtHitbox ? (bmpProKeysNoteWhiteODGlow ?? bmpProKeysNoteWhiteOD) : bmpProKeysNoteWhiteOD;
+                        if (isSharp)
+                            img = note.hasOD ? bmpProKeysNoteBlackOD : bmpProKeysNoteBlack;
                         else
-                            img = isAtHitbox ? (bmpProKeysNoteWhiteGlow ?? bmpProKeysNoteWhite) : bmpProKeysNoteWhite;
+                            img = note.hasOD ? bmpProKeysNoteWhiteOD : bmpProKeysNoteWhite;
                     }
 
-                    // Tail color
-                    Color tailColor = note.hasOD ? Color.LightGoldenrodYellow : (isSharp ? Color.Black : Color.White);
+                    RectangleF rect;
 
-                    //double posX = spanLeft + (keyWidth * keyIndex);
-                    const double gemWidthFactor = 1.0; // try 0.90–0.96
-                    double gemW = keyWidth * gemWidthFactor;
-
-                    // Center of this lane
-                    double laneCenterX = spanLeft + (keyWidth * (keyIndex + 0.5));
-
-                    // Draw gem centered in lane
-                    double posX = laneCenterX - (gemW / 2.0);
-
-                    // Maintain aspect ratio + distance squash
-                    double noteHeight = img.Height * (keyWidth / img.Width);
-                    double heightScale = Lerp(0.85, 1.00, pHead);
-                    noteHeight *= heightScale;
-
-                    // Sustain FIRST
-                    if (note.NoteLength >= 1)
+                    if (noteIsAtHitbox)
                     {
-                        DrawProKeysSustainTail_WaveAboveHitbox_FollowLane(
-                            graphics,
-                            note,
-                            tailColor,
-                            correctedTime,
-                            keyIndex,
-                            ChartLeft,
+                        rect = GetProKeyGlowRect(
+                            note.NoteNumber,
+                            trackCenterX,
                             trackWidth,
-                            horizonY,
                             hitboxY,
-                            minScale,
-                            maxScale,
-                            depthPower,
-                            posY - (float)(noteHeight / 2.0),
-                            PFromY_Notes,
-                            isSharp
+                            img
                         );
+
+                        // Shoot still only happens at the initial hit moment,
+                        // not during the whole sustain.
+                        if (groupShouldDrawShoot)
+                        {
+                            DrawProKeysHitboxLaneShoot(
+                                graphics,
+                                note.NoteNumber,
+                                trackCenterX,
+                                trackWidth,
+                                horizonY,
+                                hitboxY,
+                                overshootPx,
+                                minScale,
+                                maxScale,
+                                keyCount: 25,
+                                alpha01: 0.25f,
+                                topCutPct: 0f
+                            );
+                        }
                     }
-
-                    // Gem-only cull (unchanged)
-                    if (correctedTime > startTime + passedWindow)
-                        continue;
-
-                    // Draw gem only within overshoot region (unchanged)
-                    if (posY > hitboxY + overshootPx)
-                        continue;
-                    if (isAtHitbox)
+                    else
                     {
-                        DrawProKeysHitboxLaneShoot(
-                        graphics,
-                        note.NoteNumber,
-                        trackCenterX,
-                        trackWidth,
-                        horizonY,
-                        hitboxY,
-                        overshootPx,
-                        minScale,
-                        maxScale,
-                        keyCount: 25,
-                        alpha01: 0.30f,
-                        topCutPct: 0.00f
+                        rect = GetProKeyTravelRect(
+                            note.NoteNumber,
+                            trackCenterX,
+                            spanHead,
+                            drawCenterY,
+                            img
                         );
                     }
-                    graphics.DrawImage(
-                        img,
-                        (float)posX,
-                        posY - (float)(noteHeight / 2.0),
-                        (float)gemW,
-                        (float)noteHeight
-                    );
+
+                    graphics.DrawImage(img, rect);
                 }
+
+                LastPlayedIndexHackForProKeys(track, chordStart);
+                i = chordEnd;
             }
-        }       
+        }
+
+        private struct ProKeyGlowAnchor
+        {
+            public float X;
+            public float W;
+        }
+
+        private ProKeyGlowAnchor GetProKeyGlowAnchor(int midiNote)
+        {
+            switch (midiNote)
+            {
+                // White keys
+                case 48: return new ProKeyGlowAnchor { X = 0.000f, W = 2.000f }; // C3
+                case 50: return new ProKeyGlowAnchor { X = 2.000f, W = 2.000f }; // D3
+                case 52: return new ProKeyGlowAnchor { X = 4.000f, W = 2.000f }; // E3
+                case 53: return new ProKeyGlowAnchor { X = 6.000f, W = 2.000f }; // F3
+                case 55: return new ProKeyGlowAnchor { X = 8.000f, W = 2.000f }; // G3
+                case 57: return new ProKeyGlowAnchor { X = 10.000f, W = 2.000f }; // A3
+                case 59: return new ProKeyGlowAnchor { X = 12.000f, W = 2.000f }; // B3
+                case 60: return new ProKeyGlowAnchor { X = 14.000f, W = 2.000f }; // C4
+                case 62: return new ProKeyGlowAnchor { X = 16.000f, W = 2.000f }; // D4
+                case 64: return new ProKeyGlowAnchor { X = 18.000f, W = 2.000f }; // E4
+                case 65: return new ProKeyGlowAnchor { X = 19.900f, W = 2.000f }; // F4
+                case 67: return new ProKeyGlowAnchor { X = 21.900f, W = 2.000f }; // G4
+                case 69: return new ProKeyGlowAnchor { X = 23.900f, W = 2.000f }; // A4
+                case 71: return new ProKeyGlowAnchor { X = 25.900f, W = 2.000f }; // B4
+                case 72: return new ProKeyGlowAnchor { X = 27.900f, W = 1.625f }; // C5
+
+                // Black keys
+                case 49: return new ProKeyGlowAnchor { X = 1.361f, W = 1.181f }; // C#3
+                case 51: return new ProKeyGlowAnchor { X = 3.444f, W = 1.181f }; // D#3
+                case 54: return new ProKeyGlowAnchor { X = 7.306f, W = 1.181f }; // F#3
+                case 56: return new ProKeyGlowAnchor { X = 9.347f, W = 1.181f }; // G#3
+                case 58: return new ProKeyGlowAnchor { X = 11.444f, W = 1.181f }; // A#3
+                case 61: return new ProKeyGlowAnchor { X = 15.292f, W = 1.181f }; // C#4
+                case 63: return new ProKeyGlowAnchor { X = 17.472f, W = 1.181f }; // D#4
+                case 66: return new ProKeyGlowAnchor { X = 21.264f, W = 1.181f }; // F#4
+                case 68: return new ProKeyGlowAnchor { X = 23.292f, W = 1.181f }; // G#4
+                case 70: return new ProKeyGlowAnchor { X = 25.319f, W = 1.181f }; // A#4
+            }
+
+            return new ProKeyGlowAnchor { X = 0f, W = 1f };
+        }
+
+        private Bitmap GetProKeysGlowNote(string noteName)
+        {
+            switch (noteName)
+            {
+                // White keys - left edge of 2-black-key group / 3-black-key group
+                case "C4":
+                case "F4":
+                case "C5":
+                case "F5":
+                    return bmpProKeysWhiteLeftGlow;
+
+                // White keys - right edge before next C/F group
+                case "E4":
+                case "B4":
+                case "E5":
+                case "B5":
+                    return bmpProKeysWhiteRightGlow;
+
+                // White keys - center-ish
+                case "D4":
+                case "G4":
+                case "A4":
+                case "D5":
+                case "G5":
+                case "A5":
+                    return bmpProKeysWhiteCenterGlow;
+
+                // Black keys, first octave
+                case "C#4":
+                case "D#4":
+                    return bmpProKeysRedGlow;
+
+                case "F#4":
+                case "G#4":
+                case "A#4":
+                    return bmpProKeysYellowGlow;
+
+                // Black keys, second octave
+                case "C#5":
+                case "D#5":
+                    return bmpProKeysBlueGlow;
+
+                case "F#5":
+                case "G#5":
+                case "A#5":
+                    return bmpProKeysGreenGlow;
+            }
+
+            return bmpProKeysWhiteFullGlow;
+        }
+
+        private static void LastPlayedIndexHackForProKeys(MIDITrack track, int index)
+        {
+            track.ActiveIndex = index;
+        }
 
         private void DrawProKeysHitboxLaneShoot(
             Graphics g,
@@ -10100,7 +13093,7 @@ namespace cPlayer
             float topCutPct = 0.15f // 0..1, how far from horizon to stop (avoid going all the way to horizon)
         )
         {
-            // Map note -> key index (your mapping)
+            // Map note -> key index
             int keyIndex = noteNumber - 48; // 48..72 => 0..24
             if (keyIndex < 0 || keyIndex >= keyCount) return;
 
@@ -10118,7 +13111,7 @@ namespace cPlayer
             float bottomY = hitboxY; // clamp to hitbox (not overshoot)
             float topY = horizonY + (hitboxY - horizonY) * topCutPct;
 
-            // Convert y -> p (linear) so span matches your borders math
+            // Convert y -> p (linear) so span matches borders math
             double PFromY(float y)
             {
                 double denom = (hitboxY - horizonY);
@@ -10145,7 +13138,7 @@ namespace cPlayer
             float laneLeftBottom = (float)(leftB + keyWB * keyIndex);
             float laneRightBottom = (float)(leftB + keyWB * (keyIndex + 1));
 
-            // Slightly inset so it doesn't overlap your border rails
+            // Slightly inset so it doesn't overlap border rails
             const float insetPx = 1.0f;
             laneLeftTop += insetPx;
             laneRightTop -= insetPx;
@@ -10154,11 +13147,11 @@ namespace cPlayer
 
             var poly = new[]
             {
-        new PointF(laneLeftTop,    topY),
-        new PointF(laneRightTop,   topY),
-        new PointF(laneRightBottom,bottomY),
-        new PointF(laneLeftBottom, bottomY)
-    };
+                new PointF(laneLeftTop,    topY),
+                new PointF(laneRightTop,   topY),
+                new PointF(laneRightBottom,bottomY),
+                new PointF(laneLeftBottom, bottomY)
+            };
 
             var oldSM = g.SmoothingMode;
             var oldPO = g.PixelOffsetMode;
@@ -10210,53 +13203,78 @@ namespace cPlayer
             }
         }
 
+        private double GetVisualSustainLength(double rawLength)
+        {
+            const double sustainVisualLengthScale = 0.95;
+            const double shortSustainThreshold = 0.50;
+
+            return rawLength < shortSustainThreshold
+                ? rawLength
+                : rawLength * sustainVisualLengthScale;
+        }
 
         private void DrawProKeysNotes(Graphics graphics, int startingPosition, int ChartLeft, int trackWidth)
         {
-            if (MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Count == 0) return;
-            var renderSize = new Size(1920, 1080);
+            if (MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Count == 0)
+                return;
+
+            var renderSize = activeRenderingResolution;
             var correctedTime = GetCorrectedTime();
-            ChartGoal = renderSize.Height - startingPosition - 50; // Pre-calculated
+
+            ChartGoal = renderSize.Height - startingPosition - 50;
+
+            double hitboxY = renderSize.Height - 50;
+            double noteWidth = trackWidth / 25.0;
+            const double minSustainToDraw = 1.0;
+            const double sustainGrace = 0.05;
+
             Color tailColor;
 
-            // Filter notes to process only visible ones
-            var filteredNotes = MIDITools.MIDI_Chart.ProKeys.ChartedNotes.Where(note => note.NoteStart <= correctedTime + PlaybackWindowRB).ToList();
+            // Keep only notes that could still be visible or still have an active sustain.
+            var filteredNotes = MIDITools.MIDI_Chart.ProKeys.ChartedNotes
+                .Where(note =>
+                {
+                    double visualLength = GetVisualSustainLength(note.NoteLength);
+                    double visualEndTime = note.NoteStart + visualLength;
 
-            var noteWidth = trackWidth / 25.0;
+                    return note.NoteStart <= correctedTime + PlaybackWindowRB &&
+                           correctedTime <= visualEndTime + sustainGrace;
+                })
+                .ToList();
 
-            // Group notes by NoteStart to identify chords
             var groupedNotes = filteredNotes.GroupBy(note => note.NoteStart);
 
             foreach (var chord in groupedNotes)
             {
                 var chordNotes = chord.ToList();
-                var chordStartTime = chord.Key;
 
                 double chordLeft = double.MaxValue;
                 double chordRight = double.MinValue;
-                double posY = 0;
+                double chordPosY = 0;
 
                 foreach (var note in chordNotes)
                 {
-                    var percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
-                    posY = startingPosition + (ChartGoal * percent);
+                    double percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
+                    chordPosY = startingPosition + (ChartGoal * percent);
 
-                    var noteLocation = note.NoteNumber - 48;
-                    var posX = ChartLeft + (noteWidth * noteLocation);
+                    int noteLocation = note.NoteNumber - 48;
+                    double posX = ChartLeft + (noteWidth * noteLocation);
 
-                    // Update chord bounds
                     chordLeft = Math.Min(chordLeft, posX - 10);
                     chordRight = Math.Max(chordRight, posX + noteWidth + 10);
                 }
 
-                if (chordNotes.Count() > 1 && posY <= renderSize.Height - 50)
+                if (chordNotes.Count > 1 && chordPosY <= hitboxY)
                 {
-                    // Draw the chord marker first but only if it's at least two notes
                     var chordWidth = chordRight - chordLeft;
-                    graphics.DrawImage(bmpProKeysChordMarker, (float)chordLeft, (float)posY - 4, (float)chordWidth, 12);
+                    graphics.DrawImage(
+                        bmpProKeysChordMarker,
+                        (float)chordLeft,
+                        (float)chordPosY - 4,
+                        (float)chordWidth,
+                        12);
                 }
 
-                // Now draw the notes in the chord
                 foreach (var note in chordNotes)
                 {
                     if (note.NoteColor == Color.Empty)
@@ -10264,56 +13282,91 @@ namespace cPlayer
                         note.NoteColor = GetNoteColor(note.NoteNumber);
                     }
 
-                    var percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
-                    posY = startingPosition + (ChartGoal * percent);
+                    bool hasSustain = note.NoteLength >= minSustainToDraw;
 
-                    var img = note.NoteName.Contains("#") ? (note.hasOD ? bmpProKeysNoteBlackOD : bmpProKeysNoteBlack) : (note.hasOD ? bmpProKeysNoteWhiteOD : bmpProKeysNoteWhite);
-                    tailColor = note.hasOD ? Color.LightGoldenrodYellow : (note.NoteName.Contains("#") ? Color.Black : Color.White);
+                    double visualLength = GetVisualSustainLength(note.NoteLength);
+                    double visualEndTime = note.NoteStart + visualLength;
 
-                    var noteLocation = note.NoteNumber - 48;
+                    bool sustainActive =
+                        hasSustain &&
+                        correctedTime >= note.NoteStart &&
+                        correctedTime <= visualEndTime;
 
-                    // Calculate size and position
-                    var noteHeight = img.Height * (noteWidth / img.Width);
-                    var posX = ChartLeft + (noteWidth * noteLocation);
+                    double percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
+                    double posY = startingPosition + (ChartGoal * percent);
 
-                    // Draw sustain tail if the note length is >= 1 second
-                    if (note.NoteLength >= 1)
+                    int noteLocation = note.NoteNumber - 48;
+                    double posX = ChartLeft + (noteWidth * noteLocation);
+
+                    var img = note.NoteName.Contains("#")
+                        ? (note.hasOD ? bmpProKeysNoteBlackOD : bmpProKeysNoteBlack)
+                        : (note.hasOD ? bmpProKeysNoteWhiteOD : bmpProKeysNoteWhite);
+
+                    tailColor = note.hasOD
+                        ? Color.LightGoldenrodYellow
+                        : (note.NoteName.Contains("#") ? Color.Black : Color.White);
+
+                    double noteHeight = img.Height * (noteWidth / img.Width);
+
+                    // Once the note reaches the hitbox, keep it there while the sustain is active.
+                    bool isAtOrPastHitbox = posY >= hitboxY;
+
+                    if (sustainActive && isAtOrPastHitbox)
                     {
-                        DrawSustainTail(graphics, note, tailColor, correctedTime, posY, posX, noteWidth, startingPosition);
+                        posY = hitboxY;
                     }
-                    if (posY > renderSize.Height - 50) continue;
 
-                    // Draw the note
-                    graphics.DrawImage(img, (float)posX, (float)(posY - (noteHeight / 2)), (float)noteWidth, (float)noteHeight);                    
+                    // Draw sustain tail only while the sustain is still visually active.
+                    if (hasSustain && correctedTime <= visualEndTime + sustainGrace)
+                    {
+                        DrawSustainTail(
+                            graphics,
+                            note,
+                            tailColor,
+                            correctedTime,
+                            posY,
+                            posX,
+                            noteWidth,
+                            startingPosition);
+                    }
+
+                    // If the note has gone past the hitbox and no sustain is active, skip drawing the gem.
+                    if (posY > hitboxY && !sustainActive)
+                        continue;
+
+                    graphics.DrawImage(
+                        img,
+                        (float)posX,
+                        (float)(posY - (noteHeight / 2.0)),
+                        (float)noteWidth,
+                        (float)noteHeight);
                 }
             }
-        }
+        }        
 
-        private void DrawSustainTail_WaveAboveHitbox_FollowLane(
+        private void DrawSustainTail(
             Graphics g,
             MIDINote note,
             Color tailColor,
             double correctedTime,
-            int laneIndex,          // 0..4
+            double visualEndTime,
+            int laneIndex,
             int chartLeft,
             int trackWidth,
             float horizonY,
             float hitboxY,
             double minScale,
             double maxScale,
-            double depthPower, 
+            double depthPower,
             float yPos
-        )
+        )        
         {
             const float sampleStepY = 4f;     // smaller = smoother ribbon
             const double amplitude = 4.0;
             const double waveYFreq = 0.0125;
             const double grace = 0.05;
 
-            double endTime = note.NoteStart + note.NoteLength;
-            if (correctedTime > endTime + grace) return;
-
-            const float tailAttachPadPx = 8f;
+            if (correctedTime > visualEndTime + grace) return;
 
             double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
             double ClampMin0(double v) => v < 0 ? 0 : v;
@@ -10323,30 +13376,26 @@ namespace cPlayer
             float trackCenterX = chartLeft + (trackWidth / 2f);
             const int lanes = 5;
 
-            // time -> eased progress (used only to compute yHead/yEnd)
-            double tHead = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
-            double tEnd = 1.0 - ((endTime - correctedTime) / PlaybackWindowRB);
-            tHead = ClampMin0(tHead);
+            // The tail visually runs from the sustain endpoint toward the held gem/head.
+            // For active sustains, the head is locked at the hitbox. The endpoint should
+            // move downward as the sustain approaches completion.
+            double tEnd = 1.0 - ((visualEndTime - correctedTime) / PlaybackWindowRB);
             tEnd = ClampMin0(tEnd);
 
-            double pHead = EaseIn(tHead);
             double pEnd = EaseIn(tEnd);
+            pEnd = Clamp01(pEnd);
 
-            float YFromP01(double p01) => (float)Lerp(horizonY, hitboxY, Clamp01(p01));
+            // Match DrawBeatLines / gem projection for the far end of the tail.
+            float yEnd = (float)Lerp(horizonY, hitboxY, pEnd);
 
-            float yHead = YFromP01(pHead);
-            float yEnd = YFromP01(pEnd);
+            if (yEnd > hitboxY)
+                yEnd = hitboxY;
 
-            // ensure end is above head
-            if (yEnd > yHead)
-            {
-                float tmpY = yEnd; yEnd = yHead; yHead = tmpY;
-                double tmpP = pEnd; pEnd = pHead; pHead = tmpP;
-            }
+            // If the sustain endpoint has reached the hitbox, there is no visible tail left.
+            if (yEnd >= hitboxY - 1f)
+                return;
 
-            if (yEnd >= hitboxY) return; // nothing above hitbox remains
-
-            // ✅ Correct inverse for YFromP01: linear
+            // Correct inverse for YFromP01: linear
             double P01FromY(float y)
             {
                 double denom = (hitboxY - horizonY);
@@ -10375,11 +13424,11 @@ namespace cPlayer
             // If head has passed hitbox, go to hitbox.
             float top = Math.Max(yEnd, horizonY);
             float bottom = yPos + 3f;
-            bottom = Math.Max(horizonY, Math.Min(bottom, hitboxY));
+            bottom = Math.Max(horizonY, Math.Min(bottom, hitboxY));                       
 
             if (bottom - top <= 1f) return;
 
-            bool doWave = (yHead >= hitboxY); // wave only once head has passed
+            bool doWave = correctedTime >= note.NoteStart;
 
             var leftPts = new List<PointF>(256);
             var rightPts = new List<PointF>(256);
@@ -10398,11 +13447,11 @@ namespace cPlayer
                 double waveOffset = 0.0;
                 if (doWave)
                 {
-                    // animate by time and vary by y for a pleasing “sway”
+                    // animate by time and vary by y for a subtle animation
                     double s = Math.Sin((correctedTime * 2.0 + yy * waveYFreq) * Math.PI * 2.0);
                     waveOffset = amplitude * s;
 
-                    // ✅ keep the tail inside the lane
+                    // keep the tail inside the lane
                     double maxWave = Math.Max(0.0, (laneW / 2.0) - halfW - 1.0);
                     if (waveOffset > maxWave) waveOffset = maxWave;
                     if (waveOffset < -maxWave) waveOffset = -maxWave;
@@ -10439,17 +13488,26 @@ namespace cPlayer
         {
             if (instrument.ChartedNotes.Count == 0) return;
 
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;
             var correctedTime = GetCorrectedTime();
-                        
-            const double minScale = 0.35;   // MUST match background topWidthFactor
-            const double maxScale = 1.00;   // 1.00 to match bottom exactly
+
+            const double minScale = HighwayAngleFactor; // MUST match background topWidthFactor
+            const double maxScale = 1.00;               // 1.00 to match bottom exactly
 
             float hitboxY = renderSize.Height - 50f;
             float horizonY = startingPosition + ((hitboxY - startingPosition) * horizonPercent);
+
+            // Keep this at 0.00 if you want tap notes gone immediately after hit time.
             const double passedWindow = 0.00;
 
-            DrawBeatLinesPerspective_FromMarkers(
+            // Time window, in seconds, where we consider the note "at" the hitbox.
+            // Increase slightly if the note still looks like it misses the hitbox.
+            const double hitTimeWindow = 0.25;
+
+            // Pixel window near the hitbox for snapping.
+            const float hitWindowPx = 20f;
+
+            DrawBeatLines(
                 graphics,
                 correctedTime,
                 horizonY,
@@ -10464,13 +13522,16 @@ namespace cPlayer
             );
 
             double ClampMin0(double v) => v < 0 ? 0 : v;
-            double EaseIn(double t) => Math.Pow(t, depthPower);
+            double EaseIn(double t) => Math.Pow(t, depthPower);            
             double Lerp(double a, double b, double t) => a + (b - a) * t;
 
             float trackCenterX = ChartLeft + (trackWidth / 2f);
 
             foreach (var note in instrument.ChartedNotes)
             {
+                double visualLength = GetVisualSustainLength(note.NoteLength);
+                double visualEndTime = note.NoteStart + visualLength;
+
                 if (note.NoteStart > correctedTime + PlaybackWindowRB) break;
 
                 if (note.NoteColor == Color.Empty)
@@ -10483,13 +13544,33 @@ namespace cPlayer
                 else if (note.NoteColor == ChartOrange) noteLocation = 4;
                 else noteLocation = 0;
 
-                // p for the GEM position (0 far -> 1 at hitbox and beyond)
+                bool hasSustain = note.NoteLength >= 0.25;
+
+                bool sustainActive =
+                    hasSustain &&
+                    correctedTime >= note.NoteStart &&
+                    correctedTime <= visualEndTime;
+
+                // Cull notes that are already finished.
+                // Tap notes disappear after the hit.
+                // Sustain notes remain drawable until the sustain ends.
+                if (!hasSustain && correctedTime > note.NoteStart + passedWindow)
+                    continue;
+
+                if (hasSustain && correctedTime > visualEndTime + passedWindow)
+                    continue;
+
+                // p for the GEM position.
+                // Raw p can go past 1.0 after the note passes the hitbox.
+                // Clamped p is used for drawing so the note does not keep growing forever.
                 double tHead = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
                 tHead = ClampMin0(tHead);
-                double pHead = EaseIn(tHead);
 
-                // Highway span + note geometry AT THIS p (this matches gem placement)
-                double scaleHead = Lerp(minScale, maxScale, pHead);
+                double pHeadRaw = EaseIn(tHead);
+                double pHeadDraw = Math.Min(1.0, pHeadRaw);
+
+                // Highway span + note geometry at clamped draw position.
+                double scaleHead = Lerp(minScale, maxScale, pHeadDraw);
                 double spanHead = trackWidth * scaleHead;
                 double noteWidth = spanHead / 5.0;
 
@@ -10497,81 +13578,140 @@ namespace cPlayer
                 double laneCenterX = spanLeftHead + (noteWidth * (noteLocation + 0.5));
                 double posX = laneCenterX - (noteWidth / 2.0);
 
-                // Y mapping (horizon -> hitbox). We clamp gem Y to hitbox for drawing.
-                // (Tail logic handles what happens after hit.)
-                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHead);
+                // Y mapping. Also clamped through pHeadDraw so it does not go past hitbox scale.
+                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHeadDraw);
+                float posYForTail = (float)Lerp(horizonY, hitboxY, pHeadDraw);
 
-                const float hitWindowPx = 10f; // tweak 2..6
-                bool isAtHitbox = posY >= hitboxY - hitWindowPx;
-                                
+                bool isAtHitbox =
+                    correctedTime >= note.NoteStart - hitTimeWindow &&
+                    correctedTime <= note.NoteStart + hitTimeWindow &&
+                    posY >= hitboxY - hitWindowPx;
+
+                bool useGlowBitmap = isAtHitbox || sustainActive;
+
                 Bitmap img;
 
                 if (note.hasOD)
                 {
                     if (note.isHOPOon)
                     {
-                        img = isAtHitbox ? bmpODHopoGlow : bmpODHopo;
+                        img = useGlowBitmap ? bmpNoteODGlow : bmpODHopo;
                     }
                     else
                     {
-                        img = isAtHitbox ? bmpNoteODGlow : bmpNoteOD;
+                        img = useGlowBitmap ? bmpNoteODGlow : bmpNoteOD;
                     }
                 }
                 else
                 {
                     if (note.isHOPOon)
                     {
-                        // HOPO bitmaps per color
-                        if (noteLocation == 0) img = isAtHitbox ? bmpGreenHopoGlow : bmpGreenHopo;
-                        else if (noteLocation == 1) img = isAtHitbox ? bmpRedHopoGlow : bmpRedHopo;
-                        else if (noteLocation == 2) img = isAtHitbox ? bmpYellowHopoGlow : bmpYellowHopo;
-                        else if (noteLocation == 3) img = isAtHitbox ? bmpBlueHopoGlow : bmpBlueHopo;
-                        else img = isAtHitbox ? bmpOrangeHopoGlow : bmpOrangeHopo;
+                        if (noteLocation == 0) img = useGlowBitmap ? bmpNoteGreenGlow : bmpGreenHopo;
+                        else if (noteLocation == 1) img = useGlowBitmap ? bmpNoteRedGlow : bmpRedHopo;
+                        else if (noteLocation == 2) img = useGlowBitmap ? bmpNoteYellowGlow : bmpYellowHopo;
+                        else if (noteLocation == 3) img = useGlowBitmap ? bmpNoteBlueGlow : bmpBlueHopo;
+                        else img = useGlowBitmap ? bmpNoteOrangeGlow : bmpOrangeHopo;
                     }
                     else
                     {
-                        // Normal note bitmaps per color
-                        if (noteLocation == 0) img = isAtHitbox ? bmpNoteGreenGlow : bmpNoteGreen;
-                        else if (noteLocation == 1) img = isAtHitbox ? bmpNoteRedGlow : bmpNoteRed;
-                        else if (noteLocation == 2) img = isAtHitbox ? bmpNoteYellowGlow : bmpNoteYellow;
-                        else if (noteLocation == 3) img = isAtHitbox ? bmpNoteBlueGlow : bmpNoteBlue;
-                        else img = isAtHitbox ? bmpNoteOrangeGlow : bmpNoteOrange;
+                        if (noteLocation == 0) img = useGlowBitmap ? bmpNoteGreenGlow : bmpNoteGreen;
+                        else if (noteLocation == 1) img = useGlowBitmap ? bmpNoteRedGlow : bmpNoteRed;
+                        else if (noteLocation == 2) img = useGlowBitmap ? bmpNoteYellowGlow : bmpNoteYellow;
+                        else if (noteLocation == 3) img = useGlowBitmap ? bmpNoteBlueGlow : bmpNoteBlue;
+                        else img = useGlowBitmap ? bmpNoteOrangeGlow : bmpNoteOrange;
                     }
                 }
 
+                double noteHeight = img.Height * (noteWidth / img.Width);
+
                 // Sustain tail color
                 Color tailColor = note.hasOD ? Color.White : note.NoteColor;
-                var noteHeight = img.Height * (noteWidth / img.Width);
 
-                if (note.NoteLength >= 1)
+                if (hasSustain)
                 {
-                    DrawSustainTail_WaveAboveHitbox_FollowLane(
-                   graphics, note, tailColor, correctedTime,
-                   noteLocation, ChartLeft, trackWidth,
-                   horizonY, hitboxY,
-                   minScale, maxScale, depthPower, posY - (float)(noteHeight / 2.0)   );
+                    // While the note is still approaching, the sustain tail should begin at the
+                    // moving note head. Once the sustain is active, the head is locked to hitboxY,
+                    // so the tail should also begin at the hitbox.
+                    
+                    float sustainHeadY = (isAtHitbox || sustainActive)
+                    ? hitboxY
+                    : posYForTail;
+
+                    DrawSustainTail(
+                        graphics,
+                        note,
+                        tailColor,
+                        correctedTime,
+                        visualEndTime,
+                        noteLocation,
+                        ChartLeft,
+                        trackWidth,
+                        horizonY,
+                        hitboxY,
+                        minScale,
+                        maxScale,
+                        depthPower,
+                        sustainHeadY);
                 }
 
-                // GEM cull so it doesn't "stick"
-                if (correctedTime > note.NoteStart + passedWindow) continue;
+                // Lock the gem head to the hitbox while:
+                // 1. it is visually/timing-wise at the hitbox, or
+                // 2. the sustain is actively being held.
+                if (isAtHitbox || sustainActive)
+                {
+                    var padding = 1;
 
-                // Draw gem only while it's within the overshoot region
-                if (posY > hitboxY + overshootPx) continue;
-                graphics.DrawImage(img, (float)posX, posY - (float)(noteHeight / 2.0), (float)noteWidth, (float)noteHeight);
+                    graphics.DrawImage(
+                    img,
+                    ChartLeft + ((float)trackWidth / 5 * noteLocation) + padding,
+                    hitboxY - 5 + padding,
+                    (float)noteWidth,
+                    (float)noteHeight);
+
+                    continue;
+                }
+
+                // Draw gem normally while approaching the hitbox.
+                // Since pHeadDraw is clamped, this should no longer grow endlessly.
+                if (posY > hitboxY + overshootPx)
+                    continue;
+
+                graphics.DrawImage(
+                    img,
+                    (float)posX,
+                    posY - (float)(noteHeight / 2.0),
+                    (float)noteWidth,
+                    (float)noteHeight);
             }
         }
-      
+
         private void DrawFiveLaneNotes(Graphics graphics, MIDITrack instrument, int startingPosition, int ChartLeft, int trackWidth)
         {
-            if (instrument.ChartedNotes.Count == 0) return;
-            var renderSize = new Size(1920, 1080);
-            var correctedTime = GetCorrectedTime();
-            ChartGoal = renderSize.Height - startingPosition - 50; // Pre-calculated
-        
-            // Filter notes to process only visible ones
-            var filteredNotes = instrument.ChartedNotes.Where(note => note.NoteStart <= correctedTime + PlaybackWindowRB).ToList();
+            if (instrument.ChartedNotes.Count == 0)
+                return;
 
-            var noteWidth = trackWidth / 5.0;
+            var renderSize = activeRenderingResolution;
+            var correctedTime = GetCorrectedTime();
+
+            ChartGoal = renderSize.Height - startingPosition - 50;
+
+            double hitboxY = renderSize.Height - 50;
+            double noteWidth = trackWidth / 5.0;
+
+            const double minSustainToDraw = 1.0;
+            const double sustainGrace = 0.05;
+
+            // Keep only notes that could still be visible or still have a visible sustain.
+            var filteredNotes = instrument.ChartedNotes
+                .Where(note =>
+                {
+                    double visualLength = GetVisualSustainLength(note.NoteLength);
+                    double visualEndTime = note.NoteStart + visualLength;
+
+                    return note.NoteStart <= correctedTime + PlaybackWindowRB &&
+                           correctedTime <= visualEndTime + sustainGrace;
+                })
+                .ToList();
 
             foreach (var note in filteredNotes)
             {
@@ -10580,12 +13720,22 @@ namespace cPlayer
                     note.NoteColor = GetNoteColor(note.NoteNumber);
                 }
 
-                var percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
-                var posY = startingPosition + (ChartGoal * percent);
+                bool hasSustain = note.NoteLength >= minSustainToDraw;
 
-                var noteLocation = 0;
+                double visualLength = GetVisualSustainLength(note.NoteLength);
+                double visualEndTime = note.NoteStart + visualLength;
+
+                bool sustainActive =
+                    hasSustain &&
+                    correctedTime >= note.NoteStart &&
+                    correctedTime <= visualEndTime;
+
+                double percent = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
+                double posY = startingPosition + (ChartGoal * percent);
+
+                int noteLocation = 0;
                 Bitmap img;
-                
+
                 if (note.hasOD)
                 {
                     // Overdrive cases
@@ -10646,71 +13796,221 @@ namespace cPlayer
                 }
 
                 // Calculate size and position
-                var noteHeight = img.Height * (noteWidth / img.Width);
-                var posX = ChartLeft + (noteWidth * noteLocation);
+                double noteHeight = img.Height * (noteWidth / img.Width);
+                double posX = ChartLeft + (noteWidth * noteLocation);
 
                 Color tailColor = note.hasOD ? Color.White : note.NoteColor;
 
-                // Draw sustain tail if the note length is >= 1 second
-                if (note.NoteLength >= 1)
-                {
-                    DrawSustainTail(graphics, note, tailColor, correctedTime, posY, posX, noteWidth, startingPosition);
-                }
-                if (posY > renderSize.Height - 50) continue;
-                graphics.DrawImage(img, (float)posX, (float)(posY - (noteHeight / 2)), (float)noteWidth, (float)noteHeight);                
-            }
-        }
+                // Once the note reaches the hitbox, keep it there while the sustain is active.
+                bool isAtOrPastHitbox = posY >= hitboxY;
 
-        private void DrawSustainTail(Graphics graphics, MIDINote note, Color tailColor, double correctedTime, double posY, double posX, double noteWidth, int startingPosition)
+                if (sustainActive && isAtOrPastHitbox)
+                {
+                    posY = hitboxY;
+                }
+
+                // Draw sustain tail only while the sustain is still visually active.
+                if (hasSustain && correctedTime <= visualEndTime + sustainGrace)
+                {
+                    DrawSustainTail(
+                        graphics,
+                        note,
+                        tailColor,
+                        correctedTime,
+                        posY,
+                        posX,
+                        noteWidth,
+                        startingPosition);
+                }
+
+                // If the note has gone below the hitbox and the sustain is no longer active, stop drawing it.
+                if (posY > hitboxY && !sustainActive)
+                    continue;
+
+                graphics.DrawImage(
+                    img,
+                    (float)posX,
+                    (float)(posY - (noteHeight / 2.0)),
+                    (float)noteWidth,
+                    (float)noteHeight);
+            }
+        }        
+
+        private void DrawSustainTail(
+            Graphics graphics,
+            MIDINote note,
+            Color tailColor,
+            double correctedTime,
+            double posY,
+            double posX,
+            double noteWidth,
+            int startingPosition)
         {
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;
 
-            // Calculate the end position of the sustain tail
-            var tailEndPercent = 1.0 - (((note.NoteStart + note.NoteLength - 0.6) - correctedTime) / PlaybackWindowRB);
-            var tailEndY = startingPosition + (ChartGoal * tailEndPercent);
+            const double sustainVisualLengthScale = 0.75;
+            const double shortSustainThreshold = 0.50;
 
-            // Ensure the tail extends correctly above the note
-            if (tailEndY < startingPosition) tailEndY = startingPosition;
+            const float tailWidth = 6f;
+            const float tailHalfWidth = tailWidth / 2f;
+            const int hitboxOffsetFromBottom = 50;
 
-            // Prevent the tail from being clipped prematurely
-            if (tailEndY > renderSize.Height - 50)
+            const int waveSegmentHeight = 5;
+            const double waveAmplitude = 4.0;
+            const double waveYFreq = 0.0125;
+
+            double hitboxY = renderSize.Height - hitboxOffsetFromBottom;
+
+            // Same compromise as the five-lane sustain tail:
+            // short sustains keep their full length, longer sustains are visually shortened.
+            double visualLength = note.NoteLength < shortSustainThreshold
+                ? note.NoteLength
+                : note.NoteLength * sustainVisualLengthScale;
+
+            double visualEndTime = note.NoteStart + visualLength;
+
+            if (correctedTime > visualEndTime)
+                return;
+
+            // Calculate the end position of the visible sustain tail.
+            double tailEndPercent =
+                1.0 - ((visualEndTime - correctedTime) / PlaybackWindowRB);
+
+            double tailEndY = startingPosition + (ChartGoal * tailEndPercent);
+
+            if (tailEndY < startingPosition)
+                tailEndY = startingPosition;
+
+            if (tailEndY > hitboxY)
+                tailEndY = hitboxY;
+
+            double splitY = Math.Min(hitboxY, posY);
+
+            if (splitY - tailEndY <= 1.0)
+                return;
+
+            var oldSmoothing = graphics.SmoothingMode;
+            var oldPix = graphics.PixelOffsetMode;
+
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+            float centerX = (float)(posX + (noteWidth / 2.0));
+            float tailX = centerX - tailHalfWidth;
+
+            using (var tailBrush = new SolidBrush(tailColor))
             {
-                tailEndY = renderSize.Height - 50;
-            }
-
-            // Ensure the tail continues to display even when the note hits the hitbox
-            if (tailEndY > renderSize.Height - 50)
-            {
-                tailEndY = renderSize.Height - 50;
-            }
-
-            // Split the tail into a static and dynamic part
-            var splitY = Math.Min(renderSize.Height - 50, posY);
-
-            // Draw the static part of the tail (straight line above the hitbox)
-            if (posY <= renderSize.Height - 50 && splitY > tailEndY)
-            {
-                using (var tailBrush = new SolidBrush(tailColor))
+                // Static part: normal straight tail above/approaching the hitbox.
+                if (posY <= hitboxY && splitY > tailEndY)
                 {
-                    graphics.FillRectangle(tailBrush, (float)(posX + (noteWidth / 2) - 3), (float)tailEndY, 6, (float)(splitY - tailEndY));
+                    graphics.FillRectangle(
+                        tailBrush,
+                        tailX,
+                        (float)tailEndY,
+                        tailWidth,
+                        (float)(splitY - tailEndY));
                 }
-            }
 
-            // Draw the dynamic part of the tail (moving sine wave below the hitbox)
-            if (posY > renderSize.Height - 50 && tailEndY < splitY)
-            {
-                var dynamicHeight = (int)(splitY - tailEndY); // Ensure consistent height calculation
-                using (var tailBrush = new SolidBrush(tailColor))
+                // Dynamic part: once the gem is held at/through the hitbox, draw a small wave.
+                if (posY > hitboxY && tailEndY < splitY)
                 {
-                    for (int i = 0; i < dynamicHeight; i += 5)
-                    {
-                        // Ensure the sine wave stays within bounds
-                        if (tailEndY + i >= splitY) break;
+                    int dynamicHeight = (int)(splitY - tailEndY);
 
-                        var waveOffset = 4 * Math.Sin((correctedTime + i * 0.0125) * Math.PI); // Larger and slower sine wave
-                        graphics.FillRectangle(tailBrush, (float)(posX + (noteWidth / 2) - 3 + waveOffset), (float)(tailEndY + i), 6, 5); // Adjusted tail width
+                    for (int i = 0; i < dynamicHeight; i += waveSegmentHeight)
+                    {
+                        double y = tailEndY + i;
+
+                        if (y >= splitY)
+                            break;
+
+                        double waveOffset =
+                            waveAmplitude *
+                            Math.Sin((correctedTime * 2.0 + i * waveYFreq) * Math.PI * 2.0);
+
+                        graphics.FillRectangle(
+                            tailBrush,
+                            (float)(tailX + waveOffset),
+                            (float)y,
+                            tailWidth,
+                            waveSegmentHeight);
                     }
                 }
+            }
+
+            graphics.SmoothingMode = oldSmoothing;
+            graphics.PixelOffsetMode = oldPix;
+        }
+
+        private void TryTriggerKickLights(MIDINote note)
+        {
+            if (note == null)
+                return;
+
+            long noteKey = note.Ticks;
+
+            if (_stageKitTriggeredKickTicks.Contains(noteKey))
+                return;
+
+            double correctedTime = GetCorrectedTime();
+
+            _stageKitTriggeredKickTicks.Add(noteKey);
+            _lastKickStrobeTime = correctedTime;
+
+            FlashKickWithLeds();
+        }
+
+        private void FlashKickWithLeds()
+        {
+            QueueStageKitCommand(() =>
+            {
+                if (enableFatsCoLights.Checked && useFatsCoLEDs.Checked)
+                {
+                    foreach (var fatsCo in fatsCoLights)
+                    {
+                        fatsCo.AllOff();
+                        fatsCo.AllOn();
+                        Thread.Sleep(25);
+                        fatsCo.AllOff();
+                    }
+                }
+
+                if (stageKitToolStripMenuItem.Checked && useLEDs.Checked)
+                {
+                    foreach (var stageKit in stageKits)
+                    {
+                        stageKit.TurnAllOff();
+                        stageKit.DisplayBlueAll(ref ledDisplay, true);
+                        stageKit.DisplayYellowAll(ref ledDisplay, true);
+                        stageKit.DisplayGreenAll(ref ledDisplay, true);
+                        stageKit.DisplayRedAll(ref ledDisplay, true);
+                        Thread.Sleep(25);
+                        stageKit.TurnAllOff();
+                    }
+                }
+            });
+        }
+
+        private void UpdateDrumBasedStageLighting(MIDITrack drums)
+        {
+            if (drums == null || drums.ChartedNotes == null)
+                return;
+
+            double now = GetCorrectedTime();
+
+            const double triggerWindowSeconds = 0.5;
+
+            foreach (var note in drums.ChartedNotes)
+            {
+                if (note.NoteColor != ChartOrange)
+                    continue;
+
+                if (note.NoteStart < now - triggerWindowSeconds)
+                    continue;
+
+                if (note.NoteStart > now + triggerWindowSeconds)
+                    break;
+
+                TryTriggerKickLights(note);
             }
         }
 
@@ -10719,21 +14019,26 @@ namespace cPlayer
             var track = MIDITools.MIDI_Chart.Drums;
             if (track.ChartedNotes.Count == 0) return;
 
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;
             var correctedTime = GetCorrectedTime();
 
-            const double minScale = 0.35;
+            const double minScale = HighwayAngleFactor;
             const double maxScale = 1.00;
 
-            // Hitbox / horizon mapping matches 5-lane now
             float hitboxY = renderSize.Height - 50f;
             float horizonY = startingPosition + ((hitboxY - startingPosition) * horizonPercent);
 
-            // Same idea as 5-lane
-            const double passedWindow = 0.00; // tweak if we want a tiny "linger"
-            const float hitWindowPx = 10f;     // tweak 2..6
+            // Tap notes disappear immediately after the hit.
+            // Increase this slightly, e.g. 0.025, for a tiny visual linger.
+            const double passedWindow = 0.00;
 
-            DrawBeatLinesPerspective_FromMarkers(
+            // Time window where the drum note is forced exactly onto the hitbox.
+            const double hitTimeWindow = 0.25;
+
+            // Pixel backup window, so we only snap when it is visually close too.
+            const float hitWindowPx = 20f;
+
+            DrawBeatLines(
                 graphics,
                 correctedTime,
                 horizonY,
@@ -10751,63 +14056,79 @@ namespace cPlayer
             double EaseIn(double t) => Math.Pow(t, depthPower);
             double Lerp(double a, double b, double t) => a + (b - a) * t;
 
-            // 4-lane drums (red/yellow/blue/green)
             const int lanes = 4;
             double trackCenterX = ChartLeft + (trackWidth / 2.0);
 
             foreach (var note in track.ChartedNotes)
             {
-                if (note.NoteStart > correctedTime + PlaybackWindowRB) break; // assumes sorted
+                if (note.NoteStart > correctedTime + PlaybackWindowRB)
+                    break; // assumes sorted
 
                 if (note.NoteColor == Color.Empty)
                     note.NoteColor = GetNoteColor(note.NoteNumber, true);
 
-                // Filter kicks vs pads
+                // Filter kicks vs pads/cymbals
                 if (note.NoteColor == ChartOrange && !doKicks) continue;
                 if (note.NoteColor != ChartOrange && doKicks) continue;
 
-                // ---- Perspective timing (same shape as 5-lane) ----
+                // Cull old drum notes so they do not stick after the hit.
+                if (correctedTime > note.NoteStart + passedWindow)
+                    continue;
+
+                // Raw p can exceed 1.0 after the note reaches/passes the hitbox.
+                // Clamp p for drawing so size and Y do not continue growing.
                 double tHead = 1.0 - ((note.NoteStart - correctedTime) / PlaybackWindowRB);
                 tHead = ClampMin0(tHead);
-                double pHead = EaseIn(tHead);
 
-                double scaleHead = Lerp(minScale, maxScale, pHead);
+                double pHeadRaw = EaseIn(tHead);
+                double pHeadDraw = Math.Min(1.0, pHeadRaw);
+
+                double scaleHead = Lerp(minScale, maxScale, pHeadDraw);
                 double laneSpan = trackWidth * scaleHead;
                 double noteWidth = laneSpan / lanes;
 
-                // Map Y using shared overshootPx (same as 5-lane)
-                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHead);
+                float posY = (float)Lerp(horizonY, hitboxY + overshootPx, pHeadDraw);
 
-                // Only draw within overshoot region
-                if (posY > hitboxY + overshootPx) continue;
+                bool isAtHitbox =
+                    correctedTime >= note.NoteStart - hitTimeWindow &&
+                    correctedTime <= note.NoteStart + hitTimeWindow &&
+                    posY >= hitboxY - hitWindowPx;
 
-                bool isAtHitbox = posY >= hitboxY - hitWindowPx;
+                float drawY = isAtHitbox ? hitboxY : posY;
 
-                // ---- KICKS (rect) ----
+                // Do not draw beyond the overshoot area.
+                if (drawY > hitboxY + overshootPx)
+                {
+                    continue;
+                }                   
+
+                // KICKS
                 if (note.NoteColor == ChartOrange)
                 {
-                    // Kick lane scales too
-                    var multiplier = isAtHitbox ? 4 : 1;
-                    float kickHeight = (float)(KICK_HEIGHT * multiplier * Lerp(0.7, 1.0, pHead));
+                    // Do not let kick size explode after hitbox.
+                    float kickHeight = (float)(KICK_HEIGHT * Lerp(0.7, 1.0, pHeadDraw));
+
+                    if (isAtHitbox)
+                    {
+                        kickHeight *= 4f; 
+                        TurnOnStrobes();
+                    }
 
                     using (var solidBrush = new SolidBrush(note.hasOD ? Color.WhiteSmoke : Color.FromArgb(255, 180, 28)))
                     {
                         graphics.FillRectangle(
                             solidBrush,
                             (float)(trackCenterX - laneSpan / 2.0),
-                            posY,
+                            drawY,
                             (float)laneSpan,
                             kickHeight
                         );
                     }
 
-                    // optional: "no stick" cull behavior for kicks too
-                    if (correctedTime > note.NoteStart + passedWindow) continue;
-
                     continue;
                 }
 
-                // ---- Lane index for pads/cymbals ----
+                // Lane index for pads/cymbals
                 int noteLocation;
                 if (note.NoteColor == ChartRed) noteLocation = 0;
                 else if (note.NoteColor == ChartYellow) noteLocation = 1;
@@ -10817,26 +14138,23 @@ namespace cPlayer
                 double laneCenterX = (trackCenterX - (laneSpan / 2.0)) + (noteWidth * (noteLocation + 0.5));
                 double drawX = laneCenterX - (noteWidth / 2.0);
 
-                // ---- Bitmap selection AFTER isAtHitbox is known ----
-                Image img;
-
                 bool isCymbal = !note.isTom;
                 bool isOD = note.hasOD;
 
+                Image img;
+
                 if (isCymbal)
                 {
-                    // Provide safe fallback if a glow asset doesn't exist yet.
                     if (note.NoteColor == ChartYellow)
-                        img = isOD ? (isAtHitbox ? (bmpDrumsCymbalODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
-                                   : (isAtHitbox ? (bmpDrumsCymbalYGlow ?? bmpDrumsCymbalY) : bmpDrumsCymbalY);
+                        img = isOD ? (isAtHitbox ? (bmpNoteODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
+                                   : (isAtHitbox ? (bmpNoteYellowGlow ?? bmpDrumsCymbalY) : bmpDrumsCymbalY);
                     else if (note.NoteColor == ChartBlue)
-                        img = isOD ? (isAtHitbox ? (bmpDrumsCymbalODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
-                                   : (isAtHitbox ? (bmpDrumsCymbalBGlow ?? bmpDrumsCymbalB) : bmpDrumsCymbalB);
+                        img = isOD ? (isAtHitbox ? (bmpNoteODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
+                                   : (isAtHitbox ? (bmpNoteBlueGlow ?? bmpDrumsCymbalB) : bmpDrumsCymbalB);
                     else if (note.NoteColor == ChartGreen)
-                        img = isOD ? (isAtHitbox ? (bmpDrumsCymbalODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
-                                   : (isAtHitbox ? (bmpDrumsCymbalGGlow ?? bmpDrumsCymbalG) : bmpDrumsCymbalG);
+                        img = isOD ? (isAtHitbox ? (bmpNoteODGlow ?? bmpDrumsCymbalOD) : bmpDrumsCymbalOD)
+                                   : (isAtHitbox ? (bmpNoteGreenGlow ?? bmpDrumsCymbalG) : bmpDrumsCymbalG);
                     else
-                        // Red cymbal not typical; fall back to red pad
                         img = isOD ? (isAtHitbox ? bmpNoteODGlow : bmpNoteOD)
                                    : (isAtHitbox ? bmpNoteRedGlow : bmpNoteRed);
                 }
@@ -10851,40 +14169,76 @@ namespace cPlayer
                     else if (note.NoteColor == ChartBlue)
                         img = isOD ? (isAtHitbox ? bmpNoteODGlow : bmpNoteOD)
                                    : (isAtHitbox ? bmpNoteBlueGlow : bmpNoteBlue);
-                    else // green
+                    else
                         img = isOD ? (isAtHitbox ? bmpNoteODGlow : bmpNoteOD)
                                    : (isAtHitbox ? bmpNoteGreenGlow : bmpNoteGreen);
                 }
 
-                // "Don't stick" cull (match 5-lane behavior)
-                if (correctedTime > note.NoteStart + passedWindow) continue;
-
-                // Maintain aspect ratio + slight vertical squash in the distance
                 double noteHeight = img.Height * (noteWidth / img.Width);
-                double heightScale = Lerp(0.85, 1.00, pHead);
+                double heightScale = Lerp(0.85, 1.00, pHeadDraw);
                 noteHeight *= heightScale;
 
+                var currentInterpolation = graphics.InterpolationMode;
+                var currentPixelOffSetMode = graphics.PixelOffsetMode;
+                var currentCompositingQuality = graphics.CompositingQuality;
+                var currentSmoothingMode = graphics.SmoothingMode;
+
+                if (isCymbal)
+                {
+                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                }
+
+                var padding = 1;
                 graphics.DrawImage(
                     img,
-                    (float)drawX,
-                    (float)(posY - (noteHeight / 2.0)),
+                    isAtHitbox ? ChartLeft + ((float)trackWidth / 4 * noteLocation) + padding : (float)drawX,
+                    isAtHitbox ? drawY - 5 + padding : drawY - (float)(noteHeight / 2.0),
                     (float)noteWidth,
                     (float)noteHeight
                 );
+
+                if (isCymbal)
+                {
+                    graphics.InterpolationMode = currentInterpolation;
+                    graphics.PixelOffsetMode = currentPixelOffSetMode;
+                    graphics.CompositingQuality = currentCompositingQuality;
+                    graphics.SmoothingMode = currentSmoothingMode;
+                }
             }
         }
 
+        private void TurnOnStrobes()
+        {
+            if (enableFatsCoLights.Checked && useFatsCoStrobe.Checked && fatsCoLights.Any())
+            {
+                foreach (var fatsCo in fatsCoLights)
+                {
+                    fatsCo.StrobeOnFast();
+                }
+            }
+            if (stageKitToolStripMenuItem.Checked && useStrobe.Checked && stageKits.Any())
+            {
+                foreach (var stageKit in stageKits)
+                {
+                    stageKit.TurnStrobeOn(StrobeSpeed.Faster);
+                }
+            }
+        }
+               
         private void DrawDrumNotes(Graphics graphics, bool doKicks, int startingPosition, int ChartLeft, int trackWidth)
         {
             if (MIDITools.MIDI_Chart.Drums.ChartedNotes.Count == 0) return;
-            var renderSize = new Size(1920, 1080);
+            var renderSize = activeRenderingResolution;
             var track = MIDITools.MIDI_Chart.Drums;
             var correctedTime = GetCorrectedTime();
             ChartGoal = renderSize.Height - startingPosition - 50; // Pre-calculated
 
             // Filter notes to process only visible ones
-            var filteredNotes = track.ChartedNotes.Where(note => note.NoteStart <= correctedTime + PlaybackWindowRB).ToList();            
-            
+            var filteredNotes = track.ChartedNotes.Where(note => note.NoteStart <= correctedTime + PlaybackWindowRB).ToList();
+
             var noteWidth = trackWidth / 4.0;
 
             foreach (var note in filteredNotes)
@@ -10940,13 +14294,13 @@ namespace cPlayer
                 else
                 {
                     graphics.DrawImage(img, (float)posX, (float)(posY - (noteHeight / 2)), (float)noteWidth, (float)noteHeight);
-                }                                
+                }
             }
         }
 
         private int GetYForRBVocals()
         {
-            if (rBStyle.Checked && !doMIDINoVocals)
+            if (doRockBandChart && !doMIDINoVocals)
             {
                 if (doMIDIHarmonies)
                 {
@@ -10967,137 +14321,359 @@ namespace cPlayer
             return 0;
         }
 
-        private void DrawLyrics(Size size, Graphics graphics, Color backColor)
+        private void GetLyricRowPositions(
+            Size size,
+            bool drawHarm2,
+            bool drawHarm3,
+            out int harm1Y,
+            out int harm2Y,
+            out int harm3Y)
         {
-            if (!openSideWindow.Checked && secondScreen == null) return;
-            if ((!doStaticLyrics && !doScrollingLyrics && !doKaraokeLyrics) || !MIDITools.PhrasesVocals.Phrases.Any())
+            const int rowStepMidi = 30;
+            const int rowStepChart = 24;
+
+            // These Y values are the same "fill row" positions the lyric methods expect.
+            // Since the cached row background is drawn at (posY - 1), the bottom border lands at posY + 24.
+            // So to anchor the last row to the very bottom, use size.Height - 24.
+            int bottomAnchoredRow = size.Height - 24;
+
+            if (doVerticalChart)
             {
+                int baseTop = GetHeightDiff() + 4;
+
+                // Correct order for chart vertical:
+                // harm1 top, harm2 middle, harm3 bottom
+                harm1Y = baseTop;
+                harm2Y = baseTop + rowStepChart;
+                harm3Y = baseTop + (rowStepChart * 2);
+
+                if (!drawHarm2)
+                {
+                    harm2Y = harm1Y;
+                    harm3Y = harm1Y;
+                }
+                else if (!drawHarm3)
+                {
+                    harm3Y = harm2Y;
+                }
+
                 return;
             }
 
-            var phrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
-            var lyrics = doHarmonyLyrics && MIDITools.LyricsHarm1.Lyrics.Any() ? MIDITools.LyricsHarm1.Lyrics : MIDITools.LyricsVocals.Lyrics;
-            var font = new Font("Segoe UI", 16f, FontStyle.Bold); //new Font("Segoe UI", 12f);
-            var harm1Y = size.Height - (MIDITools.LyricsHarm3.Lyrics.Any() ? 100 : (MIDITools.LyricsHarm2.Lyrics.Any() ? 70 : 40));
-            var harm2Y = size.Height - (MIDITools.LyricsHarm3.Lyrics.Any() ? 70 : 40);
-            var harm3Y = size.Height - 40;
-            if (!doHarmonyLyrics || (doHarmonyLyrics && !MIDITools.LyricsHarm2.Lyrics.Any()))
+            // Normal MIDI mode:
+            // anchor from bottom upward
+            harm3Y = bottomAnchoredRow;
+            harm2Y = harm3Y - rowStepMidi;
+            harm1Y = harm3Y - (rowStepMidi * 2);
+
+            if (!drawHarm2)
             {
                 harm1Y = harm3Y;
+                harm2Y = harm3Y;
             }
-            if ((chartVertical.Checked || rBStyle.Checked) && chartVisualsToolStripMenuItem.Checked)
+            else if (!drawHarm3)
             {
-                if (rBStyle.Checked && doMIDINoVocals)
-                {
-                    harm1Y = 4;
-                    harm2Y = 28;
-                    harm3Y = 52;
-                }
-                else
-                {
-                    harm1Y = GetHeightDiff() + 4;
-                    harm2Y = GetHeightDiff() + 28;
-                    harm3Y = GetHeightDiff() + 52;
-                }                
+                harm1Y = harm2Y;
             }
-            if (rBStyle.Checked && !doMIDINoVocals)
+        }
+
+        private void DrawLyrics(Size size, Graphics graphics, Color backColor)
+        {
+            if (!openSideWindow.Checked && secondScreen == null)
+                return;
+
+            if (!doStaticLyrics && !doScrollingLyrics && !doKaraokeLyrics)
+                return;
+
+            bool hasVocalsPhrases = MIDITools.PhrasesVocals != null &&
+                                    MIDITools.PhrasesVocals.Phrases != null &&
+                                    MIDITools.PhrasesVocals.Phrases.Count > 0;
+
+            bool hasVocalsLyrics = MIDITools.LyricsVocals != null &&
+                                   MIDITools.LyricsVocals.Lyrics != null &&
+                                   MIDITools.LyricsVocals.Lyrics.Count > 0;
+
+            if (!hasVocalsPhrases || !hasVocalsLyrics)
+                return;
+
+            bool hasHarm1Phrases = MIDITools.PhrasesHarm1 != null &&
+                                   MIDITools.PhrasesHarm1.Phrases != null &&
+                                   MIDITools.PhrasesHarm1.Phrases.Count > 0;
+
+            bool hasHarm1Lyrics = MIDITools.LyricsHarm1 != null &&
+                                  MIDITools.LyricsHarm1.Lyrics != null &&
+                                  MIDITools.LyricsHarm1.Lyrics.Count > 0;
+
+            bool hasHarm2Phrases = MIDITools.PhrasesHarm2 != null &&
+                                   MIDITools.PhrasesHarm2.Phrases != null &&
+                                   MIDITools.PhrasesHarm2.Phrases.Count > 0;
+
+            bool hasHarm2Lyrics = MIDITools.LyricsHarm2 != null &&
+                                  MIDITools.LyricsHarm2.Lyrics != null &&
+                                  MIDITools.LyricsHarm2.Lyrics.Count > 0;
+
+            bool hasHarm3Phrases = MIDITools.PhrasesHarm3 != null &&
+                                   MIDITools.PhrasesHarm3.Phrases != null &&
+                                   MIDITools.PhrasesHarm3.Phrases.Count > 0;
+
+            bool hasHarm3Lyrics = MIDITools.LyricsHarm3 != null &&
+                                  MIDITools.LyricsHarm3.Lyrics != null &&
+                                  MIDITools.LyricsHarm3.Lyrics.Count > 0;
+
+            bool drawHarmonyLyrics = doHarmonyLyrics && hasHarm1Lyrics;
+            bool drawHarm2 = drawHarmonyLyrics && hasHarm2Lyrics;
+            bool drawHarm3 = drawHarmonyLyrics && hasHarm3Lyrics;
+
+            var mainPhrases = drawHarmonyLyrics && hasHarm1Phrases
+                ? MIDITools.PhrasesHarm1.Phrases
+                : MIDITools.PhrasesVocals.Phrases;
+
+            var mainLyrics = drawHarmonyLyrics && hasHarm1Lyrics
+                ? MIDITools.LyricsHarm1.Lyrics
+                : MIDITools.LyricsVocals.Lyrics;
+
+            int harm1Y;
+            int harm2Y;
+            int harm3Y;
+
+            GetLyricRowPositions(size, drawHarm2, drawHarm3, out harm1Y, out harm2Y, out harm3Y);
+
+            if (doRockBandChart && !doMIDINoVocals)
             {
                 if (doMIDIHarmonies)
                 {
-                    if (MIDITools.LyricsHarm3 != null && MIDITools.LyricsHarm3.Lyrics.Any())
+                    if (hasHarm3Lyrics)
                     {
                         harm3Y = 0;
                         harm2Y = 24;
                         harm1Y = vocalsHeight + (harm2Y * 2);
                     }
-                    else if (MIDITools.LyricsHarm2 != null && MIDITools.LyricsHarm2.Lyrics.Any())
+                    else if (hasHarm2Lyrics)
                     {
                         harm2Y = 0;
                         harm1Y = vocalsHeight + 24;
                     }
+                    else
+                    {
+                        harm1Y = vocalsHeight;
+                    }
                 }
                 else
                 {
-                    harm1Y = vocalsHeight + 0;
-                }                
+                    harm1Y = vocalsHeight;
+                }
             }
+            else if (doRockBandChart && doMIDINoVocals)
+            {
+                harm1Y = 0;
+                harm2Y = harm1Y + 24;
+                harm3Y = harm2Y + 24;
+            }
+
             if (doScrollingLyrics)
             {
-                var isGameChart = chartVisualsToolStripMenuItem.Checked && (chartVertical.Checked || rBStyle.Checked || chartSnippet.Checked);
-                if (doHarmonyLyrics)
-                {                    //isGameChart? Harm3Color : Color.WhiteSmoke
-                    DrawLyricsScrolling(MIDITools.LyricsHarm3.Lyrics, font, Harm3Color, backColor, harm3Y, graphics);//Harm3Color
-                    DrawLyricsScrolling(MIDITools.LyricsHarm2.Lyrics, font, Harm2Color, backColor, harm2Y, graphics);//Harm2Color
-                }// doHarmonyLyrics || doMIDIHarm1onVocals ? isGameChart ? Harm1Color : Color.WhiteSmoke : Color.White
-                DrawLyricsScrolling(lyrics, font,Harm1Color, backColor, harm1Y, graphics);//Harm1Color
-            }
-            else if (doKaraokeLyrics)
-            {
-                if (doHarmonyLyrics)
+                if (drawHarm3)
                 {
-                    DrawLyricsKaraoke(MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics, font, Harm3Color, backColor, harm3Y, graphics);
-                    DrawLyricsKaraoke(MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics, font, Harm2Color, backColor, harm2Y, graphics);
+                    DrawLyricsScrolling(MIDITools.LyricsHarm3.Lyrics, _lyricsFont, Harm3Color, backColor, harm3Y, graphics);
                 }
-                DrawLyricsKaraoke(phrases, lyrics, font, doHarmonyLyrics || doMIDIHarm1onVocals ? Harm1Color : Color.White, backColor, harm1Y, graphics);
-            }
-            else if (doStaticLyrics)
-            {
-                if (doHarmonyLyrics)
-                {
-                    DrawLyricsStatic(MIDITools.PhrasesHarm3.Phrases, font, Color.White, backColor, harm3Y, graphics);
-                    DrawLyricsStatic(MIDITools.PhrasesHarm2.Phrases, font, Color.White, backColor, harm2Y, graphics);
-                }//doHarmonyLyrics || doMIDIHarm1onVocals ? Harm1Color : Color.White
-                DrawLyricsStatic(phrases, font, Color.White, backColor, harm1Y, graphics);
-            }
-        }        
 
-        private void DrawLyricsStatic(IEnumerable<LyricPhrase> phrases, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
+                if (drawHarm2)
+                {
+                    DrawLyricsScrolling(MIDITools.LyricsHarm2.Lyrics, _lyricsFont, Harm2Color, backColor, harm2Y, graphics);
+                }
+
+                DrawLyricsScrolling(mainLyrics, _lyricsFont, Harm1Color, backColor, harm1Y, graphics);
+                return;
+            }
+
+            if (doKaraokeLyrics)
+            {
+                if (drawHarm3 && hasHarm3Phrases)
+                {
+                    DrawLyricsKaraoke(MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics, _lyricsFont, Harm3Color, backColor, harm3Y, graphics);
+                }
+
+                if (drawHarm2 && hasHarm2Phrases)
+                {
+                    DrawLyricsKaraoke(MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics, _lyricsFont, Harm2Color, backColor, harm2Y, graphics);
+                }
+
+                DrawLyricsKaraoke(
+                    mainPhrases,
+                    mainLyrics,
+                    _lyricsFont,
+                    drawHarmonyLyrics || doMIDIHarm1onVocals ? Harm1Color : Color.White,
+                    backColor,
+                    harm1Y,
+                    graphics);
+
+                return;
+            }
+
+            if (doStaticLyrics)
+            {
+                if (drawHarm3 && hasHarm3Phrases)
+                {
+                    DrawLyricsStatic(MIDITools.PhrasesHarm3.Phrases, _lyricsFont, Harm3Color, backColor, harm3Y, graphics);
+                }
+
+                if (drawHarm2 && hasHarm2Phrases)
+                {
+                    DrawLyricsStatic(MIDITools.PhrasesHarm2.Phrases, _lyricsFont, Harm2Color, backColor, harm2Y, graphics);
+                }
+
+                DrawLyricsStatic(mainPhrases, _lyricsFont, Harm1Color, backColor, harm1Y, graphics);
+            }
+        }
+
+        private Bitmap GetLyricRowBackground(int width, Color foreColor)
         {
-            var renderSize = new Size(1920, 1080);
-            if (phrases == null || phrases.Count() == 0) return;
-            var time = GetCorrectedTime();
-            graphics.DrawImage(Resources.frostedglass75, 0, posY, renderSize.Width, 24);
-            // 50% opacity = alpha 128 (out of 255)
-            using (var overlayBrush = new SolidBrush(
-                Color.FromArgb(chartVertical.Checked ? 255 : 128, foreColor)))
+            string key = width + "|" + foreColor.ToArgb() + "|" + doVerticalChart;
+
+            if (_lyricRowBgCache.TryGetValue(key, out var bmp))
+                return bmp;
+
+            bmp = new Bitmap(width, 26, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+            using (var g = Graphics.FromImage(bmp))
+            using (var overlayBrush = new SolidBrush(Color.FromArgb(doVerticalChart ? 255 : 128, foreColor)))
             {
-                graphics.FillRectangle(
-                    overlayBrush,
-                    0,
-                    posY,
-                    renderSize.Width,
-                    24
-                );
+                g.Clear(Color.Transparent);
+                g.DrawImage(Resources.frostedglass75, 0, 1, width, 24);
+                g.FillRectangle(overlayBrush, 0, 1, width, 24);
+                g.FillRectangle(_lightGrayBrush, 0, 0, width, 1);
+                g.FillRectangle(_lightGrayBrush, 0, 25, width, 1);
             }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
+
+            _lyricRowBgCache[key] = bmp;
+            return bmp;
+        }
+
+        private class CachedSimpleLyricLine : IDisposable
+        {
+            public string Key;
+            public Bitmap Bitmap;
+            public int Width;
+            public int Height;
+
+            public void Dispose()
             {
-                graphics.FillRectangle(overlayBrush, 0, posY - 1, renderSize.Width, 1);
+                Bitmap?.Dispose();
+                Bitmap = null;
             }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
+        }
+
+        private readonly Dictionary<string, CachedSimpleLyricLine> _simpleLyricLineCache =
+            new Dictionary<string, CachedSimpleLyricLine>();
+
+        private CachedSimpleLyricLine GetSimpleLyricLineBitmap(
+            Graphics graphics,
+            string text,
+            Font font,
+            Color color)
+        {
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            string key =
+                text + "|" +
+                font.Name + "|" +
+                font.SizeInPoints.ToString("0.###") + "|" +
+                ((int)font.Style) + "|" +
+                color.ToArgb();
+
+            if (_simpleLyricLineCache.TryGetValue(key, out var cached))
+                return cached;
+
+            SizeF measured = graphics.MeasureString(text, font);
+            int width = Math.Max(1, (int)Math.Ceiling(measured.Width) + 8);
+            int height = Math.Max(1, (int)Math.Ceiling(measured.Height) + 4);
+
+            Bitmap bmp = new Bitmap(width, height);
+
+            using (Graphics gBmp = Graphics.FromImage(bmp))
+            using (Brush brush = new SolidBrush(color))
             {
-                graphics.FillRectangle(overlayBrush, 0, posY + 24, renderSize.Width, 1);
+                gBmp.Clear(Color.Transparent);
+                gBmp.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                gBmp.DrawString(text, font, brush, new PointF(0, 0));
             }
+
+            cached = new CachedSimpleLyricLine
+            {
+                Key = key,
+                Bitmap = bmp,
+                Width = width,
+                Height = height
+            };
+
+            _simpleLyricLineCache[key] = cached;
+            return cached;
+        }
+
+        private void ClearSimpleLyricLineCache()
+        {
+            foreach (var item in _simpleLyricLineCache.Values)
+                item.Dispose();
+
+            _simpleLyricLineCache.Clear();
+        }
+
+        private void DrawLyricsStatic(
+            IEnumerable<LyricPhrase> phrases,
+            Font font,
+            Color foreColor,
+            Color backColor,
+            int posY,
+            Graphics graphics)
+        {
+            if (phrases == null)
+                return;
+
+            var phraseList = phrases as IList<LyricPhrase> ?? phrases.ToList();
+            if (phraseList.Count == 0)
+                return;
+
+            var renderSize = activeRenderingResolution;//new Size(1920, 1080);
+            double time = GetCorrectedTime();
+
+            var rowBg = GetLyricRowBackground(renderSize.Width, foreColor);
+            graphics.DrawImageUnscaled(rowBg, 0, posY - 1);
+
             LyricPhrase phrase = null;
-            foreach (var lyric in phrases.TakeWhile(lyric => lyric.PhraseStart <= time).Where(lyric => lyric.PhraseEnd >= time))
+            int phraseCount = phraseList.Count;
+
+            for (int i = 0; i < phraseCount; i++)
             {
-                phrase = lyric;
+                var current = phraseList[i];
+
+                if (current.PhraseStart > time)
+                    break;
+
+                if (current.PhraseEnd >= time)
+                    phrase = current;
             }
+
             string line;
             try
             {
-                line = phrase == null || phrase.PhraseText == null || string.IsNullOrEmpty(phrase.PhraseText.Trim()) ? GetMusicNotes() : ProcessLine(phrase.PhraseText, doWholeWordsLyrics);
+                line = (phrase == null || string.IsNullOrWhiteSpace(phrase.PhraseText))
+                    ? GetMusicNotes()
+                    : ProcessLine(phrase.PhraseText, doWholeWordsLyrics);
             }
-            catch (Exception)
+            catch
             {
                 line = GetMusicNotes();
             }
-            var processedLine = ProcessLine(line, doWholeWordsLyrics).Replace("‿", " ");
-            var lineSize = graphics.MeasureString(processedLine, font);
-            var left = (renderSize.Width - (int)lineSize.Width) / 2;
 
-            using (var textBrush = new SolidBrush(foreColor))// chartVisualsToolStripMenuItem.Checked && chartVertical.Checked ? Color.White : Color.Black))
+            string processedLine = line.Replace("‿", " ");
+
+            var cachedLine = GetSimpleLyricLineBitmap(graphics, processedLine, font, Color.White);
+
+            if (cachedLine != null)
             {
-                graphics.DrawString(processedLine, font, textBrush, new PointF(left, posY - 6));
+                int left = (renderSize.Width - cachedLine.Width) / 2;
+                graphics.DrawImageUnscaled(cachedLine.Bitmap, left, posY - 6);
             }
         }
 
@@ -11107,7 +14683,7 @@ namespace cPlayer
             if (Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
             {
                 Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, BassBuffer);
-                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 50);
+                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 100);
             }
             else
             {
@@ -11168,14 +14744,21 @@ namespace cPlayer
                 var matrix = GetChannelMatrix(channel_info.chans);
                 BassMix.BASS_Mixer_ChannelSetMatrix(BassStream, matrix);
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
             return true;
         }
 
-        double ActiveSongDuration = 0.0;
+        public void UpdateStemVolumes()
+        {
+            //ONLY DO THIS IF CHANGING VOLUME AND BASS IS ALREADY PLAYING AND THESE STREAMS ARE VALID
+            var channel_info = Bass.BASS_ChannelGetInfo(BassStream);
+            var matrix = GetChannelMatrix(channel_info.chans);
+            BassMix.BASS_Mixer_ChannelSetMatrix(BassStream, matrix);
+        }
+                
         private bool PrepMixerPS(IList<string> audioFiles, out int mixer, out List<int> NextSongStreams)
         {
             BassStreams.Clear();
@@ -11326,7 +14909,7 @@ namespace cPlayer
                     AddAudioToMixer(crowd);
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 mixer = 0;
                 NextSongStreams = null;
@@ -11365,8 +14948,38 @@ namespace cPlayer
             }
         }
 
-        private void StartPlayback(bool doFade, bool doNext, bool PlayAudio = true)
-        {            
+        private async Task StartPlaybackAsync(bool doFade, bool doNext, bool PlayAudio = true)
+        {
+            ResetStageKitAnimation();
+            ClearKaraokeLineCache();
+            ClearSimpleLyricLineCache();
+            ClearRBKaraokeStaticBackgroundCache();
+            ResetStageKitDrumTriggers();
+
+            doUseBackgroundVideosLast = false; // reset for new song
+            doUseBackgroundImagesLast = false; // reset for new song
+
+            if (doRockBandChart) //rock band style / prebuild the track animations
+            {
+                await DrawRockBandStyleAsync(null, true).ConfigureAwait(true);
+            }
+
+            if (GIFOverlay != null)
+            {
+                GIFOverlay.Close();
+                GIFOverlay = null;
+            }
+
+            var img = displayAlbumArt ? LargeAlbumArt : null;
+            if (secondScreen != null)
+            {
+                secondScreen.ChangeVisualsImage(img);
+            }
+            else
+            {
+                SafeVisualsSetter(img);
+            }
+
             if (PlayAudio)
             {
                 if ((!yarg.Checked && !fortNite.Checked && !guitarHero.Checked && !powerGig.Checked && !bandFuse.Checked) && (CurrentSongAudio == null || CurrentSongAudio.Length == 0))
@@ -11484,10 +15097,9 @@ namespace cPlayer
                     {
                         if (Path.GetExtension(CurrentSongAudioPath) == ".mogg")
                         {
-                            oggPath = CurrentSongAudioPath.Replace(".mogg", ".ogg");
-                            if (!nautilus.DecM(File.ReadAllBytes(CurrentSongAudioPath), false, doNext, DecryptMode.ToFile, oggPath))
+                            if (!nautilus.DecM(File.ReadAllBytes(CurrentSongAudioPath), false, doNext, DecryptMode.ToMemory))
                             {
-                                var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' is encrypted, can't play it";
+                                var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' failed to decrypt, can't play it";
                                 MessageBox.Show(msg, AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 StopPlayback();
                                 return;
@@ -11495,17 +15107,12 @@ namespace cPlayer
                         }
                         else if (Path.GetExtension(CurrentSongAudioPath) == ".yarg_mogg")
                         {
-                            oggPath = CurrentSongAudioPath.Replace(".yarg_mogg", ".ogg");
-                            if (!nautilus.DecY(CurrentSongAudioPath, DecryptMode.ToFile, oggPath))
+                            if (!nautilus.DecY(CurrentSongAudioPath, DecryptMode.ToMemory))
                             {
-                                var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' is encrypted, can't play it";
+                                var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' failed to decrypt, can't play it";
                                 MessageBox.Show(msg, AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 StopPlayback();
                                 return;
-                            }
-                            else
-                            {
-                                nautilus.RemoveMHeader(File.ReadAllBytes(oggPath), doNext, DecryptMode.ToFile, oggPath);
                             }
                         }
                     }
@@ -11515,9 +15122,9 @@ namespace cPlayer
                     }
                     if (nautilus.PlayingSongOggData == null || nautilus.PlayingSongOggData.Length == 0)
                     {
-                        if (!nautilus.DecM(CurrentSongAudio, false, false, DecryptMode.ToFile, oggPath))
+                        if (!nautilus.DecM(CurrentSongAudio, false, false, DecryptMode.ToMemory))
                         {
-                            var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' is encrypted, can't play it";
+                            var msg = "Audio file for '" + PlayingSong.Artist + " - " + PlayingSong.Name + "' failed to decrypt, can't play it";
                             MessageBox.Show(msg, AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             StopPlayback();
                             return;
@@ -11540,77 +15147,73 @@ namespace cPlayer
                     GetIntroOutroSilence();
                 }
 
-                if (PlaybackSeconds == 0 && skipIntroOutroSilence.Checked && IntroSilence > - 1)
+                if (PlaybackSeconds == 0 && skipIntroOutroSilence.Checked && IntroSilence > -1)
                 {
                     PlaybackSeconds = IntroSilence;
                 }
 
-                SetPlayLocation(PlaybackSeconds);
-
-                //apply volume correction to entire track
-                var track_vol = (float)Utils.DBToLevel(Convert.ToDouble(-1 * (MinVolume - VolumeLevel)), 1.0);
-                if (doFade) //enable fade-in
-                {
-                    Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, 0);
-                    Bass.BASS_ChannelSlideAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, track_vol, (int)(FadeLength * 1000));
-                }
-                else //no fade-in
-                {
-                    Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, track_vol);
-                }
-
                 //start video playback if possible
-                if (yarg.Checked) // && displayBackgroundVideo.Checked)
+                if (yarg.Checked) // && displayBackgroundVideo)
                 {
                     StartVideoPlayback();
                 }
+
+                SetPlayLocation(PlaybackSeconds);
+                                
+                doFade = false; //disabled for now since virtually every song that will be played here starts with silence anyways
+                if (doFade) //enable fade-in
+                {
+                    Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, 0);
+                    Bass.BASS_ChannelSlideAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, masterVol, (int)(FadeLength));
+                }
+                else //no fade-in
+                {
+                    Bass.BASS_ChannelSetAttribute(BassMixer, BASSAttribute.BASS_ATTRIB_VOL, masterVol);
+                }
+
                 //start mix playback
                 if (!Bass.BASS_ChannelPlay(BassMixer, false))
                 {
                     MessageBox.Show("Error starting BASS playback:\n" + Bass.BASS_ErrorGetCode(), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }                
+                    return;
+                }
             }
-
-            if (isRBKaraoke())
-            {
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
+                        
             PrepareForDrawing();
             UpdatePlaybackStuff();
             UpdateStats();
-            stageTimer.Enabled = (isRBKaraoke() && animatedBackground.Checked) || (classicKaraokeMode.Checked && animatedBackground2.Checked);
             LargeAlbumArt = File.Exists(CurrentSongArtBlurred) ? Tools.NemoLoadImage(CurrentSongArtBlurred) : null;
-            if (displayAlbumArt.Checked && LargeAlbumArt != null)
+            if (displayAlbumArt && LargeAlbumArt != null)
             {
                 Color bgColor = Color.AliceBlue;
                 using (var bmp = (Bitmap)Image.FromFile(CurrentSongArtBlurred))
                 {
                     bgColor = Tools.GetMoodBackgroundFromBlurred(bmp, Color.AliceBlue, 28);
+                    _cachedMoodColor = bgColor;
                 }
 
                 if (secondScreen != null)
                 {
-                    secondScreen.ChangeBackgroundImage(LargeAlbumArt, true);
-                    secondScreen.ChangeBackgroundColor(bgColor);
-                    picVisuals.BackColor = Color.AliceBlue;
+                    secondScreen.ChangeVisualsImage(LargeAlbumArt);
+                    SetSecondScreenBackColorIfChanged(bgColor);
+                    SetPicVisualsBackColorIfChanged(Color.AliceBlue);
                 }
                 else
                 {
-                    picVisuals.Image = LargeAlbumArt;
-                    picVisuals.SizeMode = PictureBoxSizeMode.Zoom;
-                    picVisuals.BackColor = bgColor;
+                    SafeVisualsSetter(LargeAlbumArt);
+                    SetPicVisualsBackColorIfChanged(bgColor);
                 }
             }
             else
             {
-                var image = isRBKaraoke() && staticBackground.Checked ? stageBackground : null;
+                var image = doRockBandKaraoke && doStaticBackground ? stageBackground : null;
                 if (secondScreen != null)
                 {
-                    secondScreen.ChangeBackgroundImage(image);
+                    secondScreen.ChangeVisualsImage(image);
                 }
                 else
                 {
-                    picVisuals.Image = image;
+                    SafeVisualsSetter(image);
                 }
             }
 
@@ -11638,9 +15241,9 @@ namespace cPlayer
             }
             sw.Dispose();
 
-            if (displayKaraokeMode.Checked && classicKaraokeMode.Checked && solidColorBackground.Checked)
+            if (doModernKaraokeMode && doSolidColorBackground)
             {
-                picVisuals.Image = Resources.gradient;
+                SafeVisualsSetter(null);
             }
 
             try
@@ -11652,75 +15255,197 @@ namespace cPlayer
 
         private void SetVideoPlayerPath(string ini)
         {
-            _mediaPlayer.Media = null;
-                        
-            var video_path = "";
-            if (string.IsNullOrEmpty(ini) || !File.Exists(ini)) return;
-            var sr = new StreamReader(ini);
-            while (sr.Peek() >= 0)
-            {   //read value for Phase Shift entry in song.ini
-                var line = sr.ReadLine();
-                if (!line.Contains("video =") && !line.Contains("video=")) continue;
-                video_path = Path.GetDirectoryName(ini) + "\\" + Tools.GetConfigString(line).Trim();
-                break;
-            }
-            sr.Dispose();
-            if (string.IsNullOrEmpty(video_path) || !File.Exists(video_path))
+            string videoPath = "";
+
+            if (string.IsNullOrEmpty(ini) || !File.Exists(ini))
             {
-                var path = Path.GetDirectoryName(ini); //default
-                //search for mid file in YARG exCON folder, video should be where the .mid file is
-                var possible_folder = Directory.GetFiles(Path.GetDirectoryName(ini), "*.mid", SearchOption.AllDirectories);
-                if (possible_folder.Any())
+                ClearVideoMediaSafely();
+                return;
+            }
+
+            string iniFolder = Path.GetDirectoryName(ini);
+
+            // First try reading explicit "video =" entry from song.ini
+            try
+            {
+                foreach (string line in File.ReadLines(ini))
                 {
-                    path = Path.GetDirectoryName(possible_folder[0]);
-                }
-                var backgrounds = Directory.GetFiles(path);
-                for (var i = 0; i < backgrounds.Count(); i++)
-                {
-                    switch (Path.GetFileName(backgrounds[i]).ToLowerInvariant())
+                    if (line == null)
+                        continue;
+
+                    if (!line.Contains("video =") && !line.Contains("video="))
+                        continue;
+
+                    string configuredVideo = Tools.GetConfigString(line).Trim();
+
+                    if (!string.IsNullOrEmpty(configuredVideo))
                     {
-                        case "background.avi":
-                        case "video.mp4":
-                        case "video.webm":
-                        case "bg.mp4":
-                        case "bg.webm":
-                            video_path = backgrounds[i];
-                            break;
-                        default:
+                        videoPath = Path.Combine(iniFolder, configuredVideo);
+                    }
+
+                    break;
+                }
+            }
+            catch
+            {
+                videoPath = "";
+            }
+
+            // If the explicit video path failed, search common background names
+            if (string.IsNullOrEmpty(videoPath) || !File.Exists(videoPath))
+            {
+                string searchPath = iniFolder;
+
+                try
+                {
+                    // Search for mid file in YARG exCON folder;
+                    // video should be where the .mid file is.
+                    string[] possibleMidiFiles = Directory.GetFiles(
+                        iniFolder,
+                        "*.mid",
+                        SearchOption.AllDirectories);
+
+                    if (possibleMidiFiles.Length > 0)
+                    {
+                        searchPath = Path.GetDirectoryName(possibleMidiFiles[0]);
+                    }
+                }
+                catch
+                {
+                    searchPath = iniFolder;
+                }
+
+                try
+                {
+                    string[] backgrounds = Directory.GetFiles(searchPath);
+
+                    for (int i = 0; i < backgrounds.Length; i++)
+                    {
+                        string fileName = Path.GetFileName(backgrounds[i]).ToLowerInvariant();
+
+                        switch (fileName)
+                        {
+                            case "background.avi":
+                            case "video.mp4":
+                            case "video.webm":
+                            case "bg.mp4":
+                            case "bg.webm":
+                                videoPath = backgrounds[i];
+                                break;
+                        }
+
+                        if (!string.IsNullOrEmpty(videoPath) && File.Exists(videoPath))
                             break;
                     }
                 }
-            }            
-            CHVideoPath = video_path;
-            if (yarg.Checked && (string.IsNullOrEmpty(CHVideoPath) && rBStyle.Checked))
+                catch
+                {
+                    videoPath = "";
+                }
+            }
+
+            CHVideoPath = videoPath;
+
+            // Existing fallback behavior
+            if (yarg.Checked && string.IsNullOrEmpty(CHVideoPath) && doRockBandChart)
             {
+                ClearVideoMediaSafely();
                 ChangeRBStyleBackground();
                 return;
             }
-            if (string.IsNullOrEmpty(video_path)) return;
-            //StartVideoPlayback(video_path, VideoPathType.FromPath, 0);
-            var media = new Media(_libVLC, CHVideoPath, FromType.FromPath);
-            if (media == null) return;
-            _mediaPlayer.Media = media;
+
+            if (string.IsNullOrEmpty(videoPath) || !File.Exists(videoPath))
+            {
+                ClearVideoMediaSafely();
+                return;
+            }
+
+            // Only now touch LibVLC, after we know we have a valid replacement.
+            SetVideoMediaSafely(videoPath);
         }
+
+        private void SetVideoMediaSafely(string videoPath)
+        {
+            if (_libVLC == null || _mediaPlayer == null)
+                return;
+
+            lock (_vlcMediaLock)
+            {
+                Media newMedia = null;
+                Media oldMedia = null;
+
+                try
+                {
+                    newMedia = new Media(_libVLC, videoPath, FromType.FromPath);
+
+                    if (newMedia == null)
+                        return;
+
+                    oldMedia = _currentVlcMedia;
+
+                    // Keep the new media alive in a field.
+                    _currentVlcMedia = newMedia;
+
+                    // Replace directly instead of clearing to null first.
+                    _mediaPlayer.Media = _currentVlcMedia;
+
+                    // Dispose old media only after replacement succeeds.
+                    oldMedia?.Dispose();
+                }
+                catch
+                {
+                    // If assignment failed, don't leave a dangling new media object.
+                    if (!ReferenceEquals(newMedia, _currentVlcMedia))
+                        newMedia?.Dispose();
+                }
+            }
+        }
+
+        private void ClearVideoMediaSafely()
+        {
+            if (_mediaPlayer == null)
+                return;
+
+            lock (_vlcMediaLock)
+            {
+                try
+                {
+                    Media oldMedia = _currentVlcMedia;
+                    _currentVlcMedia = null;
+                    _mediaPlayer.Media = null;
+
+                    oldMedia?.Dispose();
+                }
+                catch
+                { }
+            }
+        }        
 
         private void StartVideoPlayback()
         {
+            if (doFocusMode) return;
             if (PlayingSong == null) return;
             if (_mediaPlayer.Media == null)
             {
                 SetVideoPlayerPath(string.IsNullOrEmpty(sngPath) ? PlayingSong.Location : Application.StartupPath + "\\temp\\song.ini");
             }
             if (_mediaPlayer.Media == null) return;
+
             VideoIsPlaying = true;
             ClearVisuals();
             videoView.Visible = true;
             videoView.BringToFront();
+            var width = secondScreen != null ? secondScreen.Width : (isFullScreen ? Width : picVisuals.Width);
+            var height = secondScreen != null ? secondScreen.Height : (isFullScreen ? Height : picVisuals.Height);
+            _mediaPlayer.AspectRatio = $"{width}:{height}";
+            _mediaPlayer.Scale = 0;
+
             _mediaPlayer.Play();
-            if (_mediaPlayer.IsSeekable)
+
+            if (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused)
             {
-                _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
-            }               
+                _mediaPlayer.Time = GetBASSTimeForVideo();
+            }
         }
 
         public void SetPlayLocation(double time, bool seeking = false)
@@ -11734,10 +15459,10 @@ namespace cPlayer
             {
                 time = 0.0;
             }
-            if (_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused && !seeking)
+            if ((_mediaPlayer.State == VLCState.Playing || _mediaPlayer.State == VLCState.Paused) && !seeking)
             {
-                _mediaPlayer.Time = (long)(time * 1000) + (Parser.Songs == null ? 0 : Parser.Songs[0].VideoStartTime);
-            }           
+                _mediaPlayer.Time = GetBASSTimeForVideo();
+            }
             if ((opusFiles.Any() || oggFiles.Any() || wavFiles.Any() || mp3Files.Any()) && BassStreams.Count() > 1)
             {
                 foreach (var stream in BassStreams)
@@ -11766,7 +15491,7 @@ namespace cPlayer
         }
 
         private void UpdatePlaybackStuff()
-        {            
+        {
             UpdateNotifyTray();
             PlaybackTimer.Enabled = true;
         }
@@ -11774,7 +15499,7 @@ namespace cPlayer
         private void StopPlayback(bool Pause = false)
         {
             try
-            {                
+            {
                 PlaybackTimer.Enabled = false;
                 if (Pause)
                 {
@@ -11795,15 +15520,14 @@ namespace cPlayer
                 {
                     StopAllVideoPlayback();
                     StopBASS();
+                    StopStageKits();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                
+
             }
         }
-
-        private int _stopInProgress;
 
         private void StopVideoPlayback(bool stop = true)
         {
@@ -11837,19 +15561,11 @@ namespace cPlayer
                     Interlocked.Exchange(ref _stopInProgress, 0);
                 }
             });
-        }        
+        }
 
-        public void ChangeBackgroundImage(Image image, bool zoom = false)
+        public void ChangeBackgroundImage(Image image)
         {
-            picVisuals.Image = image;
-            if (zoom)
-            {
-                picVisuals.SizeMode = PictureBoxSizeMode.Zoom;
-            }
-            else
-            {
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
+            SafeVisualsSetter(image);
         }
 
         public void ClearOverlayFrame()
@@ -11861,10 +15577,10 @@ namespace cPlayer
             using (var g = Graphics.FromImage(bmp))
             {
                 g.Clear(Color.Transparent);
-                try 
-                { 
-                    videoOverlay.UpdateVisuals(bmp); 
-                } 
+                try
+                {
+                    videoOverlay.UpdateVisuals(bmp);
+                }
                 catch { }
             }
         }
@@ -11881,7 +15597,7 @@ namespace cPlayer
                     Bass.BASS_StreamFree(stream);
                 }
             }
-            catch (Exception ex)
+            catch
             { }
         }
 
@@ -11945,8 +15661,6 @@ namespace cPlayer
             return newline.Replace("/", "").Trim();
         }
 
-        private Image LargeAlbumArt = null;
-        private Image OriginalAlbumArt = null;
         public void UpdateDisplay(bool PrepareToDraw = true)
         {
             if (isClosing) return;
@@ -11954,24 +15668,18 @@ namespace cPlayer
             {
                 PrepareForDrawing();
             }
-            var doShow = openSideWindow.Checked;
-            Width = doShow ? 1000 : 412;
+            if (WindowState != FormWindowState.Maximized)
+            {
+                Width = Width < activeRenderingResolution.Width ? activeRenderingResolution.Width : Width;
+                Height = Height < activeRenderingResolution.Height ? activeRenderingResolution.Height : Height;
+            }
             LargeAlbumArt = File.Exists(CurrentSongArtBlurred) ? Tools.NemoLoadImage(CurrentSongArtBlurred) : null;
             OriginalAlbumArt = File.Exists(CurrentSongArt) ? Tools.NemoLoadImage(CurrentSongArt) : null;
-            var image = displayAlbumArt.Checked ? LargeAlbumArt : null;
-            if (secondScreen != null)
-            {
-                secondScreen.ChangeBackgroundImage(image, displayAlbumArt.Checked);
-            }
-            else
-            {
-                picVisuals.Image = image;
-            }
             if (secondScreen == null)
             {
                 lblSections.Parent = picVisuals;
-                lblSections.Visible = showPracticeSections.Checked && MIDITools.PracticeSessions.Any() && !chartVertical.Checked;
-                lblSections.BackColor = yarg.Checked && displayBackgroundVideo.Checked && _mediaPlayer.Media != null ? Color.Black : LabelBackgroundColor;
+                lblSections.Visible = showPracticeSections.Checked && MIDITools.PracticeSessions.Any() && !doVerticalChart;
+                lblSections.BackColor = yarg.Checked && enableYARGCHVideos && _mediaPlayer.Media != null ? Color.Black : LabelBackgroundColor;
                 lblSections.Refresh();
 
                 videoView.Parent = picVisuals;
@@ -11984,26 +15692,26 @@ namespace cPlayer
 
         private int GetHeightDiff()
         {
-            if (doMIDINoVocals && !rBStyle.Checked)
+            if (doMIDINoVocals && !doRockBandChart)
             {
                 return 4;
             }
-            if (((chartVisualsToolStripMenuItem.Checked && chartVertical.Checked) && MIDITools.LyricsVocals.Lyrics.Any()) || (chartVisualsToolStripMenuItem.Checked && rBStyle.Checked))
+            if (((doVerticalChart) && MIDITools.LyricsVocals.Lyrics.Any()) || doRockBandChart)
             {
                 return vocalsHeight + 4;
             }
             var heightDiff = 0;
-            if (lblSections.Visible && !chartVertical.Checked && !rBStyle.Checked)
+            if (lblSections.Visible && !doVerticalChart && !doRockBandChart)
             {
                 heightDiff += lblSections.Height;
             }
-            if (doScrollingLyrics || doStaticLyrics || doKaraokeLyrics || rBStyle.Checked)
+            if (doScrollingLyrics || doStaticLyrics || doKaraokeLyrics || doRockBandChart)
             {
-                if (doHarmonyLyrics || rBStyle.Checked)
+                if (doHarmonyLyrics || doRockBandChart)
                 {
                     heightDiff += MIDITools.LyricsHarm3.Lyrics.Any() ? 60 : (MIDITools.LyricsHarm2.Lyrics.Any() ? 40 : 20);
                 }
-                else if (MIDITools.LyricsVocals.Lyrics.Any() || rBStyle.Checked)
+                else if (MIDITools.LyricsVocals.Lyrics.Any() || doRockBandChart)
                 {
                     heightDiff += 20;
                 }
@@ -12018,13 +15726,17 @@ namespace cPlayer
             graphics.PixelOffsetMode = PixelOffsetMode.Half;
             graphics.CompositingQuality = CompositingQuality.AssumeLinear;
             graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+
         }
 
         private void howToUseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var hub = new frmHelpHub();
-            hub.Show();
-            hub.ClickWelcome();
+            if (helpHubForm == null || helpHubForm.IsDisposed)
+            {
+                helpHubForm = new frmHelpHub();
+            }
+            helpHubForm.Show();
+            helpHubForm.ClickWelcome();
         }
 
         private void folderScanner_DoWork(object sender, DoWorkEventArgs e)
@@ -12059,7 +15771,7 @@ namespace cPlayer
                 SongsToAdd.AddRange(files.Where(file => Path.GetExtension(file) == ".pkg").ToList());
             }
             else if (rb4PS4.Checked)
-            {               
+            {
                 SongsToAdd.AddRange(files.Where(file => Path.GetExtension(file) == ".songdta_ps4").ToList());
             }
             else if (rockSmith.Checked)
@@ -12276,16 +15988,8 @@ namespace cPlayer
                                          (lstPlaylist.SelectedItems.Count == 1 &&
                                           lstPlaylist.SelectedItems[0].Tag.ToString() == "1");
             }
-            catch (Exception ex)
+            catch
             { }
-        }
-
-        private void NotifyContextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            restoreToolStripMenuItem.Visible = WindowState == FormWindowState.Minimized;
-            playToolStripMenuItem.Visible = Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING && picPlay.Enabled;
-            pauseToolStripMenuItem.Visible = Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING && picPlay.Enabled;
-            nextToolStripMenuItem.Visible = picNext.Enabled;
         }
 
         private void returnToPlaylist_Click(object sender, EventArgs e)
@@ -12449,22 +16153,33 @@ namespace cPlayer
 
         private void frmMain_Shown(object sender, EventArgs e)
         {
+            Screen screen = Screen.FromControl(this);
+            isResizing = true;
+            this.StartPosition = FormStartPosition.Manual;
+            this.WindowState = FormWindowState.Normal;
+            this.Bounds = screen.WorkingArea;
+            this.WindowState = FormWindowState.Maximized;
             ClearAll();
             LoadConfig();
             CenterToScreen();
             UpdateRecentPlaylists("");
             UpdateDisplay(false);
-            ChangeTopMenuColors(Color.Black, Color.AliceBlue);            
+            ChangeTopMenuColors(Color.Black, Color.AliceBlue);
             Activate();
             InitBASS();
             if (!string.IsNullOrEmpty(PlaylistPath) && autoloadLastPlaylist.Checked && File.Exists(PlaylistPath))
             {
                 PrepareToLoadPlaylist();
             }
-            updater.RunWorkerAsync();            
+            updater.RunWorkerAsync();
             hoverForm.Show(this);
             UpdateOverlayPosition();
-        }
+            lblFPS.Parent = picVisuals;
+            lblFPS.Left = picVisuals.Width - lblFPS.Width;
+            lblFPS.Top = 0;
+            isResizing = false;            
+            UpdateActiveRenderingResolution();
+        }        
 
         private void PrepareToLoadPlaylist(string playlist = "")
         {
@@ -12472,7 +16187,7 @@ namespace cPlayer
             {
                 PlaylistPath = playlist;
             }
-            statusLabel.Text = "Loading Playlist...";            
+            statusLabel.Text = "Loading Playlist...";
             LoadPlaylist();
         }
 
@@ -12493,7 +16208,7 @@ namespace cPlayer
             }
             else if (e.KeyCode == Keys.Escape && isFullScreen)
             {
-                doResizeVisuals();
+                //doResizeVisuals();
             }
         }
 
@@ -12574,29 +16289,7 @@ namespace cPlayer
             {
                 WindowState = FormWindowState.Normal;
             }
-        }
-
-        private void VisualsContextMenu_Opening(object sender, CancelEventArgs e)
-        {
-            displayKaraokeMode.Enabled = PlayingSong == null || (MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any());
-            displayAlbumArt.Enabled = PlayingSong == null || File.Exists(CurrentSongArtBlurred);
-            chartVisualsToolStripMenuItem.Enabled = !hasNoMIDI;
-            UpdateKaraokeItemsVisibility();
-        }
-
-        private void UpdateKaraokeItemsVisibility()
-        {
-            selectBackgroundColor.Visible = !rockBandKaraoke.Checked;
-            selectLyricColor.Visible = !rockBandKaraoke.Checked;
-            selectHighlightColor.Visible = true;
-            restoreDefaultsToolStripMenuItem.Visible = true;
-            toolStripMenuItem13.Visible = true;
-            toolStripMenuItem14.Visible = true;
-            selectHarmony3HighlightColor.Visible = classicKaraokeMode.Checked || rockBandKaraoke.Checked;
-            selectHarmony3TextColor.Visible = classicKaraokeMode.Checked;
-            selectHarmonyTextColor.Visible = classicKaraokeMode.Checked;
-            selectHarmonyHighlightColor.Visible = classicKaraokeMode.Checked || rockBandKaraoke.Checked;
-        }
+        }        
 
         private void txtSearch_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -12605,12 +16298,6 @@ namespace cPlayer
             if (ShowingNotFoundMessage) return;
             if (txtSearch.Text == strSearchPlaylist || Playlist.Count == 0) return;
             ReloadPlaylist(Playlist, true, true, false);
-        }
-
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            if (txtSearch.Text == strSearchPlaylist || Playlist.Count == 0) return;
-            ReloadPlaylist(Playlist);
         }
 
         private void GoToSearchTerm(string search, bool UserSearch)
@@ -12668,7 +16355,7 @@ namespace cPlayer
                 lstPlaylist.Items[select].Focused = true;
                 lstPlaylist.EnsureVisible(select);
             }
-            catch (Exception ex)
+            catch
             { }
         }
 
@@ -12687,8 +16374,8 @@ namespace cPlayer
                 GoToSearchTerm(e.KeyChar.ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), false);
                 e.Handled = true;
             }
-            catch (Exception ex)
-            {  }
+            catch
+            { }
         }
 
         private void lstPlaylist_KeyDown(object sender, KeyEventArgs e)
@@ -12734,10 +16421,9 @@ namespace cPlayer
             EnableDisable(true);
             ReloadPlaylist(Playlist, true, false, false);
             picShuffle.Tag = "noshuffle";
-            toolTip1.SetToolTip(picShuffle, "Enable track shuffling");            
-            //if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING) return;
+            toolTip1.SetToolTip(picShuffle, "Enable track shuffling");
             doSongPlayback();
-        }     
+        }
 
         private void SongMixer_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -12778,7 +16464,7 @@ namespace cPlayer
             Playlist = new List<Song>();
 
             foreach (var song in StaticPlaylist)
-            {               
+            {
                 bool sameArtist =
                     !string.IsNullOrWhiteSpace(seedArtist) &&
                     string.Equals((song.Artist ?? "").Trim(), seedArtist, StringComparison.OrdinalIgnoreCase);
@@ -12790,7 +16476,7 @@ namespace cPlayer
                 }
 
                 if (song.BPM < minBPM || song.BPM > maxBPM) continue;
-                if (song.Length < minLength || song.Length > maxLength) continue;                              
+                if (song.Length < minLength || song.Length > maxLength) continue;
 
                 bool genreAllowed =
                     !string.IsNullOrWhiteSpace(song.Genre) &&
@@ -12800,7 +16486,7 @@ namespace cPlayer
                 {
                     Playlist.Add(song);
                 }
-            }        
+            }
         }
 
         private static HashSet<string> GetAllowedGenres(string seedGenre)
@@ -12890,6 +16576,560 @@ namespace cPlayer
                 message = message + " " + GetCurrentSection(time);
             }
             return message;
+        }              
+
+        private Size _spectrumSize = Size.Empty;
+
+        private float[] _fftData = new float[2048]; // FFT4096 = 2048 bins
+        private float[] _fftEdge;
+        private float[] _fftVisual;
+        private float[] _fftSmoothed;
+
+        private PointF[] _fftTopLine;
+        private PointF[] _fftBottomLine;
+        private PointF[] _fftFillPoints;
+
+        private int[] _fftBandStart;
+        private int[] _fftBandEnd;
+
+        private Size _fftWaveCachedSize = Size.Empty;
+        private int _fftVisualPointsCached = 0;
+
+        private readonly Brush _fftBgBrush = new SolidBrush(Color.Black);
+        private readonly Brush _fftFillBrush = new SolidBrush(Color.FromArgb(105, Color.DodgerBlue));
+        private readonly Pen _fftHighlightPen = new Pen(Color.FromArgb(130, Color.RoyalBlue), 1.0f);
+        private readonly Pen _fftCenterPen = new Pen(Color.FromArgb(35, Color.RoyalBlue), 1.0f);
+
+        private Color _fftBgColorA = Color.FromArgb(8, 8, 8);
+        private Color _fftBgColorB = Color.FromArgb(18, 18, 24);
+
+        private int _fftBgPaletteIndex = 0;
+        private double _fftBgLastBeatIndex = -1;
+        private double _fftBgColorChangeStartBeat = 0;
+
+        private readonly Random _fftBgRandom = new Random();
+
+        private readonly Color[] _fftBgPalette =
+        {
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(55, 75, 130),   // deep blue
+            Color.FromArgb(85, 55, 130),   // deep purple
+            Color.FromArgb(45, 105, 80),   // deep green
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(125, 65, 45),   // burnt orange
+            Color.FromArgb(45, 100, 125),  // teal blue
+            Color.FromArgb(110, 95, 45),   // dark gold / olive
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(120, 45, 65),   // muted red / magenta
+            Color.FromArgb(55, 120, 115),  // cyan / teal
+            Color.FromArgb(70, 55, 120),   // indigo
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(95, 55, 95),    // plum
+            Color.FromArgb(40, 85, 105),   // steel teal
+            Color.FromArgb(90, 70, 40),    // bronze
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(60, 90, 140),   // brighter blue
+            Color.FromArgb(100, 60, 140),  // violet
+            Color.FromArgb(55, 125, 95),   // emerald green
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(135, 75, 55),   // orange-brown
+            Color.FromArgb(55, 115, 140),  // blue-cyan
+            Color.FromArgb(120, 110, 55),  // mustard / olive
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(135, 55, 80),   // rose red
+            Color.FromArgb(65, 135, 125),  // seafoam teal
+            Color.FromArgb(85, 65, 145),   // royal purple
+
+            Color.Black,                   // revert to black
+
+            Color.FromArgb(145, 80, 120),  // pink-purple
+            Color.FromArgb(70, 140, 90),   // leafy green
+            Color.FromArgb(60, 95, 150),   // cool blue
+
+            Color.FromArgb(220, 220, 220)
+        };
+
+        private void EnsureFFTWaveCache(Size size, int visualPoints)
+        {
+            if (_fftWaveCachedSize == size &&
+                _fftVisualPointsCached == visualPoints &&
+                _fftVisual != null &&
+                _fftSmoothed != null &&
+                _fftTopLine != null &&
+                _fftBottomLine != null &&
+                _fftFillPoints != null &&
+                _fftBandStart != null &&
+                _fftBandEnd != null &&
+                    _fftEdge != null)
+            {
+                return;
+            }
+
+            _fftEdge = new float[visualPoints];
+            _fftWaveCachedSize = size;
+            _fftVisualPointsCached = visualPoints;
+
+            _fftVisual = new float[visualPoints];
+            _fftSmoothed = new float[visualPoints];
+
+            _fftTopLine = new PointF[visualPoints];
+            _fftBottomLine = new PointF[visualPoints];
+            _fftFillPoints = new PointF[visualPoints * 2];
+
+            _fftBandStart = new int[visualPoints];
+            _fftBandEnd = new int[visualPoints];
+
+            int maxBin = _fftData.Length - 1;
+
+            // Skip bin 0. Bin 0 is DC/near-silence junk for visuals.
+            const int minBin = 1;
+
+            // Log-ish mapping, but softened so the left side does not become blocky.
+            // Smaller exponent = more space for lows/mids.
+            // Larger exponent = more space for highs.
+            const double curve = 1.25;
+
+            for (int i = 0; i < visualPoints; i++)
+            {
+                double t1 = i / (double)visualPoints;
+                double t2 = (i + 1) / (double)visualPoints;
+
+                int b1 = minBin + (int)((maxBin - minBin) * Math.Pow(t1, curve));
+                int b2 = minBin + (int)((maxBin - minBin) * Math.Pow(t2, curve));
+
+                if (b2 <= b1)
+                    b2 = b1 + 1;
+
+                if (b1 < minBin)
+                    b1 = minBin;
+
+                if (b2 > maxBin)
+                    b2 = maxBin;
+
+                _fftBandStart[i] = b1;
+                _fftBandEnd[i] = b2;
+            }
+        }
+
+        private void DrawFFTWaveform(Graphics graphics, Rectangle bounds)
+        {
+            if (bounds.Width <= 0 || bounds.Height <= 0)
+                return;
+
+            const int visualPoints = 768;
+
+            EnsureFFTWaveCache(bounds.Size, visualPoints);
+
+            int result = Bass.BASS_ChannelGetData(
+                BassMixer,
+                _fftData,
+                (int)BASSData.BASS_DATA_FFT4096);
+
+            if (doSpectrumColors)
+            {
+                using (SolidBrush bgBrush = new SolidBrush(GetBPMPulsingFFTBackgroundColor()))
+                {
+                    graphics.FillRectangle(bgBrush, bounds);
+                }
+            }
+            else
+            {
+                graphics.FillRectangle(_fftBgBrush, bounds);
+            }
+
+            float centerY = bounds.Top + bounds.Height / 2f;
+            float maxAmplitude = bounds.Height * 0.43f;
+
+            if (result <= 0)
+            {
+                graphics.DrawLine(_fftCenterPen, bounds.Left, centerY, bounds.Right, centerY);
+                return;
+            }
+
+            const float gain = 14.0f;
+            const float riseSpeed = 0.42f;
+            const float fallSpeed = 0.82f;
+
+            for (int i = 0; i < visualPoints; i++)
+            {
+                float screenU = i / (float)(visualPoints - 1);
+
+                // Mirror the frequency layout horizontally:
+                // center = lows, edges = highs
+                float spectrumT = Math.Abs(screenU - 0.5f) * 2f;
+
+                // Look up the band as if the spectrum runs from center outward
+                int mirroredBandIndex = Math.Min(
+                    visualPoints - 1,
+                    (int)(spectrumT * (visualPoints - 1)));
+
+                int startBin = _fftBandStart[mirroredBandIndex];
+                int endBin = _fftBandEnd[mirroredBandIndex];
+
+                float peak = 0f;
+                float sum = 0f;
+                int count = 0;
+
+                for (int bin = startBin; bin <= endBin; bin++)
+                {
+                    float value = _fftData[bin];
+
+                    if (value > peak)
+                        peak = value;
+
+                    sum += value;
+                    count++;
+                }
+
+                float avg = count > 0 ? (sum / count) : 0f;
+
+                // Blend average and peak differently depending on frequency zone.
+                // Lows get more averaging to avoid skinny spikes.
+                float energy;
+
+                if (spectrumT < 0.30f)          // low frequencies (center)
+                {
+                    energy = (avg * 0.72f) + (peak * 0.28f);
+                }
+                else if (spectrumT < 0.70f)     // mids
+                {
+                    energy = (avg * 0.45f) + (peak * 0.55f);
+                }
+                else                            // highs (edges)
+                {
+                    energy = (avg * 0.22f) + (peak * 0.78f);
+                }
+
+                float raw = Math.Min(1.0f, energy * gain);
+
+                // Slightly compress the dynamic range so spikes don't tower over everything.
+                float target = (float)Math.Pow(raw, 0.68f);
+
+                // Frequency weighting, now based on spectrumT (center->edge)
+                float frequencyWeight;
+
+                if (spectrumT < 0.35f)
+                {
+                    // lows in the center
+                    frequencyWeight = 0.68f;
+                }
+                else if (spectrumT < 0.70f)
+                {
+                    // mids
+                    frequencyWeight = 0.92f;
+                }
+                else
+                {
+                    // highs at the edges
+                    frequencyWeight = 0.62f;
+                }
+
+                target *= frequencyWeight;                
+
+                float current = _fftSmoothed[i];
+
+                if (target > current)
+                    current += (target - current) * riseSpeed;
+                else
+                    current *= fallSpeed;
+
+                _fftSmoothed[i] = current;
+                _fftVisual[i] = current;
+            }
+
+            _fftVisual[0] = _fftSmoothed[0];
+            _fftVisual[visualPoints - 1] = _fftSmoothed[visualPoints - 1];
+
+            for (int i = 1; i < visualPoints - 1; i++)
+            {
+                _fftVisual[i] =
+                (_fftSmoothed[i - 1] * 0.10f) +
+                (_fftSmoothed[i] * 0.80f) +
+                (_fftSmoothed[i + 1] * 0.10f);
+            }
+
+            int lowEndCount = (int)(visualPoints * 0.28f);
+
+            // Because lows are now centered, smooth around the center area.
+            int centerIndex = visualPoints / 2;
+            int lowStart = Math.Max(2, centerIndex - (lowEndCount / 2));
+            int lowEnd = Math.Min(visualPoints - 3, centerIndex + (lowEndCount / 2));
+
+            for (int i = lowStart; i <= lowEnd; i++)
+            {
+                _fftVisual[i] =
+                    (_fftVisual[i - 2] * 0.10f) +
+                    (_fftVisual[i - 1] * 0.20f) +
+                    (_fftVisual[i] * 0.40f) +
+                    (_fftVisual[i + 1] * 0.20f) +
+                    (_fftVisual[i + 2] * 0.10f);
+            }
+
+            _fftEdge[0] = _fftVisual[0];
+            _fftEdge[visualPoints - 1] = _fftVisual[visualPoints - 1];
+
+            for (int i = 1; i < visualPoints - 1; i++)
+            {
+                float center = _fftVisual[i];
+                float left = _fftVisual[i - 1];
+                float right = _fftVisual[i + 1];
+
+                // Local contrast / unsharp mask.
+                float neighborAverage = (left + right) * 0.5f;
+                float sharpened = center + ((center - neighborAverage) * 0.85f);
+
+                _fftEdge[i] = Math.Max(0f, Math.Min(1f, sharpened));
+            }
+
+            for (int i = 2; i < visualPoints - 2; i++)
+            {
+                bool isPeak =
+                    _fftEdge[i] > _fftEdge[i - 1] &&
+                    _fftEdge[i] > _fftEdge[i + 1] &&
+                    _fftEdge[i] > 0.08f;
+
+                if (isPeak)
+                {
+                    _fftEdge[i] = Math.Min(1.0f, _fftEdge[i] * 1.18f);
+                }
+            }
+
+            float stepX = bounds.Width / (float)(visualPoints - 1);
+
+            for (int i = 0; i < visualPoints; i++)
+            {
+                float x = bounds.Left + i * stepX;
+
+                float fillAmp = _fftVisual[i] * maxAmplitude;
+                float edgeAmp = _fftEdge[i] * maxAmplitude;
+
+                float fillTopY = centerY - fillAmp;
+                float fillBottomY = centerY + fillAmp;
+
+                float edgeTopY = centerY - edgeAmp;
+                float edgeBottomY = centerY + edgeAmp;
+
+                _fftTopLine[i] = new PointF(x, edgeTopY);
+                _fftBottomLine[i] = new PointF(x, edgeBottomY);
+
+                _fftFillPoints[i] = new PointF(x, fillTopY);
+                _fftFillPoints[(visualPoints * 2) - 1 - i] = new PointF(x, fillBottomY);
+            }
+
+            var oldSmoothing = graphics.SmoothingMode;
+            var oldPixelOffset = graphics.PixelOffsetMode;
+            var oldCompositing = graphics.CompositingQuality;
+            var oldInterpolation = graphics.InterpolationMode;
+
+            graphics.SmoothingMode = SmoothingMode.HighSpeed;
+            graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+            graphics.CompositingQuality = CompositingQuality.HighSpeed;
+            graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+            graphics.FillPolygon(_fftFillBrush, _fftFillPoints);
+
+            graphics.DrawLines(_fftHighlightPen, _fftTopLine);
+            graphics.DrawLines(_fftHighlightPen, _fftBottomLine);
+
+            graphics.DrawLine(_fftCenterPen, bounds.Left, centerY, bounds.Right, centerY);
+
+            graphics.SmoothingMode = oldSmoothing;
+            graphics.PixelOffsetMode = oldPixelOffset;
+            graphics.CompositingQuality = oldCompositing;
+            graphics.InterpolationMode = oldInterpolation;
+        }
+
+        private static Color LerpColor(Color a, Color b, float t)
+        {
+            t = Math.Max(0f, Math.Min(1f, t));
+
+            int r = (int)(a.R + ((b.R - a.R) * t));
+            int g = (int)(a.G + ((b.G - a.G) * t));
+            int bVal = (int)(a.B + ((b.B - a.B) * t));
+
+            return Color.FromArgb(r, g, bVal);
+        }
+
+        private static float SmoothStep(float t)
+        {
+            t = Math.Max(0f, Math.Min(1f, t));
+            return t * t * (3f - (2f * t));
+        }
+
+        private static Color BoostColorSaturationAndBrightness(Color color, float saturationBoost, float brightnessBoost)
+        {
+            float r = color.R / 255f;
+            float g = color.G / 255f;
+            float b = color.B / 255f;
+
+            float max = Math.Max(r, Math.Max(g, b));
+            float min = Math.Min(r, Math.Min(g, b));
+            float l = (max + min) / 2f;
+
+            float h;
+            float s;
+
+            if (Math.Abs(max - min) < 0.0001f)
+            {
+                h = 0f;
+                s = 0f;
+            }
+            else
+            {
+                float d = max - min;
+
+                s = l > 0.5f
+                    ? d / (2f - max - min)
+                    : d / (max + min);
+
+                if (Math.Abs(max - r) < 0.0001f)
+                    h = (g - b) / d + (g < b ? 6f : 0f);
+                else if (Math.Abs(max - g) < 0.0001f)
+                    h = (b - r) / d + 2f;
+                else
+                    h = (r - g) / d + 4f;
+
+                h /= 6f;
+            }
+
+            s = Math.Min(1f, s * saturationBoost);
+            l = Math.Min(1f, l * brightnessBoost);
+
+            return ColorFromHsl(h, s, l);
+        }
+
+        private static Color ColorFromHsl(float h, float s, float l)
+        {
+            float r, g, b;
+
+            if (s == 0f)
+            {
+                r = g = b = l;
+            }
+            else
+            {
+                float q = l < 0.5f
+                    ? l * (1f + s)
+                    : l + s - (l * s);
+
+                float p = (2f * l) - q;
+
+                r = HueToRgb(p, q, h + (1f / 3f));
+                g = HueToRgb(p, q, h);
+                b = HueToRgb(p, q, h - (1f / 3f));
+            }
+
+            return Color.FromArgb(
+                ClampToByte(r * 255f),
+                ClampToByte(g * 255f),
+                ClampToByte(b * 255f));
+        }
+
+        private static float HueToRgb(float p, float q, float t)
+        {
+            if (t < 0f)
+                t += 1f;
+
+            if (t > 1f)
+                t -= 1f;
+
+            if (t < 1f / 6f)
+                return p + ((q - p) * 6f * t);
+
+            if (t < 1f / 2f)
+                return q;
+
+            if (t < 2f / 3f)
+                return p + ((q - p) * ((2f / 3f) - t) * 6f);
+
+            return p;
+        }
+
+        private static int ClampToByte(float value)
+        {
+            if (value < 0f)
+                return 0;
+
+            if (value > 255f)
+                return 255;
+
+            return (int)value;
+        }
+
+        private Color GetBPMPulsingFFTBackgroundColor()
+        {
+            double bpm = PlayingSong != null && PlayingSong.BPM > 0
+                ? PlayingSong.BPM
+                : 120.0;
+
+            double time = GetCorrectedTime();
+
+            double secondsPerBeat = 60.0 / bpm;
+            double beatPosition = time / secondsPerBeat;
+            double beatIndex = Math.Floor(beatPosition);
+            double beatFraction = beatPosition - beatIndex;
+
+            // Slower = smoother color drifting.
+            // 32 beats at 120 BPM = about 16 seconds.
+            const int beatsPerColorChange = 16;
+
+            if (_fftBgLastBeatIndex < 0)
+            {
+                _fftBgLastBeatIndex = beatIndex;
+                _fftBgColorChangeStartBeat = beatIndex;
+
+                _fftBgPaletteIndex = 0;
+                _fftBgColorA = _fftBgPalette[0];
+                _fftBgColorB = _fftBgPalette[1];
+            }
+
+            if (beatIndex >= _fftBgColorChangeStartBeat + beatsPerColorChange)
+            {
+                _fftBgPaletteIndex = (_fftBgPaletteIndex + 1) % _fftBgPalette.Length;
+
+                _fftBgColorA = _fftBgColorB;
+                _fftBgColorB = _fftBgPalette[(_fftBgPaletteIndex + 1) % _fftBgPalette.Length];
+
+                _fftBgColorChangeStartBeat = beatIndex;
+            }
+
+            double colorProgress =
+                (beatPosition - _fftBgColorChangeStartBeat) / beatsPerColorChange;
+
+            float colorT = SmoothStep((float)colorProgress);
+
+            Color baseColor = LerpColor(_fftBgColorA, _fftBgColorB, colorT);
+
+            // Create a richer/brighter version of the SAME hue.
+            Color pulseColor = BoostColorSaturationAndBrightness(baseColor, 1.35f, 1.25f);
+
+            // Soft pulse curve.
+            // Starts strongest near the beat, fades gently.
+            // Lower strength = less flashing.
+            float beatPulse = (float)Math.Pow(1.0 - beatFraction, 2.2);
+
+            // Make downbeat a tiny bit stronger
+            bool isDownbeat = ((long)beatIndex % 4) == 0;
+            float pulseStrength = isDownbeat ? 0.24f : 0.14f;
+
+            float pulseT = beatPulse * pulseStrength;
+
+            _fftBgLastBeatIndex = beatIndex;
+
+            return LerpColor(baseColor, pulseColor, pulseT);
         }
 
         private void DrawSpectrum(Rectangle bounds, Graphics g)
@@ -12934,69 +17174,35 @@ namespace cPlayer
                         break;
                 }
             }
-            catch (Exception ex)
-            {   }
-        }
-
-        public bool GetDisplayAudioSpectrumIsChecked()
-        {
-            return displayAudioSpectrum.Checked;
-        }
-
-        private void displayAudioSpectrum_Click(object sender, EventArgs e)
-        {
-            ClickDisplayAudioSpectrum();                 
+            catch
+            { }
         }
 
         public void ClickDisplayAudioSpectrum()
         {
             StopAllVideoPlayback();
-            picVisuals.BackColor = Color.AliceBlue;
-            stageTimer.Enabled = false;
+            SetPicVisualsBackColorIfChanged(Color.AliceBlue);
             ChangeTopMenuColors(Color.Black, Color.AliceBlue);
-            CheckUncheckAll(displayAudioSpectrum);
-            updateDisplayType(displayAudioSpectrum);
-            picVisuals.Image = null;
+            DisableAllModes();
+            displayAudioSpectrum = true;
+            updateDisplayType();
+            SafeVisualsSetter(null);
         }
 
-        private Color GetMoodColor()
-        {
-            Color bgColor = Color.AliceBlue;
-            if (File.Exists(CurrentSongArtBlurred))
-            {
-                using (var bmp = (Bitmap)Image.FromFile(CurrentSongArtBlurred))
-                {
-                    bgColor = Tools.GetMoodBackgroundFromBlurred(bmp, Color.AliceBlue, 28);
-                }
-            }
-            return bgColor;
-        }
-
-        private void displayAlbumArt_Click(object sender, EventArgs e)
-        {
-            ClickDisplayAlbumArt();
-        }     
-        
-        public bool GetDisplayAlbumArtIsChecked()
-        {
-            return displayAlbumArt.Checked;
-        }
-        
         public void ClickDisplayAlbumArt()
         {
-            stageTimer.Enabled = false;
             ChangeTopMenuColors(Color.Black, Color.AliceBlue);
-            CheckUncheckAll(displayAlbumArt);
-            updateDisplayType(displayAlbumArt);
+            DisableAllModes();
+            displayAlbumArt = true;
+            updateDisplayType();
+            var bgColor = _cachedMoodColor;
             toolTip1.SetToolTip(picPreview, "Click to change spectrum style");
-            var bgColor = GetMoodColor();
             if (!PlaybackTimer.Enabled)
             {
-                picVisuals.Image = Resources.logo;
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
+                SafeVisualsSetter(Resources.logo);
                 if (secondScreen != null)
                 {
-                    secondScreen.ChangeBackgroundImage(Resources.logo);
+                    secondScreen.ChangeVisualsImage(Resources.logo);
                 }
             }
             else
@@ -13004,13 +17210,13 @@ namespace cPlayer
                 if (secondScreen != null)
                 {
                     secondScreen.StopVideoPlayback();
-                    secondScreen.ChangeBackgroundColor(bgColor);
-                    picVisuals.BackColor = Color.AliceBlue;
+                    SetSecondScreenBackColorIfChanged(bgColor);
+                    SetPicVisualsBackColorIfChanged(Color.AliceBlue);
                 }
                 else
                 {
                     StopVideoPlayback();
-                    picVisuals.BackColor = bgColor;
+                    SetPicVisualsBackColorIfChanged(bgColor);
                 }
             }
         }
@@ -13018,7 +17224,7 @@ namespace cPlayer
         private void ChangeDisplay()
         {
             ClearVisuals();
-            if (!displayAlbumArt.Checked && File.Exists(CurrentSongArt))
+            if (!displayAlbumArt && File.Exists(CurrentSongArt))
             {
                 picPreview.Image = Tools.NemoLoadImage(CurrentSongArt);
                 picPreview.Cursor = Cursors.Hand;
@@ -13032,203 +17238,232 @@ namespace cPlayer
             }
         }
 
-        private void audioTracks_Click(object sender, EventArgs e)
-        {
-            isChoosingStems = true;
-            var selector = new AudioSelector(this);
-            selector.Show();
-        }
-
         private void showMIDIVisuals_Click(object sender, EventArgs e)
         {
-            var selector = new MIDISelector(this);
-            selector.Show();
-        }
-
-        private readonly Dictionary<string, Bitmap> _lyricBmpCache = new Dictionary<string, Bitmap>(StringComparer.Ordinal);
-        private readonly object _lyricBmpLock = new object();
-
-        private Bitmap GetLyricBitmap(string text, Font font, Color foreColor)
-        {
-            // Cache key: text + font + color
-            string key = text + "\n" + font.Name + "|" + font.SizeInPoints + "|" + (int)font.Style + "|" + foreColor.ToArgb();
-
-            lock (_lyricBmpLock)
+            if (midiSelectorForm == null || midiSelectorForm.IsDisposed)
             {
-                if (_lyricBmpCache.TryGetValue(key, out var bmp))
-                    return bmp;
-
-                // Measure once
-                var size = TextRenderer.MeasureText(text, font, new Size(int.MaxValue, int.MaxValue),
-                    TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
-
-                // Make a tight bitmap
-                bmp = new Bitmap(Math.Max(1, size.Width), Math.Max(1, size.Height), PixelFormat.Format32bppPArgb);
-
-                using (var g = Graphics.FromImage(bmp))
-                {
-                    g.Clear(Color.Transparent);
-                }
-
-                // Draw onto bitmap
-                using (var g = Graphics.FromImage(bmp))
-                {
-                    TextRenderer.DrawText(
-                        g,
-                        text,
-                        font,
-                        new Point(0, 0),
-                        foreColor,
-                        TextFormatFlags.NoPadding | TextFormatFlags.SingleLine | TextFormatFlags.NoClipping
-                    );
-                }
-
-                _lyricBmpCache[key] = bmp;
-                return bmp;
+                midiSelectorForm = new MIDISelector(this);
             }
+            midiSelectorForm.Show();
         }
 
         private void DrawLyricsScrolling(List<Lyric> lyrics, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
         {
-            if ((!openSideWindow.Checked && secondScreen == null) || PlayingSong == null || Bass.BASS_ChannelIsActive(BassMixer) != BASSActive.BASS_ACTIVE_PLAYING || !doScrollingLyrics) return;
-            if (lyrics == null || lyrics.Count == 0) return;
-            var renderSize = new Size(1920, 1080);
+            if ((!openSideWindow.Checked && secondScreen == null) || PlayingSong == null || !doScrollingLyrics)
+                return;
 
-            var time = GetCorrectedTime();
-            var playbackWindow = PlaybackWindowRBVocals * (isRBKaraoke() && PlayingSong.BPM > 80.0 ? 80.0 / PlayingSong.BPM : 1.0);
-            var hitboxPosition = chartVertical.Checked || rBStyle.Checked || isRBKaraoke() ? HitboxVocalsX + (bmpHitboxVocals.Width / 2) : renderSize.Width;
+            if (lyrics == null || lyrics.Count == 0)
+                return;
 
-            // Draw background for lyrics
-            graphics.DrawImage(Resources.frostedglass75, 0, posY, renderSize.Width, 24);
-            using (var overlayBrush = new SolidBrush(
-                Color.FromArgb(chartVertical.Checked ? 255 : 128, foreColor)))
+            var renderSize = activeRenderingResolution;
+
+            double time = GetCorrectedTime();
+            double playbackWindow = GetVocalScrollWindow();
+
+            bool isGameStyle = (doVerticalChart || doRockBandChart) || doRockBandKaraoke;
+            int hitboxPosition = isGameStyle ? HitboxVocalsX + (bmpHitboxVocals.Width / 2) : renderSize.Width;
+
+            var rowBg = GetLyricRowBackground(renderSize.Width, foreColor);
+            graphics.DrawImageUnscaled(rowBg, 0, posY - 1);
+
+            int lyricCount = lyrics.Count;
+
+            for (int i = 0; i < lyricCount; i++)
             {
-                graphics.FillRectangle(overlayBrush, 0, posY, renderSize.Width, 24);
+                var lyric = lyrics[i];
+
+                if (lyric.End > 0 && lyric.End < time - 0.10)
+                    continue;
+
+                if (lyric.Start > time + playbackWindow)
+                    break;
+
+                float leftF = isGameStyle
+                    ? (float)(((lyric.Start - time) / playbackWindow) * (renderSize.Width - hitboxPosition) + hitboxPosition)
+                    : (float)(((lyric.Start - time) / playbackWindow) * renderSize.Width);
+
+                int left = (int)Math.Round(leftF);
+
+                string text = lyric.DisplayText.Replace("‿", " ");
+                using (var brush = new SolidBrush(Color.WhiteSmoke))
+                {
+                    graphics.DrawString(text, font, brush, new Point(left, posY - 6));
+                }          
             }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
-            {
-                graphics.FillRectangle(overlayBrush, 0, posY - 1, renderSize.Width, 1);
-            }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
-            {
-                graphics.FillRectangle(overlayBrush, 0, posY + 24, renderSize.Width, 1);
-            }
+        }
 
-            foreach (var lyric in lyrics)
-            {
-                if (lyric.End < time - 1) continue;
-
-                if (lyric.Start > time + playbackWindow) return;
-
-                float leftF = ((chartVertical.Checked || rBStyle.Checked) && chartVisualsToolStripMenuItem.Checked) || isRBKaraoke()
-                    ? (int)(((lyric.Start - time) / playbackWindow) * (renderSize.Width - hitboxPosition)) + hitboxPosition
-                    : (int)(((lyric.Start - time) / playbackWindow) * renderSize.Width);
-                var left = (int)Math.Round(leftF);
-                const int step = 2;
-                left = (left / step) * step;
-
-                var bmp = GetLyricBitmap(lyric.DisplayText.Replace("‿", " "), font, Color.WhiteSmoke);
-                graphics.DrawImageUnscaled(bmp, left, posY - 6);
-            }
-        }               
-
-        private void DrawLyricsKaraoke(IEnumerable<LyricPhrase> phrases, IEnumerable<Lyric> lyrics, Font font, Color foreColor, Color backColor, int posY, Graphics graphics)
+        private void DrawLyricsKaraoke(
+            IEnumerable<LyricPhrase> phrases,
+            IEnumerable<Lyric> lyrics,
+            Font font,
+            Color foreColor,
+            Color backColor,
+            int posY,
+            Graphics graphics)
         {
-            if (lyrics == null || lyrics.Count() == 0) return;
-            var time = GetCorrectedTime();
-            var renderSize = new Size(1920, 1080);
-            graphics.DrawImage(Resources.frostedglass75, 0, posY, renderSize.Width, 24);
-            // 50% opacity = alpha 128 (out of 255)
-            using (var overlayBrush = new SolidBrush(
-                Color.FromArgb(chartVertical.Checked ? 255 : 128, foreColor)))
-            {
-                graphics.FillRectangle(
-                    overlayBrush,
-                    0,
-                    posY,
-                    renderSize.Width,
-                    24
-                );
-            }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
-            {
-                graphics.FillRectangle(overlayBrush, 0, posY - 1, renderSize.Width, 1);
-            }
-            using (var overlayBrush = new SolidBrush(Color.LightGray))
-            {
-                graphics.FillRectangle(overlayBrush, 0, posY + 24, renderSize.Width, 1);
-            }
+            if (phrases == null || lyrics == null)
+                return;
+
+            var phraseList = phrases as IList<LyricPhrase> ?? phrases.ToList();
+            var lyricList = lyrics as IList<Lyric> ?? lyrics.ToList();
+
+            if (lyricList.Count == 0 || phraseList.Count == 0)
+                return;
+
+            double time = GetCorrectedTime();
+            var renderSize = activeRenderingResolution;                   
+
+            var rowBg = GetLyricRowBackground(renderSize.Width, foreColor);
+            graphics.DrawImageUnscaled(rowBg, 0, posY - 1);
 
             LyricPhrase line = null;
-            foreach (var lyric in phrases.TakeWhile(lyric => lyric.PhraseStart <= time).Where(lyric => lyric.PhraseEnd >= time))
+            int phraseCount = phraseList.Count;
+
+            for (int i = 0; i < phraseCount; i++)
             {
-                line = lyric;
+                var phrase = phraseList[i];
+
+                if (phrase.PhraseStart > time)
+                    break;
+
+                if (phrase.PhraseEnd >= time)
+                    line = phrase;
             }
 
-            if (line == null || string.IsNullOrEmpty(line.PhraseText)) return;
+            if (line == null || string.IsNullOrEmpty(line.PhraseText))
+                return;
 
-            var full = ProcessLine(line.PhraseText, doWholeWordsLyrics).Replace("‿", " ");
-            var highlight = ProcessLine(lyrics.Where(lyr => !(lyr.Start < line.PhraseStart))
-                              .TakeWhile(lyr => !(lyr.Start > time))
-                              .Aggregate("", (current, lyr) => current + " " + lyr.Text), doWholeWordsLyrics).Replace("‿", " ");
+            string full = ProcessLine(line.PhraseText, doWholeWordsLyrics).Replace("‿", " ");
+            if (string.IsNullOrEmpty(full))
+                return;
 
-            if (string.IsNullOrEmpty(full) || string.IsNullOrEmpty(highlight)) return;
+            var sb = new StringBuilder();
+            int lyricCount = lyricList.Count;
 
-            var flags = TextFormatFlags.NoPadding | TextFormatFlags.NoClipping;
-            var fullSize = TextRenderer.MeasureText(graphics, full, font, new Size(int.MaxValue, int.MaxValue), flags);
-            int left = (renderSize.Width - fullSize.Width) / 2;
+            for (int i = 0; i < lyricCount; i++)
+            {
+                var lyr = lyricList[i];
 
-            TextRenderer.DrawText(graphics, full, font, new Point(left, posY - 6), Color.White, flags);
-            TextRenderer.DrawText(graphics, highlight, font, new Point(left, posY - 6), foreColor, flags);
+                if (lyr.Start < line.PhraseStart)
+                    continue;
+
+                if (lyr.Start > time)
+                    break;
+
+                sb.Append(' ');
+                sb.Append(lyr.Text);
+            }
+
+            string highlight = ProcessLine(sb.ToString(), doWholeWordsLyrics).Replace("‿", " ");
+            if (string.IsNullOrEmpty(highlight))
+                return;
+
+            var oldHint = graphics.TextRenderingHint;
+            graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+            using (var format = (StringFormat)StringFormat.GenericTypographic.Clone())
+            using (var fullBrush = new SolidBrush(Color.Gainsboro))
+            using (var highlightBrush = new SolidBrush(Color.White))
+            {
+                format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+                format.Trimming = StringTrimming.None;
+
+                SizeF fullSize = graphics.MeasureString(full, font, PointF.Empty, format);
+                float left = (renderSize.Width - fullSize.Width) / 2f;
+                float top = posY - 6;
+
+                graphics.DrawString(full, font, fullBrush, new PointF(left, top), format);
+                graphics.DrawString(highlight, font, highlightBrush, new PointF(left, top), format);
+            }
+
+            graphics.TextRenderingHint = oldHint;
         }
 
         private void showLyrics_Click(object sender, EventArgs e)
         {
-            var selector = new LyricSelector(this);
-            selector.Show();            
-        }      
-        
-        private void panelVisuals_DoubleClick(object sender, EventArgs e)
-        {
-            //if (secondScreen != null) return;
-            //doResizeVisuals();                 
+            if (lyricSelectorForm == null || lyricSelectorForm.IsDisposed)
+            {
+                lyricSelectorForm = new LyricSelector(this);
+            }
+            lyricSelectorForm.Show();
         }
 
-        private void doResizeVisuals()
+        private void panelVisuals_DoubleClick(object sender, EventArgs e)
+        {
+            if (secondScreen != null) return;
+            doResizeVisuals();
+        }
+
+        public void doResizeVisuals()
         {
             var screen = Screen.FromControl(picVisuals);
+
+            lblFPS.Parent = picVisuals;
+            lblFPS.Top = 0;
+            lblFPS.BringToFront();
+
+            this.SuspendLayout();
+            picVisuals.SuspendLayout();
+            isResizing = true;
+
             if (isFullScreen)
             {
-                picVisuals.Dock = DockStyle.None;
-                picVisuals.Location = picVisualsPosition;
-                picVisuals.Size = picVisualsSize;
-                Location = savedFormLocation;
-                Size = savedFormSize;
                 FormBorderStyle = FormBorderStyle.FixedSingle;
-                isFullScreen = false;
-                if (displayKaraokeMode.Checked || chartVisualsToolStripMenuItem.Checked)
-                {
-                    ChangeTopMenuColors(Color.Black, Color.AliceBlue);
-                }
                 menuStrip1.Visible = true;
+
+                WindowState = FormWindowState.Maximized;
+                MaximizeBox = false;
+
+                Size = screen.WorkingArea.Size;
+                Location = new Point(0, 0);                              
+                
+                picVisuals.Location = picVisualsPosition;
+                picVisuals.Size = picVisualsSize;                
+                picVisuals.Dock = DockStyle.None;
+
+                try
+                {
+                    videoOverlay.Bounds = picVisuals.Bounds;
+                    videoOverlay.Top = picVisuals.Top + menuStrip1.Height;
+                    
+                }
+                catch { }
+
+                isFullScreen = false;
+
+                ChangeTopMenuColors(Color.Black, Color.AliceBlue);
+
+                lblFPS.Left = picVisuals.Width - lblFPS.Width;
             }
             else
             {
-                // Save position and size *before* going full screen
                 picVisualsPosition = picVisuals.Location;
-                picVisualsSize = picVisuals.Size;
-                savedFormLocation = this.Location;
-                savedFormSize = this.Size;
-                FormBorderStyle = FormBorderStyle.None;
-                Bounds = screen.Bounds; // Take over the whole screen
-                picVisuals.Dock = DockStyle.Fill;
-                isFullScreen = true;
-                if (displayKaraokeMode.Checked || chartVisualsToolStripMenuItem.Checked)
-                {
-                    ChangeTopMenuColors(Color.White, Color.Black);
-                }
+                picVisualsSize = picVisuals.Size;                
+
                 menuStrip1.Visible = false;
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Normal;
+                Bounds = screen.Bounds;
+
+                try
+                {
+                    videoOverlay.Bounds = Bounds;
+                }
+                catch { }
+
+                picVisuals.Dock = DockStyle.Fill;
+
+                isFullScreen = true;
+
+                ChangeTopMenuColors(Color.White, Color.Black);
+
+                lblFPS.Left = Bounds.Width - lblFPS.Width;
             }
+                        
+            isResizing = false;
+            UpdateActiveRenderingResolution();
+            picVisuals.ResumeLayout();
+            this.ResumeLayout();
         }
 
         private void ChangeTopMenuColors(Color forecolor, Color backcolor)
@@ -13333,7 +17568,7 @@ namespace cPlayer
                 MessageBox.Show("There is no active song", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            
+
             var text = BuildSongDetailsText(ActiveSong, ActiveSong == PlayingSong);
             using (var f = new SongDetailsForm(text, ActiveSong.Location))
             {
@@ -13357,7 +17592,6 @@ namespace cPlayer
                 sb.AppendLine($"{key.PadRight(20)}: {val}");
             }
 
-            //Section("Active Song Details");
             KV("Song Location", song.Location);
             KV("Playlist Index", song.Index);
             KV("Artist", song.Artist);
@@ -13408,7 +17642,7 @@ namespace cPlayer
                 if (MIDITools.MIDI_Chart.ProKeys.Solos.Count > 0) solos.Add("PK");
 
                 KV("Average BPM", MIDITools.MIDI_Chart.AverageBPM.ToString(CultureInfo.InvariantCulture));
-                KV("Uses disco flip?", MIDITools.MIDI_Chart.DiscoFlips.Any() ? "Yes" : "No");                
+                KV("Uses disco flip?", MIDITools.MIDI_Chart.DiscoFlips.Any() ? "Yes" : "No");
                 KV("Instrument Charts", instruments.Count == 0 ? "None" : string.Join(" ", instruments));
                 KV("Instrument Solos", solos.Count == 0 ? "None" : string.Join(" ", solos));
 
@@ -13457,7 +17691,7 @@ namespace cPlayer
             DoShuffleSongs();
         }
 
-         private void DoShuffleSongs()
+        private void DoShuffleSongs()
         {
             int num1 = ShuffleSongs(true);
             if (num1 < 0 || num1 > lstPlaylist.Items.Count - 1)
@@ -13491,7 +17725,7 @@ namespace cPlayer
             }
 
             doSongPlayback();
-        }        
+        }
 
         private void updater_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -13504,7 +17738,7 @@ namespace cPlayer
                 {
                     client.DownloadFile("https://nemosnautilus.com/cplayer/updatev6.txt", path);
                 }
-                catch (Exception)
+                catch
                 { }
             }
         }
@@ -13519,7 +17753,7 @@ namespace cPlayer
         {
             videoOverlay.TopMost = false;
 
-            var path = Application.StartupPath + "\\bin\\updatev5.txt";
+            var path = Application.StartupPath + "\\bin\\updatev6.txt";
             if (!File.Exists(path))
             {
                 if (showUpdateMessage)
@@ -13530,7 +17764,7 @@ namespace cPlayer
                 return;
             }
             var thisVersion = GetAppVersion();
-            var newVersion = "v";
+            var newVersion = "";
             string newName;
             string releaseDate;
             string link;
@@ -13586,7 +17820,7 @@ namespace cPlayer
             {
                 if (showUpdateMessage)
                 {
-                    MessageBox.Show("You have a newer version (" + thisVersion + ") than what's on the server (" + newVersion + ")\nNo update needed!", AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("You have a newer version (" + thisVersion + ") than what's on the server (" + newVersion + ")\nNo update needed", AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 videoOverlay.TopMost = true;
                 return;
@@ -13604,8 +17838,11 @@ namespace cPlayer
 
         private void viewChangeLog_Click(object sender, EventArgs e)
         {
-            var changeLog = new ChangeLog();
-            changeLog.ShowDialog();
+            if (changeLogForm == null || changeLogForm.IsDisposed)
+            {
+                changeLogForm = new ChangeLog();
+            }
+            changeLogForm.Show();
         }
 
         private void sortPlaylistByModifiedDate_Click(object sender, EventArgs e)
@@ -13615,6 +17852,7 @@ namespace cPlayer
 
         private void RenderVisuals(Size size, Graphics g)
         {
+            screenSize = size;
             if (!PlaybackTimer.Enabled || (!openSideWindow.Checked && secondScreen == null) || PlayingSong == null || WindowState == FormWindowState.Minimized
                 || (_mediaPlayer.State == VLCState.Paused))
             {
@@ -13623,9 +17861,14 @@ namespace cPlayer
 
             UpdateTextQuality(g);
 
-            if (displayAlbumArt.Checked)
+            if (doVerticalChart || doRockBandChart || doMIDIChart)
             {
-                g.Clear(GetMoodColor());
+                DrawMIDIFile(size, g);
+                return;
+            }
+            if (displayAlbumArt && !DoYargVideo())
+            {
+                g.Clear(_cachedMoodColor);
                 if (LargeAlbumArt != null)
                 {
                     g.DrawImage(LargeAlbumArt, (size.Width - size.Height) / 2, 0, size.Height, size.Height);
@@ -13633,7 +17876,7 @@ namespace cPlayer
                 DrawLyrics(size, g, Color.White);
                 return;
             }
-            if (displayAudioSpectrum.Checked)
+            if (displayAudioSpectrum && !DoYargVideo())
             {
                 var bounds = picVisuals.Bounds;
                 if (secondScreen != null)
@@ -13643,28 +17886,18 @@ namespace cPlayer
                 DrawSpectrum(bounds, g);
                 DrawLyrics(size, g, Color.White);
                 return;
-            }
-            if (chartVisualsToolStripMenuItem.Checked && chartFull.Checked && DrewFullChart)
-            {
-                var percent = (GetCorrectedTime() / ((double)PlayingSong.Length / 1000));
-                var width = ((int)(size.Width * percent)) + 1;
-                using (var chart = CopyChartSection(ChartBitmap, new Rectangle(Point.Empty, new Size(width, size.Height))))
-                {
-                    g.DrawImage(chart, 0, 0, width, size.Height);
-                }
-                return;
-            }
-            if (isRBKaraoke() && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
+            }            
+            if (doRockBandKaraoke && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
             {
                 DoRockBandKaraoke(size, g);
                 return;
             }
-            if (displayKaraokeMode.Checked && cPlayerStyle.Checked && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
+            if (doCPlayerStyleKaraoke && MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())
             {
                 DoKaraokeMode(g, MIDITools.PhrasesVocals.Phrases, MIDITools.LyricsVocals.Lyrics);
                 return;
             }
-            if (displayKaraokeMode.Checked && classicKaraokeMode.Checked && ((MIDITools.PhrasesHarm1.Phrases.Any() && MIDITools.LyricsHarm1.Lyrics.Any()) || (MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())))
+            if (doModernKaraokeMode && ((MIDITools.PhrasesHarm1.Phrases.Any() && MIDITools.LyricsHarm1.Lyrics.Any()) || (MIDITools.PhrasesVocals.Phrases.Any() && MIDITools.LyricsVocals.Lyrics.Any())))
             {
                 DoModernKaraoke(size, g, MIDITools.PhrasesVocals.Phrases, MIDITools.LyricsVocals.Lyrics,
                                    MIDITools.PhrasesHarm1?.Phrases ?? MIDITools.PhrasesVocals.Phrases,
@@ -13672,24 +17905,169 @@ namespace cPlayer
                                    MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics,
                                    MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics);
                 return;
-            }
-            if (chartVisualsToolStripMenuItem.Checked && (chartVertical.Checked || rBStyle.Checked))
-            {
-                DrawMIDIFile(size, g);
-                return;
-            }
-            if (!chartVisualsToolStripMenuItem.Checked || (!chartSnippet.Checked && DrewFullChart)) return;
-
-            DrawMIDIFile(size, g);
-            DrewFullChart = true;
+            }            
         }
 
-        private void EnsureFrame(Size size)
+        private void EnsureRenderedFrame(Size size)
         {
             if (_renderedFrame != null && _renderedFrame.Size == size) return;
             _renderedFrame?.Dispose();
             _renderedFrame = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppPArgb);
+        }
 
+        private bool DoYargVideo()
+        {
+            return yarg.Checked && !string.IsNullOrEmpty(CHVideoPath) && IsVideoPlayingOnAnyScreen();
+        }
+
+        private Bitmap _cachedVocalGlass;
+        private Bitmap _cachedVocalFadeIn;
+        private Bitmap _cachedVocalFadeOut;
+        private Bitmap _cachedHarmonyFadeIn;
+        private Bitmap _cachedHarmonyFadeOut;
+
+        private Size _cachedVocalGlassSize = Size.Empty;
+        private Size _cachedVocalFadeSize = Size.Empty;
+        private Size _cachedHarmonyFadeSize = Size.Empty;
+        private bool _cachedVocalGlassVerticalMode;
+
+        private readonly Font _rbKaraokeLyricFont = new Font("Segoe UI", 16f, FontStyle.Bold);
+        private readonly Font _rbKaraokeScaleFont = new Font("Tahoma", 16f);
+
+        private void EnsureRockBandKaraokeImageCache(Size size, int vocalsY)
+        {
+            int vocalTrackHeight = vocalsHeight * 2;
+            int fadeWidth = (int)(Resources.fadeout3.Width * 1.5);
+
+            bool vertical = doVerticalChart;
+
+            Size glassSize = new Size(size.Width, vocalTrackHeight);
+            Size vocalFadeSize = new Size(fadeWidth, vocalTrackHeight);
+            Size harmonyFadeSize = new Size(fadeWidth, 24);
+
+            if (_cachedVocalGlass == null ||
+                _cachedVocalGlassSize != glassSize ||
+                _cachedVocalGlassVerticalMode != vertical)
+            {
+                _cachedVocalGlass?.Dispose();
+
+                _cachedVocalGlass = new Bitmap(glassSize.Width, glassSize.Height);
+
+                using (Graphics g = Graphics.FromImage(_cachedVocalGlass))
+                {
+                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                    g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+                    Image source = vertical ? Resources.frostedglass75 : Resources.frostedglass50;
+                    g.DrawImage(source, 0, 0, glassSize.Width, glassSize.Height);
+                }
+
+                _cachedVocalGlassSize = glassSize;
+                _cachedVocalGlassVerticalMode = vertical;
+            }
+
+            if (_cachedVocalFadeIn == null || _cachedVocalFadeSize != vocalFadeSize)
+            {
+                _cachedVocalFadeIn?.Dispose();
+                _cachedVocalFadeOut?.Dispose();
+
+                _cachedVocalFadeIn = new Bitmap(vocalFadeSize.Width, vocalFadeSize.Height);
+                _cachedVocalFadeOut = new Bitmap(vocalFadeSize.Width, vocalFadeSize.Height);
+
+                using (Graphics g = Graphics.FromImage(_cachedVocalFadeIn))
+                    g.DrawImage(Resources.fadein3, 0, 0, vocalFadeSize.Width, vocalFadeSize.Height);
+
+                using (Graphics g = Graphics.FromImage(_cachedVocalFadeOut))
+                    g.DrawImage(Resources.fadeout3, 0, 0, vocalFadeSize.Width, vocalFadeSize.Height);
+
+                _cachedVocalFadeSize = vocalFadeSize;
+            }
+
+            if (_cachedHarmonyFadeIn == null || _cachedHarmonyFadeSize != harmonyFadeSize)
+            {
+                _cachedHarmonyFadeIn?.Dispose();
+                _cachedHarmonyFadeOut?.Dispose();
+
+                _cachedHarmonyFadeIn = new Bitmap(harmonyFadeSize.Width, harmonyFadeSize.Height);
+                _cachedHarmonyFadeOut = new Bitmap(harmonyFadeSize.Width, harmonyFadeSize.Height);
+
+                using (Graphics g = Graphics.FromImage(_cachedHarmonyFadeIn))
+                    g.DrawImage(Resources.fadein3, 0, 0, harmonyFadeSize.Width, harmonyFadeSize.Height);
+
+                using (Graphics g = Graphics.FromImage(_cachedHarmonyFadeOut))
+                    g.DrawImage(Resources.fadeout3, 0, 0, harmonyFadeSize.Width, harmonyFadeSize.Height);
+
+                _cachedHarmonyFadeSize = harmonyFadeSize;
+            }
+        }
+
+        private void SetPicVisualsBackColorIfChanged(Color color)
+        {
+            if (_lastPicVisualsBackColor.ToArgb() == color.ToArgb())
+                return;
+
+            picVisuals.BackColor = color;
+            _lastPicVisualsBackColor = color;
+        }
+
+        private void SetSecondScreenBackColorIfChanged(Color color)
+        {
+            if (secondScreen == null)
+                return;
+
+            if (_lastSecondScreenBackColor.ToArgb() == color.ToArgb())
+                return;
+
+            secondScreen.ChangeBackgroundColor(color);
+            _lastSecondScreenBackColor = color;
+        }
+
+        private void DrawCachedRBKaraokeStaticBackground(Graphics graphics, Size size)
+        {
+            if (graphics == null || stageBackground == null || size.Width <= 0 || size.Height <= 0)
+                return;
+
+            bool needsRebuild =
+                _cachedRBKaraokeStaticBackground == null ||
+                _cachedRBKaraokeStaticBackgroundSize != size ||
+                !ReferenceEquals(_cachedRBKaraokeStaticBackgroundSource, stageBackground);
+
+            if (needsRebuild)
+            {
+                _cachedRBKaraokeStaticBackground?.Dispose();
+
+                _cachedRBKaraokeStaticBackground = new Bitmap(
+                    size.Width,
+                    size.Height,
+                    PixelFormat.Format32bppPArgb);
+
+                using (Graphics g = Graphics.FromImage(_cachedRBKaraokeStaticBackground))
+                {
+                    g.Clear(Color.Black);
+
+                    g.CompositingMode = CompositingMode.SourceOver;
+                    g.CompositingQuality = CompositingQuality.HighSpeed;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    g.SmoothingMode = SmoothingMode.HighSpeed;
+
+                    g.DrawImage(stageBackground, 0, 0, size.Width, size.Height);
+                }
+
+                _cachedRBKaraokeStaticBackgroundSize = size;
+                _cachedRBKaraokeStaticBackgroundSource = stageBackground;
+            }
+
+            graphics.DrawImageUnscaled(_cachedRBKaraokeStaticBackground, 0, 0);
+        }
+
+        private void ClearRBKaraokeStaticBackgroundCache()
+        {
+            _cachedRBKaraokeStaticBackground?.Dispose();
+            _cachedRBKaraokeStaticBackground = null;
+            _cachedRBKaraokeStaticBackgroundSize = Size.Empty;
+            _cachedRBKaraokeStaticBackgroundSource = null;
         }
 
         private void DoRockBandKaraoke(Size size, Graphics graphics)
@@ -13701,301 +18079,347 @@ namespace cPlayer
             Color backColor = Color.FromArgb(36, 36, 36);
             const int spacer = 4;
 
-            if (secondScreen != null)
+            try
             {
-                secondScreen.ChangeBackgroundColor(backColor);
-                picVisuals.BackColor = Color.AliceBlue;
-            }
-            else
-            {
-                picVisuals.BackColor = backColor;
-            }
-                var time = GetCorrectedTime();
-                LyricPhrase currentLineLead = null;
-                LyricPhrase nextLineLead = null;
-                LyricPhrase lastLineLead = null;
-                //get active and next phrase, and store last used phrase
-                var phrasesLead = MIDITools.PhrasesVocals.Phrases;
-                var lyricsLead = MIDITools.LyricsVocals.Lyrics;
-                var phrasesHarmony = MIDITools.PhrasesHarm1.Phrases;
-                var lyricsHarmony = MIDITools.LyricsHarm1.Lyrics;
-                var phrasesHarmony2 = MIDITools.PhrasesHarm2.Phrases;
-                var lyricsHarmony2 = MIDITools.LyricsHarm2.Lyrics;
-                var phrasesHarmony3 = MIDITools.PhrasesHarm3.Phrases;
-                var lyricsHarmony3 = MIDITools.LyricsHarm3.Lyrics;
-                for (var i = 0; i < phrasesLead.Count(); i++)
+                if (DoYargVideo())
                 {
-                    var phrase = phrasesLead[i];
-                    if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
-                    if (phrase.PhraseEnd < time)
+                    graphics.Clear(Color.Transparent);
+                    if (secondScreen != null)
                     {
-                        lastLineLead = phrasesLead[i];
-                        continue;
+                        SetPicVisualsBackColorIfChanged(Color.AliceBlue);
                     }
-                    if (phrase.PhraseStart > time)
-                    {
-                        nextLineLead = phrasesLead[i];
-                        break;
-                    }
-                    currentLineLead = phrase;
-                    if (i < phrasesLead.Count - 1)
-                    {
-                        nextLineLead = phrasesLead[i + 1];
-                    }
-                    break;
                 }
-                LyricPhrase currentLineHarmony = null;
-                LyricPhrase nextLineHarmony = null;
-                LyricPhrase lastLineHarmony = null;
-                //get active and next phrase, and store last used phrase
-                for (var i = 0; i < phrasesHarmony.Count(); i++)
+                else
                 {
-                    var phrase = phrasesHarmony[i];
-                    if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
-                    if (phrase.PhraseEnd < time)
+                    if (secondScreen != null)
                     {
-                        lastLineHarmony = phrasesHarmony[i];
-                        continue;
-                    }
-                    if (phrase.PhraseStart > time)
-                    {
-                        nextLineHarmony = phrasesHarmony[i];
-                        break;
-                    }
-                    currentLineHarmony = phrase;
-                    if (i < phrasesHarmony.Count - 1)
-                    {
-                        nextLineHarmony = phrasesHarmony[i + 1];
-                    }
-                    break;
-                }
-                LyricPhrase currentLineHarmony2 = null;
-                LyricPhrase nextLineHarmony2 = null;
-                LyricPhrase lastLineHarmony2 = null;
-                //get active and next phrase, and store last used phrase
-                for (var i = 0; i < phrasesHarmony2.Count(); i++)
-                {
-                    var phrase = phrasesHarmony2[i];
-                    if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
-                    if (phrase.PhraseEnd < time)
-                    {
-                        lastLineHarmony2 = phrasesHarmony2[i];
-                        continue;
-                    }
-                    if (phrase.PhraseStart > time)
-                    {
-                        nextLineHarmony2 = phrasesHarmony2[i];
-                        break;
-                    }
-                    currentLineHarmony2 = phrase;
-                    if (i < phrasesHarmony2.Count - 1)
-                    {
-                        nextLineHarmony2 = phrasesHarmony2[i + 1];
-                    }
-                    break;
-                }
-
-                if (time < 5.0)
-                {
-                    var title = "\"" + PlayingSong.Name.Replace("&", "&&") + "\"";
-                    var artist = PlayingSong.Artist.Replace("&", "&&");
-                    var album = PlayingSong.Album.Replace("&", "&&");
-                    var bpm = PlayingSong.BPM == 0 ? "" : "BPM: " + Math.Round(PlayingSong.BPM, 0, MidpointRounding.AwayFromZero);
-                    var parts = 1;
-                    if (lyricsHarmony.Any())
-                    {
-                        parts++;
-                    }
-                    if (lyricsHarmony2.Any())
-                    {
-                        parts++;
-                    }
-                    var vocalParts = "Vocal Parts: " + parts;
-                    var charter = PlayingSong.Charter.Replace("&", "&&");
-                    if (!string.IsNullOrEmpty(charter))
-                    {
-                        charter = "As charted by " + charter;
+                        SetSecondScreenBackColorIfChanged(backColor);
+                        SetPicVisualsBackColorIfChanged(Color.AliceBlue);
                     }
                     else
                     {
-                        charter = "";
+                        SetPicVisualsBackColorIfChanged(backColor);
                     }
+                }
 
-                    var lineY = 20;
-                    var infoFont = new Font("Tahoma", GetScaledFontSize(graphics, title, new Font("Tahoma", (float)16f), 36f));
-                    var infoSize = TextRenderer.MeasureText(title, infoFont);
-                    var infoX = (size.Width - infoSize.Width) / 2;
+                if (doStaticBackground && !DoYargVideo())
+                {
+                    DrawCachedRBKaraokeStaticBackground(graphics, size);
+                }
+            }
+            catch { }
+
+            var time = GetCorrectedTime();
+            LyricPhrase currentLineLead = null;
+            LyricPhrase nextLineLead = null;
+            LyricPhrase lastLineLead = null;
+            //get active and next phrase, and store last used phrase
+            var phrasesLead = MIDITools.PhrasesVocals.Phrases;
+            var lyricsLead = MIDITools.LyricsVocals.Lyrics;
+            var phrasesHarmony = MIDITools.PhrasesHarm1.Phrases;
+            var lyricsHarmony = MIDITools.LyricsHarm1.Lyrics;
+            var phrasesHarmony2 = MIDITools.PhrasesHarm2.Phrases;
+            var lyricsHarmony2 = MIDITools.LyricsHarm2.Lyrics;
+            var phrasesHarmony3 = MIDITools.PhrasesHarm3.Phrases;
+            var lyricsHarmony3 = MIDITools.LyricsHarm3.Lyrics;
+            for (var i = 0; i < phrasesLead.Count; i++)
+            {
+                var phrase = phrasesLead[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineLead = phrasesLead[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineLead = phrasesLead[i];
+                    break;
+                }
+                currentLineLead = phrase;
+                if (i < phrasesLead.Count - 1)
+                {
+                    nextLineLead = phrasesLead[i + 1];
+                }
+                break;
+            }
+            LyricPhrase currentLineHarmony = null;
+            LyricPhrase nextLineHarmony = null;
+            LyricPhrase lastLineHarmony = null;
+            //get active and next phrase, and store last used phrase
+            for (var i = 0; i < phrasesHarmony.Count; i++)
+            {
+                var phrase = phrasesHarmony[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineHarmony = phrasesHarmony[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineHarmony = phrasesHarmony[i];
+                    break;
+                }
+                currentLineHarmony = phrase;
+                if (i < phrasesHarmony.Count - 1)
+                {
+                    nextLineHarmony = phrasesHarmony[i + 1];
+                }
+                break;
+            }
+            LyricPhrase currentLineHarmony2 = null;
+            LyricPhrase nextLineHarmony2 = null;
+            LyricPhrase lastLineHarmony2 = null;
+            //get active and next phrase, and store last used phrase
+            for (var i = 0; i < phrasesHarmony2.Count; i++)
+            {
+                var phrase = phrasesHarmony2[i];
+                if (string.IsNullOrEmpty(phrase.PhraseText)) continue;
+                if (phrase.PhraseEnd < time)
+                {
+                    lastLineHarmony2 = phrasesHarmony2[i];
+                    continue;
+                }
+                if (phrase.PhraseStart > time)
+                {
+                    nextLineHarmony2 = phrasesHarmony2[i];
+                    break;
+                }
+                currentLineHarmony2 = phrase;
+                if (i < phrasesHarmony2.Count - 1)
+                {
+                    nextLineHarmony2 = phrasesHarmony2[i + 1];
+                }
+                break;
+            }
+
+            if (time < 5.0)
+            {
+                var title = "\"" + PlayingSong.Name.Replace("&", "&&") + "\"";
+                var artist = PlayingSong.Artist.Replace("&", "&&");
+                var album = PlayingSong.Album.Replace("&", "&&");
+                var bpm = PlayingSong.BPM == 0 ? "" : "BPM: " + Math.Round(PlayingSong.BPM, 0, MidpointRounding.AwayFromZero);
+                var parts = 1;
+                if (lyricsHarmony.Any())
+                {
+                    parts++;
+                }
+                if (lyricsHarmony2.Any())
+                {
+                    parts++;
+                }
+                var vocalParts = "Vocal Parts: " + parts;
+                var charter = PlayingSong.Charter.Replace("&", "&&");
+                if (!string.IsNullOrEmpty(charter))
+                {
+                    charter = "As charted by " + charter;
+                }
+                else
+                {
+                    charter = "";
+                }
+
+                var lineY = 20;                
+                float sizeToUse = GetScaledFontSize(graphics, title, _rbKaraokeScaleFont, 36f);
+                var baseFont = new Font("Tahoma", sizeToUse);
+                var infoSize = TextRenderer.MeasureText(title, baseFont);
+                int infoX = 0;
+
+                using (var infoFont = new Font("Tahoma", sizeToUse))
+                {
+                    infoSize = TextRenderer.MeasureText(title, infoFont);
+                    infoX = (size.Width - infoSize.Width) / 2;
                     TextRenderer.DrawText(graphics, title, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
                     lineY += infoSize.Height;
+                }
 
-                    infoFont = new Font("Tahoma", GetScaledFontSize(graphics, artist, new Font("Tahoma", (float)16f), 36f));
+                using (var infoFont = new Font("Tahoma", sizeToUse))
+                {                    
                     infoSize = TextRenderer.MeasureText(artist, infoFont);
                     infoX = (size.Width - infoSize.Width) / 2;
                     TextRenderer.DrawText(graphics, artist, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
                     lineY += infoSize.Height;
+                }
 
-                    infoFont = new Font("Tahoma", GetScaledFontSize(graphics, album, new Font("Tahoma", (float)16f), 36f));
+                using (var infoFont = new Font("Tahoma", sizeToUse))
+                {
                     infoSize = TextRenderer.MeasureText(album, infoFont);
                     infoX = (size.Width - infoSize.Width) / 2;
                     TextRenderer.DrawText(graphics, album, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
                     lineY += infoSize.Height;
+                }
 
-                    if (!string.IsNullOrEmpty(charter))
+                if (!string.IsNullOrEmpty(charter))
+                {
+                    using (var infoFont = new Font("Tahoma", sizeToUse))
                     {
-                        infoFont = new Font("Tahoma", GetScaledFontSize(graphics, charter, new Font("Tahoma", (float)16f), 24f));
                         infoSize = TextRenderer.MeasureText(charter, infoFont);
                         infoX = (size.Width - infoSize.Width) / 2;
                         lineY = size.Height - infoSize.Height - 20;
                         TextRenderer.DrawText(graphics, charter, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
                     }
-                    else
+                }
+                else
+                {
+                    using (var infoFont = new Font("Tahoma", sizeToUse))
                     {
-                        infoFont = new Font("Tahoma", GetScaledFontSize(graphics, "Harmonix", new Font("Tahoma", (float)16f), 24f));
                         infoSize = TextRenderer.MeasureText("Harmonix", infoFont);
                         lineY = size.Height - infoSize.Height - 20;
                     }
-                    lineY -= infoSize.Height;
+                }
+                lineY -= infoSize.Height;
 
-                    if (!string.IsNullOrEmpty(bpm))
+                if (!string.IsNullOrEmpty(bpm))
+                {
+                    using (var infoFont = new Font("Tahoma", sizeToUse))
                     {
                         infoSize = TextRenderer.MeasureText(bpm, infoFont);
                         infoX = (size.Width - infoSize.Width) / 2;
                         TextRenderer.DrawText(graphics, bpm, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
-                    }
-                    lineY -= infoSize.Height;
+                    }                    
+                }
+                lineY -= infoSize.Height;
 
+                using (var infoFont = new Font("Tahoma", sizeToUse))
+                {
                     infoSize = TextRenderer.MeasureText(vocalParts, infoFont);
                     infoX = (size.Width - infoSize.Width) / 2;
                     TextRenderer.DrawText(graphics, vocalParts, infoFont, new Point(infoX, lineY), Color.WhiteSmoke, Color.Transparent);
                 }
-                else
+            }
+            else
+            {
+                if (currentLineLead == null || nextLineLead == null)
                 {
-                    if (currentLineLead == null || nextLineLead == null)
+                    try
                     {
-                        try
+                        LyricPhrase nextStartingPhrase = null;                        
+                        if (nextLineLead != null && nextLineHarmony != null)
                         {
-                            LyricPhrase nextStartingPhrase = null;
-                            //nextStartingPhrase = nextLineLead.PhraseStart < nextLineHarmony.PhraseStart ? nextLineLead : nextLineHarmony;
-                            if (nextLineLead != null && nextLineHarmony != null)
+                            nextStartingPhrase = nextLineLead.PhraseStart < nextLineHarmony.PhraseStart
+                                ? nextLineLead : nextLineHarmony;
+                        }
+                        else if (nextLineLead != null)
+                        {
+                            nextStartingPhrase = nextLineLead;
+                        }
+                        else if (nextLineHarmony != null)
+                        {
+                            nextStartingPhrase = nextLineHarmony;
+                        }
+                        if (nextStartingPhrase != null)
+                        {
+                            var wait = ((int)((nextStartingPhrase.PhraseStart - time) + 0.5));
+                            if (wait >= 1)
                             {
-                                nextStartingPhrase = nextLineLead.PhraseStart < nextLineHarmony.PhraseStart
-                                    ? nextLineLead : nextLineHarmony;
-                            }
-                            else if (nextLineLead != null)
-                            {
-                                nextStartingPhrase = nextLineLead;
-                            }
-                            else if (nextLineHarmony != null)
-                            {
-                                nextStartingPhrase = nextLineHarmony;
-                            }
-                            if (nextStartingPhrase != null)
-                            {
-                                var wait = ((int)((nextStartingPhrase.PhraseStart - time) + 0.5));
-                                if (wait >= 1)
-                                {
-                                    double LastEnd;
-                                    double NextStart;
-                                    double gap;
+                                double LastEnd;
+                                double NextStart;
+                                double gap;
 
-                                    try
-                                    {
-                                        LastEnd = new[] { lastLineLead?.PhraseEnd, lastLineHarmony?.PhraseEnd }.Where(x => x.HasValue).Max().Value;
-                                    }
-                                    catch
-                                    {
-                                        LastEnd = 0.0;
-                                    }
-                                    NextStart = new[] { nextLineLead?.PhraseStart, nextLineHarmony?.PhraseStart }.Where(x => x.HasValue).Min().Value;
-                                    gap = NextStart - LastEnd;
-                                    if (gap >= 3)
-                                    {
-                                        var infoFont = new Font("Arial", GetScaledFontSize(graphics, wait.ToString(CultureInfo.InvariantCulture), new Font("Tahoma", (float)16f), 130f));
-                                        var infoSize = TextRenderer.MeasureText(wait.ToString(CultureInfo.InvariantCulture), infoFont);
-                                        var infoX = (size.Width - infoSize.Width) / 2;
-                                        TextRenderer.DrawText(graphics, wait.ToString(CultureInfo.InvariantCulture), infoFont, new Point(infoX, (vocalsY - infoSize.Height) / 2), Color.WhiteSmoke, Color.Transparent);
-                                    }
+                                try
+                                {
+                                    LastEnd = new[] { lastLineLead?.PhraseEnd, lastLineHarmony?.PhraseEnd }.Where(x => x.HasValue).Max().Value;
+                                }
+                                catch
+                                {
+                                    LastEnd = 0.0;
+                                }
+                                NextStart = new[] { nextLineLead?.PhraseStart, nextLineHarmony?.PhraseStart }.Where(x => x.HasValue).Min().Value;
+                                gap = NextStart - LastEnd;
+                                if (gap >= 3)
+                                {
+                                    var infoFont = new Font("Arial", GetScaledFontSize(graphics, wait.ToString(CultureInfo.InvariantCulture), new Font("Tahoma", (float)16f), 130f));
+                                    var infoSize = TextRenderer.MeasureText(wait.ToString(CultureInfo.InvariantCulture), infoFont);
+                                    var infoX = (size.Width - infoSize.Width) / 2;
+                                    TextRenderer.DrawText(graphics, wait.ToString(CultureInfo.InvariantCulture), infoFont, new Point(infoX, (vocalsY - infoSize.Height) / 2), Color.WhiteSmoke, Color.Transparent);
                                 }
                             }
                         }
-                        catch
-                        {
-                        }
                     }
+                    catch
+                    { }
                 }
-
-                var vocalLyrics = doHarmonyLyrics && MIDITools.LyricsHarm1.Lyrics.Any() ? MIDITools.LyricsHarm1.Lyrics : MIDITools.LyricsVocals.Lyrics;
-                var font = new Font("Segoe UI", 16f, FontStyle.Bold);
-                var harm1Y = vocalsY + (vocalsHeight * 2) + spacer;
-                var harm2Y = vocalsY - spacer - 24;
-                var harm3Y = harm2Y - spacer - 24;
-                
-                if (chartVertical.Checked)
-                {
-                    using (var overlayBrush = new SolidBrush(
-                    Color.FromArgb(chartVertical.Checked ? 255 : 128, Color.Black)))
-                    {
-                        graphics.FillRectangle(overlayBrush, 0, vocalsY, size.Width, vocalsHeight * 2);
-                    }
-                }
-                graphics.DrawImage(chartVertical.Checked ? Resources.frostedglass75 : Resources.frostedglass50, 0, vocalsY, size.Width, vocalsHeight * 2);                
-                if (doStaticLyrics)
-                {
-                    var vocalPhrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
-                    DrawLyricsStatic(MIDITools.PhrasesHarm3.Phrases, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
-                    DrawLyricsStatic(MIDITools.PhrasesHarm2.Phrases, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
-                    DrawLyricsStatic(vocalPhrases, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
-                }
-                else if (doKaraokeLyrics)
-                {
-                    var vocalPhrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
-                    DrawLyricsKaraoke(MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
-                    DrawLyricsKaraoke(MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
-                    DrawLyricsKaraoke(vocalPhrases, vocalLyrics, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
-                }
-                else //default to scrolling
-                {
-                    DrawLyricsScrolling(MIDITools.LyricsHarm3.Lyrics, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
-                    DrawLyricsScrolling(MIDITools.LyricsHarm2.Lyrics, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
-                    DrawLyricsScrolling(vocalLyrics, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
-                }                
-                DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, vocalsHeight * 2, vocalsY);
-
-                if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Count > 0 && doMIDIHarmonies)
-                {
-                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm3, vocalsHeight * 2, vocalsY, false, 3, out Index);
-                    MIDITools.MIDI_Chart.Harm3.ActiveIndex = Index;
-                    graphics.DrawImage(Resources.fadeout3, 0, harm3Y, (int)(Resources.fadeout3.Width * 1.5), 24);
-                    graphics.DrawImage(Resources.fadein3, size.Width - (int)(Resources.fadeout3.Width * 1.5), harm3Y, (int)(Resources.fadeout3.Width * 1.5), 24);
-                }
-                if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Count > 0 && doMIDIHarmonies)
-                {
-                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm2, vocalsHeight * 2, vocalsY, false, 2, out Index);
-                    MIDITools.MIDI_Chart.Harm2.ActiveIndex = Index;
-                    graphics.DrawImage(Resources.fadeout3, 0, harm2Y, (int)(Resources.fadeout3.Width * 1.5), 24);
-                    graphics.DrawImage(Resources.fadein3, size.Width - (int)(Resources.fadeout3.Width * 1.5), harm2Y, (int)(Resources.fadeout3.Width * 1.5), 24);
-                }
-                if (MIDITools.MIDI_Chart.Harm1.ChartedNotes.Count > 0 && doMIDIHarmonies)
-                {
-                    DrawNotes(graphics, MIDITools.MIDI_Chart.Harm1, vocalsHeight * 2, vocalsY, false, 1, out Index);
-                    MIDITools.MIDI_Chart.Harm1.ActiveIndex = Index;
-                }
-                else
-                {
-                    DrawNotes(graphics, MIDITools.MIDI_Chart.Vocals, vocalsHeight * 2, vocalsY, false, 0, out Index);
-                    MIDITools.MIDI_Chart.Vocals.ActiveIndex = Index;
-                }
-                DrawHitbox(graphics, bmpHitboxVocals, HitboxVocalsX, vocalsY, bmpHitboxVocals.Width, vocalsHeight * 2, 1, "");
-                graphics.DrawImage(Resources.fadein3, size.Width - (int)(Resources.fadeout3.Width * 1.5), vocalsY, (int)(Resources.fadeout3.Width * 1.5), vocalsHeight * 2);
-                graphics.DrawImage(Resources.fadeout3, 0, vocalsY, (int)(Resources.fadeout3.Width * 1.5), vocalsHeight * 2);
-
-                graphics.DrawImage(Resources.fadeout3, 0, harm1Y, (int)(Resources.fadeout3.Width * 1.5), 24);
-                graphics.DrawImage(Resources.fadein3, size.Width - (int)(Resources.fadeout3.Width * 1.5), harm1Y, (int)(Resources.fadeout3.Width * 1.5), 24);
             }
+
+            var vocalLyrics = doHarmonyLyrics && MIDITools.LyricsHarm1.Lyrics.Any() ? MIDITools.LyricsHarm1.Lyrics : MIDITools.LyricsVocals.Lyrics;
+            
+            var font = _rbKaraokeLyricFont;
+            var harm1Y = vocalsY + (vocalsHeight * 2) + spacer;
+            var harm2Y = vocalsY - spacer - 24;
+            var harm3Y = harm2Y - spacer - 24;
+
+            if (doVerticalChart)
+            {
+                using (var overlayBrush = new SolidBrush(
+                Color.FromArgb(doVerticalChart ? 255 : 128, Color.Black)))
+                {
+                    graphics.FillRectangle(overlayBrush, 0, vocalsY, size.Width, vocalsHeight * 2);
+                }
+            }
+            EnsureRockBandKaraokeImageCache(size, vocalsY);
+            graphics.DrawImageUnscaled(_cachedVocalGlass, 0, vocalsY);
+            
+            if (doStaticLyrics)
+            {
+                var vocalPhrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
+                DrawLyricsStatic(MIDITools.PhrasesHarm3.Phrases, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
+                DrawLyricsStatic(MIDITools.PhrasesHarm2.Phrases, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
+                DrawLyricsStatic(vocalPhrases, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
+            }
+            else if (doKaraokeLyrics)
+            {
+                var vocalPhrases = doHarmonyLyrics && MIDITools.PhrasesHarm1.Phrases.Any() ? MIDITools.PhrasesHarm1.Phrases : MIDITools.PhrasesVocals.Phrases;
+                DrawLyricsKaraoke(MIDITools.PhrasesHarm3.Phrases, MIDITools.LyricsHarm3.Lyrics, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
+                DrawLyricsKaraoke(MIDITools.PhrasesHarm2.Phrases, MIDITools.LyricsHarm2.Lyrics, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
+                DrawLyricsKaraoke(vocalPhrases, vocalLyrics, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
+            }
+            else //default to scrolling
+            {
+                DrawLyricsScrolling(MIDITools.LyricsHarm3.Lyrics, font, KaraokeModeHarm3Highlight, backColor, harm3Y, graphics);
+                DrawLyricsScrolling(MIDITools.LyricsHarm2.Lyrics, font, KaraokeModeHarm2Highlight, backColor, harm2Y, graphics);
+                DrawLyricsScrolling(vocalLyrics, font, KaraokeModeHarm1Highlight, backColor, harm1Y, graphics);
+            }
+
+            DrawPhraseMarkers(graphics, MIDITools.PhrasesVocals, vocalsHeight * 2, vocalsY);
+            int fadeWidth = _cachedVocalFadeOut.Width;
+            int hFadeWidth = _cachedHarmonyFadeOut.Width;
+
+            if (MIDITools.MIDI_Chart.Harm3.ChartedNotes.Count > 0 && doMIDIHarmonies)
+            {
+                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm3, vocalsHeight * 2, vocalsY, false, 3, out Index);
+                MIDITools.MIDI_Chart.Harm3.ActiveIndex = Index;
+                graphics.DrawImageUnscaled(_cachedHarmonyFadeOut, 0, harm3Y);
+                graphics.DrawImageUnscaled(_cachedHarmonyFadeIn, size.Width - hFadeWidth, harm3Y);
+            }
+            if (MIDITools.MIDI_Chart.Harm2.ChartedNotes.Count > 0 && doMIDIHarmonies)
+            {
+                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm2, vocalsHeight * 2, vocalsY, false, 2, out Index);
+                MIDITools.MIDI_Chart.Harm2.ActiveIndex = Index;
+                graphics.DrawImageUnscaled(_cachedHarmonyFadeOut, 0, harm2Y);
+                graphics.DrawImageUnscaled(_cachedHarmonyFadeIn, size.Width - hFadeWidth, harm2Y);
+            }
+            if (MIDITools.MIDI_Chart.Harm1.ChartedNotes.Count > 0 && doMIDIHarmonies)
+            {
+                DrawNotes(graphics, MIDITools.MIDI_Chart.Harm1, vocalsHeight * 2, vocalsY, false, 1, out Index);
+                MIDITools.MIDI_Chart.Harm1.ActiveIndex = Index;
+            }
+            else
+            {
+                DrawNotes(graphics, MIDITools.MIDI_Chart.Vocals, vocalsHeight * 2, vocalsY, false, 0, out Index);
+                MIDITools.MIDI_Chart.Vocals.ActiveIndex = Index;
+            }
+            DrawHitbox(graphics, bmpHitboxVocals, HitboxVocalsX, vocalsY, bmpHitboxVocals.Width, vocalsHeight * 2, 1, "");
+            graphics.DrawImageUnscaled(_cachedVocalFadeIn, size.Width - fadeWidth, vocalsY);
+            graphics.DrawImageUnscaled(_cachedVocalFadeOut, 0, vocalsY);
+
+            graphics.DrawImageUnscaled(_cachedHarmonyFadeOut, 0, harm1Y);
+            graphics.DrawImageUnscaled(_cachedHarmonyFadeIn, size.Width - hFadeWidth, harm1Y);
+        }
 
         private void picPreview_Paint(object sender, PaintEventArgs e)
         {
-            if (displayAlbumArt.Checked || (!File.Exists(CurrentSongArt) && !displayAudioSpectrum.Checked))
+            if (displayAlbumArt || (!File.Exists(CurrentSongArt) && !displayAudioSpectrum))
             {
                 DrawSpectrum(picPreview.Bounds, e.Graphics);
             }
@@ -14062,7 +18486,7 @@ namespace cPlayer
 
             try
             {
-                // ---------- INTRO ----------
+                // INTRO
                 long introBytes = 0;
 
                 while (true)
@@ -14099,7 +18523,7 @@ namespace cPlayer
 
                 intro = Bass.BASS_ChannelBytes2Seconds(bassMixer, introBytes);
 
-                // ---------- OUTRO ----------
+                // OUTRO
                 long outroStartBytes = length;
                 long pos = length;
 
@@ -14144,27 +18568,26 @@ namespace cPlayer
 
                 outro = Bass.BASS_ChannelBytes2Seconds(bassMixer, outroStartBytes);
             }
-            catch (Exception ex)
+            catch
             { }
         }
 
-        private void updateDisplayType(object sender)
+        private void updateDisplayType()
         {
             if (!PlaybackTimer.Enabled)
             {
                 if (secondScreen != null)
                 {
-                    secondScreen.ChangeBackgroundImage(Resources.logo);
+                    secondScreen.ChangeVisualsImage(Resources.logo);
                 }
                 else
                 {
-                    picVisuals.Image = Resources.logo;
+                    SafeVisualsSetter(Resources.logo);
                 }
-            }           
+            }
             UpdateDisplay(false);
             ChangeDisplay();
-            UpdateKaraokeItemsVisibility();
-        }           
+        }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
@@ -14181,13 +18604,13 @@ namespace cPlayer
 
         private void playBGVideos_Click(object sender, EventArgs e)
         {
-            displayBackgroundVideo.Checked = playBGVideos.Checked;
+            enableYARGCHVideos = playBGVideos.Checked;
         }
 
         private void frmMain_Move(object sender, EventArgs e)
         {
             UpdateOverlayPosition();
-        }        
+        }
 
         private void picPlay_MouseClick(object sender, MouseEventArgs e)
         {
@@ -14210,11 +18633,6 @@ namespace cPlayer
                     secondScreen._mediaPlayer.Play();
                 }
                 UpdatePlaybackStuff();
-                if ((rockBandKaraoke.Checked && displayKaraokeMode.Checked && animatedBackground.Checked) ||
-                    classicKaraokeMode.Checked && displayKaraokeMode.Checked && animatedBackground2.Checked)
-                {
-                    stageTimer.Enabled = true;
-                }
             }
             else
             {
@@ -14247,7 +18665,6 @@ namespace cPlayer
         {
             if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
             {
-                stageTimer.Enabled = false;
                 StopPlayback(true);
                 UpdateNotifyTray();
             }
@@ -14265,12 +18682,12 @@ namespace cPlayer
         {
             if (sender != null && e.Button != MouseButtons.Left) return;
             if (songExtractor.IsBusy || songPreparer.IsBusy) return;
-            
+
             picLoop.Tag = picLoop.Tag.ToString() == "loop" ? "noloop" : "loop";
             toolTip1.SetToolTip(picLoop, picLoop.Tag.ToString() == "loop" ? "Disable track looping" : "Enable track looping");
             picShuffle.Tag = "noshuffle";
             toolTip1.SetToolTip(picShuffle, "Enable track shuffling");
-           
+
             if (picLoop.Tag.ToString() == "loop")
             {
                 picLoop.Image = Resources.icon_loop_enabled;
@@ -14286,12 +18703,12 @@ namespace cPlayer
         {
             if (sender != null && e.Button != MouseButtons.Left) return;
             if (songExtractor.IsBusy || songPreparer.IsBusy) return;
-            
+
             picShuffle.Tag = picShuffle.Tag.ToString() == "shuffle" ? "noshuffle" : "shuffle";
             toolTip1.SetToolTip(picShuffle, picShuffle.Tag.ToString() == "shuffle" ? "Disable track shuffling" : "Enable track shuffling");
             picLoop.Tag = "noloop";
             toolTip1.SetToolTip(picLoop, "Enable track looping");
-            
+
             if (picShuffle.Tag.ToString() == "shuffle")
             {
                 picLoop.Image = Resources.icon_loop_disabled1;
@@ -14325,9 +18742,6 @@ namespace cPlayer
             ReplacePanelWithRoundedEdges(panelPlaying, 20);
             ReplacePanelWithRoundedEdges(panelPlaylist, 20);
             ReplacePicturesWithRoundedEdges(picPreview, 20);
-            ReplacePicturesWithRoundedEdges(picVisuals, 20);
-            // Reapply rounded edges on resize
-            picVisuals.Resize += (s, ev) => ReplacePicturesWithRoundedEdges(picVisuals, 20);
         }
 
         private void ReplacePicturesWithRoundedEdges(PictureBox pictureBox, int cornerRadius)
@@ -14399,8 +18813,11 @@ namespace cPlayer
 
         private void microphoneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var selector = new MicControl(this);
-            selector.Show();
+            if (micControlForm == null || micControlForm.IsDisposed)
+            {
+                micControlForm = new MicControl(this);
+            }
+            micControlForm.Show();
         }
 
         private void stageKitToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
@@ -14408,104 +18825,97 @@ namespace cPlayer
             var isChecked = stageKitToolStripMenuItem.Checked;
             if (!isChecked)
             {
-                StopStageKit();
+                StopStageKits();
             }
-            controller1.Enabled = isChecked;
-            controller2.Enabled = isChecked;
-            controller3.Enabled = isChecked;
-            controller4.Enabled = isChecked;
         }
 
-        private void StopStageKit()
+        private void StopStageKits()
         {
-            if (stageKit == null) return;
-            try
+            if (stageKits != null)
+            {
+                foreach (var stageKit in stageKits)
+                {
+                    if (stageKit == null) continue;
+                    try
+                    {
+                        stageKit.TurnAllOff();
+                    }
+                    catch { }
+                }
+            }
+            if (fatsCoLights != null)
+            {
+                foreach (var fatsCo in fatsCoLights)
+                {
+                    if (fatsCo == null) continue;
+                    {
+                        try
+                        {
+                            fatsCo.AllOff();
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void DisableStageKits(bool message)
+        {
+            if (message)
+            {
+                MessageBox.Show("No Stage Kits found", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            foreach (var stageKit in stageKits)
             {
                 stageKit.TurnAllOff();
             }
-            catch (Exception)
-            { }
+            if (!enableFatsCoLights.Checked)
+            {
+                StopStageKitCommandWorker();
+                stageKitTimer.Enabled = false;
+            }
         }
-
-        private void controller1_Click(object sender, EventArgs e)
-        {
-            UncheckAllStageKits();
-            controller1.Checked = true;
-            stageKitIndex = 1;
-            SelectStageKitController();
-        }
-
-        private void controller2_Click(object sender, EventArgs e)
-        {
-            UncheckAllStageKits();
-            controller2.Checked = true;
-            stageKitIndex = 2;
-            SelectStageKitController();
-        }
-
-        private void controller3_Click(object sender, EventArgs e)
-        {
-            UncheckAllStageKits();
-            controller3.Checked = true;
-            stageKitIndex = 3;
-            SelectStageKitController();
-        }
-
-        private void controller4_Click(object sender, EventArgs e)
-        {
-            UncheckAllStageKits();
-            controller4.Checked = true;
-            stageKitIndex = 4;
-            SelectStageKitController();
-        }                        
 
         private void stageKitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (stageKit != null && !stageKitToolStripMenuItem.Checked)
+            if (!stageKitToolStripMenuItem.Checked)
             {
-                UncheckAllStageKits();
-                stageKit = null;
+                DisableStageKits(false);
+                return;
             }
-            stageKitTimer.Enabled = stageKitToolStripMenuItem.Checked;                
-        }
 
-        private void selectBackgroundColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeBackgroundColor = GetColorFromPicker(KaraokeModeBackgroundColor);
-        }
+            var hidDevices = DeviceList.Local.GetHidDevices().ToList();
+            stageKitToolStripMenuItem.Checked = false;                 
+            stageKitIndices.Clear();
+            stageKits.Clear();
 
-        private Color GetColorFromPicker(Color color)
-        {
-            using (ColorDialog colorDialog = new ColorDialog())            {  
-                if (colorDialog.ShowDialog() == DialogResult.OK)
+            foreach (var hidDevice in hidDevices)
+            {
+                if (IsOriginalStageKit(hidDevice))
                 {
-                    return colorDialog.Color;
+                    CheckForConnectedStageKits();
                 }
-                return color;
+            }
+            stageKitToolStripMenuItem.Checked = stageKitIndices.Any();
+            foreach (var index in stageKitIndices)
+            {
+                stageKits.Add(new StageKitController(index + 1));
+            }
+            useLEDs.Enabled = stageKitToolStripMenuItem.Enabled;
+            useStrobe.Enabled = stageKitToolStripMenuItem.Enabled;
+            useFogger.Enabled = stageKitToolStripMenuItem.Enabled;
+
+            if (stageKitToolStripMenuItem.Checked)
+            {
+                StartStageKitCommandWorker();
+                stageKitTimer.Enabled = true;
+            }
+            else
+            {
+                DisableStageKits(true);
             }
         }
-
-        private void selectLyricColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm1Text = GetColorFromPicker(KaraokeModeHarm1Text);
-        }
-
-        private void selectHighlightColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm1Highlight = GetColorFromPicker(KaraokeModeHarm1Highlight);
-        }
-
-        private void restoreDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            KaraokeModeBackgroundColor = cPlayerStyle.Checked ? Color.White : Color.Black;
-            KaraokeModeHarm1Text = cPlayerStyle.Checked ? Color.FromArgb(180, 180, 180) : Color.White;
-            KaraokeModeHarm1Highlight = cPlayerStyle.Checked ? Color.FromArgb(95, 209, 209) : Color.DodgerBlue;
-            KaraokeModeHarm2Text = Color.LightGray;
-            KaraokeModeHarm2Highlight = Color.HotPink;
-            KaraokeModeHarm3Text = Color.DarkGray;
-            KaraokeModeHarm3Highlight = Color.LimeGreen;
-        }
-
+         
         private void doRebuildPlaylist(bool doAudio)
         {
             if (MessageBox.Show("This might take a while...are you sure you want to do this now?",
@@ -14543,7 +18953,7 @@ namespace cPlayer
             doRebuildPlaylist(true);
         }
 
-        private void StopAllVideoPlayback()
+        public void StopAllVideoPlayback()
         {
             if (VideoIsPlaying)
             {
@@ -14558,310 +18968,127 @@ namespace cPlayer
             }
         }
 
-        public bool GetClassicKaraokeModeIsChecked()
+        private bool IsVideoPlayingOnAnyScreen()
         {
-            return classicKaraokeMode.Checked;
-        }
-
-        private void classicKaraokeMode_Click(object sender, EventArgs e)
-        {
-            ClickClassicKaraokeMode();    
+            bool mainVideo = VideoIsPlaying;
+            bool secondaryvideo = secondScreen != null && secondScreen.VideoIsPlaying;
+            return mainVideo || secondaryvideo;
         }
 
         public void ClickClassicKaraokeMode()
         {
-            if (!yarg.Checked)
+            if (!DoYargVideo())
             {
                 StopAllVideoPlayback();
             }
-            else if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
+            else if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath) && !IsVideoPlayingOnAnyScreen())
             {
                 PlayCurrentVideo(CHVideoPath);
             }
-            picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
-            picVisuals.Image = null;
-            CheckUncheckAll(classicKaraokeMode);
-            displayKaraokeMode.Checked = true;
-            updateDisplayType(classicKaraokeMode);
-            if (secondScreen != null)
-            {
-                if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
-                {
-                    secondScreen.ChangeBackgroundImage(null);
-                    secondScreen.ChangeBackgroundColor(Color.Black);
-                }
-                else
-                {
-                    secondScreen.ChangeBackgroundImage(solidColorBackground.Checked ? Resources.gradient : null);
-                    secondScreen.ChangeBackgroundColor(KaraokeModeBackgroundColor);
-                }                
-                picVisuals.Image = Resources.logo;
-                picVisuals.SizeMode = PictureBoxSizeMode.Zoom;
-                picVisuals.BackColor = Color.AliceBlue;
-            }
-            else
-            {
-                if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
-                {
-                    picVisuals.Image = null;
-                    picVisuals.BackColor = Color.Black;
-                }
-                else
-                {
-                    picVisuals.Image = solidColorBackground.Checked ? Resources.gradient : null;
-                    picVisuals.BackColor = KaraokeModeBackgroundColor;
-                }                    
-            }
-            stageTimer.Enabled = animatedBackground2.Checked;
+            SafeVisualsSetter(null);
+            DisableAllModes();
+            doModernKaraokeMode = true;
+            updateDisplayType();
         }
 
-        public bool GetcPlayerStyleIsChecked()
-        {
-            return cPlayerStyle.Checked;
-        }
-
-        private void cPlayerStyle_Click(object sender, EventArgs e)
-        {
-            ClickCPlayerStyle();
-        }
-        
         public void ClickCPlayerStyle()
         {
             if (!yarg.Checked)
             {
                 StopAllVideoPlayback();
             }
-            if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath) && !VideoIsPlaying)
-            { 
+            if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath) && !IsVideoPlayingOnAnyScreen())
+            {
                 PlayCurrentVideo(CHVideoPath);
             }
-            picVisuals.Image = null;
-            stageTimer.Enabled = false;
-            CheckUncheckAll(cPlayerStyle);
-            displayKaraokeMode.Checked = true;
-            updateDisplayType(cPlayerStyle);
+            SafeVisualsSetter(null);
+            DisableAllModes();
+            doCPlayerStyleKaraoke = true;
+            updateDisplayType();
             picVisuals.BackgroundImage = null;
-        }
-
-        private void selectHarmonyTextColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm2Text = GetColorFromPicker(KaraokeModeHarm2Text);
-        }
-
-        private void selectHarmonyHighlightColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm2Highlight = GetColorFromPicker(KaraokeModeHarm2Highlight);
-        }
-
-        private void selectHarmony3TextColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm3Text = GetColorFromPicker(KaraokeModeHarm3Text);
-        }
-
-        private void selectHarmony3HighlightColor_Click(object sender, EventArgs e)
-        {
-            KaraokeModeHarm3Highlight = GetColorFromPicker(KaraokeModeHarm3Highlight);
-        }
-
-        public bool GetRockBandKaraokeIsChecked()
-        {
-            return rockBandKaraoke.Checked;
-        }
-
-        private void rockBandKaraoke_Click(object sender, EventArgs e)
-        {
-            ClickRockBandKaraoke();
-        }
+        }              
 
         public void ClickRockBandKaraoke()
         {
-            StopAllVideoPlayback();
-            picVisuals.Image = PlaybackTimer.Enabled ? stageBackground : null;// Resources.background_new;
-            CheckUncheckAll(rockBandKaraoke);
-            displayKaraokeMode.Checked = true;
-            updateDisplayType(rockBandKaraoke);
-            stageTimer.Enabled = animatedBackground.Checked;
-            picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
-            if (staticBackground.Checked)
+            if (!DoYargVideo())
             {
-                staticBackground.PerformClick();
+                StopAllVideoPlayback();
             }
-            else if (animatedBackground.Checked)
-            {
-                animatedBackground.PerformClick();
-            }
+            SafeVisualsSetter(PlaybackTimer.Enabled ? Resources.stage_background : null);
+            DisableAllModes();
+            doRockBandKaraoke = true;                
+            updateDisplayType();
         }
 
-        private int stageCounter = 0;
-        private void stageTimer_Tick(object sender, EventArgs e)
+        public void ClickVerticalChart()
         {
-            if (!PlaybackTimer.Enabled) return;
-            if (stageFrames == null || stageFrames.Count == 0)
-            {
-                var image = isRBKaraoke() ? stageBackground : null;
-                if (secondScreen != null)
-                {
-                    secondScreen.ChangeBackgroundImage(image);
-                }
-                else
-                {
-                    picVisuals.Image = image;
-                }
-                stageTimer.Enabled = false;
-                return;
-            }
-            var frame = stageFrames[stageCounter++];
+            StopAllVideoPlayback();
+            DisableAllModes();
+            doVerticalChart = true;
+            updateDisplayType();
+            UpdateVisualStyle();
             if (secondScreen != null)
             {
-                secondScreen.ChangeBackgroundImage(frame);
-            }
-            else
-            {
-                picVisuals.Image = frame;
-            }
-            if (stageCounter == stageFrames.Count - 1)
-            {
-                stageCounter = 0;
+                SetSecondScreenBackColorIfChanged(Color.Black);
             }
         }
 
-        public bool GetChartVerticalIsChecked()
-        {
-            return chartVertical.Checked;
-        }
-
-        private void chartVertical_Click(object sender, EventArgs e)
-        {
-            ClickChartVertical();
-        }
-
-        public void ClickChartVertical()
+        public void ClickMIDIChart()
         {
             StopAllVideoPlayback();
-            CheckUncheckAll(chartVertical);
-            chartVisualsToolStripMenuItem.Checked = true;
-            updateDisplayType(chartVertical);
-            UpdateVisualStyle(chartVertical);
-            if (secondScreen != null)
-            {
-                secondScreen.ChangeBackgroundColor(Color.Black);
-            }
+            DisableAllModes();
+            doMIDIChart = true;
+            updateDisplayType();
+            UpdateVisualStyle();
         }
 
-        public bool GetChartSnippetIsChecked()
+        private void DisableAllModes()
         {
-            return chartSnippet.Checked;
-        }
-
-        private void chartSnippet_Click(object sender, EventArgs e)
-        {
-            ClickChartSnippet();
-        }
-
-        public void ClickChartSnippet()
-        {
-            StopAllVideoPlayback();
-            CheckUncheckAll(chartSnippet);
-            chartVisualsToolStripMenuItem.Checked = true;
-            updateDisplayType(chartSnippet);
-            UpdateVisualStyle(chartSnippet);
-        }
-
-        private void CheckUncheckAll(object sender)
-        {
-            chartVertical.Checked = false;
-            chartSnippet.Checked = false;
-            chartFull.Checked = false;
-            displayKaraokeMode.Checked = false;
-            displayAlbumArt.Checked = false;
-            displayAudioSpectrum.Checked = false;
-            rockBandKaraoke.Checked = false;
-            cPlayerStyle.Checked = false;
-            classicKaraokeMode.Checked = false;
-            chartVisualsToolStripMenuItem.Checked = false;
-            rBStyle.Checked = false;
-            ((ToolStripMenuItem)(sender)).Checked = true;
-        }
-
-        private void chartFull_Click(object sender, EventArgs e)
-        {
-            CheckUncheckAll(sender);
-            chartVisualsToolStripMenuItem.Checked = true;
-            updateDisplayType(sender);
-            UpdateVisualStyle(sender);            
-        }
-
-        private DateTime lastCursorMovement;
-        private void cursorTimer_Tick(object sender, EventArgs e)
-        {
-            if (!isFullScreen)
-            {
-                cursorTimer.Enabled = false;
-                return;
-            }
-            var timeSpan = DateTime.Now - lastCursorMovement;
-            if (timeSpan.Seconds >= 3)
-            {
-                Cursor.Hide();
-                cursorTimer.Enabled = false;                            
-            }
-        }
-
-        public bool GetAnimatedBackgroundIsChecked()
-        {
-            return animatedBackground.Checked;
-        }
-
-        private void animatedBackground_Click(object sender, EventArgs e)
-        {
-            ClickAnimatedBackground();
+            displayAlbumArt = false;
+            displayAudioSpectrum = false;
+            doModernKaraokeMode = false;
+            doRockBandKaraoke = false;
+            doCPlayerStyleKaraoke = false;
+            doMIDIChart = false;
+            doVerticalChart = false;
+            doRockBandChart = false;
+            //doFocusMode = false;
         }
 
         public void ClickAnimatedBackground()
         {
-            StopAllVideoPlayback();
-            staticBackground.Checked = false;
-            animatedBackground.Checked = true;
-            if (isRBKaraoke())
+            if (!DoYargVideo())
             {
-                stageTimer.Enabled = true;
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
+                StopAllVideoPlayback();
             }
-        }
-
-        public bool GetStaticBackgroundIsChecked()
-        {
-            return staticBackground.Checked;
-        }
-
-        private void staticBackground_Click(object sender, EventArgs e)
-        {
-            ClickStaticBackground();
+            doStaticBackground = false;
+            doAnimatedBackground = true;
         }
 
         public void ClickStaticBackground()
         {
-            StopAllVideoPlayback();
-            stageTimer.Enabled = false;
-            staticBackground.Checked = true;
-            animatedBackground.Checked = false;
-            if (isRBKaraoke())
+            if (!DoYargVideo())
+            {
+                StopAllVideoPlayback();
+            }
+            doStaticBackground = true;
+            doAnimatedBackground = false;
+            if (doRockBandKaraoke)
             {
                 if (secondScreen != null)
                 {
-                    secondScreen.ChangeBackgroundImage(stageBackground);
+                    secondScreen.ChangeVisualsImage(Resources.stage_background);
                 }
                 else
                 {
-                    picVisuals.Image = stageBackground;
+                    SafeVisualsSetter(Resources.stage_background);
                 }
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }
 
         public bool GetForceSoloVocalsIsChecked()
         {
-            return forceSoloVocals.Checked;
+            return doForceSoloVocals;
         }
 
         private void forceSoloVocals_Click(object sender, EventArgs e)
@@ -14871,51 +19098,86 @@ namespace cPlayer
 
         public void ClickForceSoloVocals()
         {
-            forceSoloVocals.Checked = !forceSoloVocals.Checked;
-            if (forceSoloVocals.Checked)
+            doForceSoloVocals = !doForceSoloVocals;
+            if (doForceSoloVocals)
             {
-                forceTwoPartHarmonies.Checked = false;
+                doForceTwoPartHarmonies = false;
             }
         }
 
         public bool GetForceTwoPartHarmoniesIsChecked()
         {
-            return forceTwoPartHarmonies.Checked;
-        }
-
-        private void forceTwoPartHarmonies_Click(object sender, EventArgs e)
-        {
-            ClickForceTwoPartHarmonies();
+            return doForceTwoPartHarmonies;
         }
 
         public void ClickForceTwoPartHarmonies()
         {
-            forceTwoPartHarmonies.Checked = !forceTwoPartHarmonies.Checked;
-            if (forceTwoPartHarmonies.Checked)
+            doForceTwoPartHarmonies = !doForceTwoPartHarmonies;
+            if (doForceTwoPartHarmonies)
             {
-                forceSoloVocals.Checked = false;
+                doForceSoloVocals = false;
             }
         }
 
         private void stageKitTimer_Tick(object sender, EventArgs e)
         {
-            if (Bass.BASS_ChannelIsActive(BassMixer) == BASSActive.BASS_ACTIVE_PLAYING)
-            {
-                // the stream is still playing...                    
-                var pos = Bass.BASS_ChannelGetPosition(BassStream); // position in bytes
-                var time = Bass.BASS_ChannelBytes2Seconds(BassStream, pos); // the elapsed time length                   
+            if (!useLEDs.Checked && !useStrobe.Checked && !useFogger.Checked)
+                return;
 
-                RandomizeStageKit(time);
-            }
+            if (stageKits.Count == 0 && fatsCoLights.Count == 0)
+                return;
+
+            double time = GetCorrectedTime();
+            AnimateStageKits(time);
+        }
+
+        private StageKitLedFrame BuildPattern_LaserOpposites(int step)
+        {
+            var frame = new StageKitLedFrame();
+
+            int baseIndex = step & 7;
+
+            SetOppositePair(frame.Red, baseIndex + 0);
+            SetOppositePair(frame.Blue, baseIndex + 1);
+            SetOppositePair(frame.Green, baseIndex + 2);
+            SetOppositePair(frame.Yellow, baseIndex + 3);
+
+            return frame;
+        }
+
+        private void SetOppositePair(bool[] bank, int index)
+        {
+            if (bank == null || bank.Length < 8)
+                return;
+
+            int a = index & 7;
+            int b = (a + 4) & 7;
+
+            bank[a] = true;
+            bank[b] = true;
+        }
+
+        private enum StageKitLedPattern
+        {
+            OneEachSameDirection,
+            OneEachAlternatingDirections,
+            BuildColorsThenReverse,
+            ThreeEachStaggered,
+            LaserOpposites
+        }
+
+        private sealed class StageKitLedFrame
+        {
+            public bool[] Red = new bool[8];
+            public bool[] Blue = new bool[8];
+            public bool[] Green = new bool[8];
+            public bool[] Yellow = new bool[8];
         }
 
         public enum VideoPathType
         {
             FromPath, FromLocation
         }
-
-        private int _applyARInProgress;
-        private volatile string _pendingAspectRatio;
 
         void ApplyFillAspectRatio()
         {
@@ -14956,13 +19218,9 @@ namespace cPlayer
             });
         }
 
-
-        private string _currentVideoPath;
-        private VideoPathType _currentVideoType;
-        private Media _currentMedia;
-
         public void StartVideoPlayback(string videoPath, VideoPathType pathType, long videoTime)
         {
+            if (doFocusMode) return;
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() => StartVideoPlayback(videoPath, pathType, videoTime)));
@@ -15041,7 +19299,7 @@ namespace cPlayer
 
         private Screen GetOtherScreen()
         {
-            // Use center point — more reliable when dragging between monitors
+            // Use center point
             var center = new Point(
                 this.Left + this.Width / 2,
                 this.Top + this.Height / 2);
@@ -15058,35 +19316,34 @@ namespace cPlayer
             return current;
         }
 
-        private PopOutScreen secondScreen;
-        public string currentVideoPath;
         private void enableSecondScreen_Click(object sender, EventArgs e)
         {
-            var videoShouldBeVisible = (yarg.Checked || rBStyle.Checked) && (VideoIsPlaying || (secondScreen != null && secondScreen.VideoIsPlaying));
+            var videoShouldBeVisible = (yarg.Checked || doRockBandChart) && IsVideoPlayingOnAnyScreen();
+            var videoPath = yarg.Checked && !string.IsNullOrWhiteSpace(CHVideoPath) && File.Exists(CHVideoPath) ? CHVideoPath : currentVideoPath;
 
             if (enableSecondScreen.Checked)
             {
-                enableSecondScreen.Checked = false;                
-                if (chartVisualsToolStripMenuItem.Checked && chartVertical.Checked)
+                enableSecondScreen.Checked = false;
+                if (doVerticalChart)
                 {
-                    picVisuals.Image = null;
-                    picVisuals.BackColor = Color.Black;
+                    SafeVisualsSetter(null);
+                    SetPicVisualsBackColorIfChanged(Color.Black);
                 }
-                else if (displayKaraokeMode.Checked && classicKaraokeMode.Checked && solidColorBackground.Checked)
+                else if (doModernKaraokeMode && doSolidColorBackground)
                 {
-                    picVisuals.Image = Resources.gradient;
+                    SafeVisualsSetter(null);
                 }
-                else if (displayKaraokeMode.Checked && cPlayerStyle.Checked)
+                else if (doCPlayerStyleKaraoke)
                 {
-                    picVisuals.Image = null;
+                    SafeVisualsSetter(null);
                 }
-                else if (chartVisualsToolStripMenuItem.Checked && rBStyle.Checked)
+                else if (doRockBandChart)
                 {
-                    picVisuals.Image = secondScreen.backgroundImage;
+                    SafeVisualsSetter(secondScreen.backgroundImage);
                 }
-                else if (displayAlbumArt.Checked)
+                else if (displayAlbumArt)
                 {
-                    picVisuals.Image = LargeAlbumArt;
+                    SafeVisualsSetter(LargeAlbumArt);
                     picVisuals.SizeMode = PictureBoxSizeMode.Zoom;
                     Color bgColor = Color.AliceBlue;
                     if (File.Exists(CurrentSongArtBlurred))
@@ -15096,20 +19353,20 @@ namespace cPlayer
                             bgColor = Tools.GetMoodBackgroundFromBlurred(bmp, Color.AliceBlue, 28);
                         }
                     }
-                    picVisuals.BackColor = bgColor;
+                    SetPicVisualsBackColorIfChanged(bgColor);
                 }
                 if (secondScreen != null)
                 {
                     long time = 0;
                     try
                     {
-                        time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+                        time = GetBASSTimeForVideo();
                     }
-                    catch { }                        
+                    catch { }
                     if (secondScreen.VideoIsPlaying)
                     {
                         secondScreen.StopVideoPlayback();
-                        StartVideoPlayback(currentVideoPath, VideoPathType.FromPath, time);
+                        StartVideoPlayback(videoPath, VideoPathType.FromPath, time);
                     }
                     secondScreen.Dispose();
                     secondScreen = null;
@@ -15121,19 +19378,21 @@ namespace cPlayer
                 if (Screen.AllScreens.Length <= 1) return;
                 var target = GetOtherScreen();
 
-                enableSecondScreen.Checked = true;                
-                secondScreen = new PopOutScreen(this);
-                secondScreen.WindowState = FormWindowState.Normal;
-                secondScreen.Bounds = target.Bounds;
+                enableSecondScreen.Checked = true;
+                secondScreen = new PopOutScreen(this)
+                {
+                    WindowState = FormWindowState.Normal,
+                    Bounds = target.Bounds
+                };
 
-                secondScreen.ChangeBackgroundColor(picVisuals.BackColor);
-                if (displayKaraokeMode.Checked && classicKaraokeMode.Checked && solidColorBackground.Checked && !videoShouldBeVisible)
+                SetSecondScreenBackColorIfChanged(picVisuals.BackColor);
+                if (doModernKaraokeMode && doSolidColorBackground && !videoShouldBeVisible)
                 {
-                    secondScreen.ChangeBackgroundImage(Resources.gradient);
+                    secondScreen.ChangeVisualsImage(null);
                 }
-                else if (displayAlbumArt.Checked)
+                else if (displayAlbumArt)
                 {
-                    secondScreen.ChangeBackgroundImage(LargeAlbumArt, true);
+                    secondScreen.ChangeVisualsImage(LargeAlbumArt);
                     Color bgColor = Color.AliceBlue;
                     if (File.Exists(CurrentSongArtBlurred))
                     {
@@ -15142,22 +19401,22 @@ namespace cPlayer
                             bgColor = Tools.GetMoodBackgroundFromBlurred(bmp, Color.AliceBlue, 28);
                         }
                     }
-                    secondScreen.ChangeBackgroundColor(bgColor);
-                    picVisuals.BackColor = Color.AliceBlue;// bgColor;
-                }                
-                if (rBStyle.Checked && !videoShouldBeVisible)
-                {
-                    secondScreen.ChangeBackgroundImage(picVisuals.Image);
+                    SetSecondScreenBackColorIfChanged(bgColor);
+                    SetPicVisualsBackColorIfChanged(Color.AliceBlue);
                 }
-                picVisuals.Image = Resources.logo;
+                if (doRockBandChart && !videoShouldBeVisible)
+                {
+                    secondScreen.ChangeVisualsImage(picVisuals.Image);
+                }
+                SafeVisualsSetter(Resources.logo);
                 secondScreen.Show();
                 if (videoShouldBeVisible)
                 {
-                    var time = _mediaPlayer.Time = (long)(PlaybackSeconds * 1000) + Parser.Songs[0].VideoStartTime;
+                    var time = GetBASSTimeForVideo();
                     StopAllVideoPlayback();
                     if (!secondScreen.VideoIsPlaying)
                     {
-                        secondScreen.StartVideoPlayback(currentVideoPath, PopOutScreen.VideoPathType.FromPath, time);
+                        secondScreen.StartVideoPlayback(videoPath, PopOutScreen.VideoPathType.FromPath, time);
                     }
                 }
                 if (WindowState == FormWindowState.Normal)
@@ -15165,56 +19424,37 @@ namespace cPlayer
                     UpdateOverlayPosition();
                 }
             }
+            UpdateActiveRenderingResolution();
+            changedBackground = false;
         }
 
-        private void changeStageBackground_Click(object sender, EventArgs e)
+        private long GetBASSTimeForVideo()
         {
-            randomizeBackgroundImage();
-        }
+            var mixerState = Bass.BASS_ChannelIsActive(BassMixer);
+            if (mixerState != BASSActive.BASS_ACTIVE_PLAYING) return 0;
 
-        public bool GetEnableBackgroundImageIsChecked()
-        {
-            return staticBackground2.Checked;
-        }
-
-        private void enableBackgroundImage_Click(object sender, EventArgs e)
-        {
-            ClickEnableBackgroundImage();
+            long pos = Bass.BASS_ChannelGetPosition(BassMixer);
+            double audioMs = Bass.BASS_ChannelBytes2Seconds(BassMixer, pos) * 1000.0;
+            long finalPosition = (long)audioMs + Parser.Songs[0].VideoStartTime;
+            return finalPosition;
         }
 
         public void ClickEnableBackgroundImage()
         {
-            animatedBackground2.Checked = false;
-            staticBackground2.Checked = true;
-            solidColorBackground.Checked = false;
-            stageTimer.Enabled = false;
-            if (classicKaraokeMode.Checked)
-            {
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
-        }
-
-        public bool GetAnimatedBackground2IsChecked()
-        {
-            return animatedBackground2.Checked;
-        }
-
-        private void animatedBackground2_Click(object sender, EventArgs e)
-        {
-            ClickAnimatedBackground2();
+            doAnimatedBackground2 = false;
+            doStaticBackground2 = true;
+            doSolidColorBackground = false;
         }
 
         public void ClickAnimatedBackground2()
         {
-            StopAllVideoPlayback();
-            solidColorBackground.Checked = false;
-            animatedBackground2.Checked = true;
-            staticBackground2.Checked = false;
-            if (classicKaraokeMode.Checked)
+            if (!DoYargVideo())
             {
-                stageTimer.Enabled = true;
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
+                StopAllVideoPlayback();
             }
+            doSolidColorBackground = false;
+            doAnimatedBackground2 = true;
+            doStaticBackground2 = false;
         }
 
         private void lblClearSearch_MouseClick(object sender, MouseEventArgs e)
@@ -15360,7 +19600,7 @@ namespace cPlayer
                 .ToList();
 
             for (var i = 0; i < topFavoriteSongs.Count; i++)
-            {               
+            {
                 int realIndex = topFavoriteSongs[i].PlaylistIndex; // 0-based
 
                 //format leading index number
@@ -15440,7 +19680,7 @@ namespace cPlayer
             if (e.Button != MouseButtons.Left) return;
 
             Point screenPos = picFilters.PointToScreen(Point.Empty);
-            
+
             var picker = new frmFilters(this);
             picker.StartPosition = FormStartPosition.Manual;
             picker.Location = new Point(
@@ -15449,68 +19689,49 @@ namespace cPlayer
             );
 
             picker.Show(this);
-        }
-
-        public bool GetSolidColorBackgroundIsChecked()
-        {
-            return solidColorBackground.Checked;
-        }
-
-        private void solidColorBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ClickSolidColorBackground();
-        }
+        }       
 
         public void ClickSolidColorBackground()
         {
-            if (!yarg.Checked || string.IsNullOrEmpty(CHVideoPath))
+            if (!DoYargVideo())
             {
                 StopAllVideoPlayback();
             }
-            if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath) && !VideoIsPlaying)
-            {
-                PlayCurrentVideo(CHVideoPath);
-            }
-            solidColorBackground.Checked = true;
-            animatedBackground2.Checked = false;
-            staticBackground2.Checked = false;
-            stageTimer.Enabled = false;
+            doSolidColorBackground = true;
+            doAnimatedBackground2 = false;
+            doStaticBackground2 = false;
             if (secondScreen != null)
             {
                 if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
                 {
-                    secondScreen.ChangeBackgroundImage(null);
-                    secondScreen.ChangeBackgroundColor(Color.Black);
+                    secondScreen.ChangeVisualsImage(null);
+                    SetSecondScreenBackColorIfChanged(Color.Black);
                 }
                 else
                 {
-                    secondScreen.ChangeBackgroundImage(Resources.gradient);
-                    secondScreen.ChangeBackgroundColor(picVisuals.BackColor);
+                    secondScreen.ChangeVisualsImage(null);
+                    SetSecondScreenBackColorIfChanged(picVisuals.BackColor);
                 }
             }
             else
             {
                 if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
                 {
-                    picVisuals.Image = null;
-                    picVisuals.BackColor = Color.Black;
+                    SafeVisualsSetter(null);
+                    SetPicVisualsBackColorIfChanged(Color.Black);
                 }
                 else
                 {
-                    picVisuals.Image = Resources.gradient;
-                    picVisuals.BackColor = KaraokeBackgroundColor;
+                    SafeVisualsSetter(null);
+                    SetPicVisualsBackColorIfChanged(KaraokeBackgroundColor);
                 }
-            }
-            if (classicKaraokeMode.Checked)
-            {
-                picVisuals.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }
 
         private void picSecondScreen_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;
-            if (picSecondScreen.Tag == "disabled")
+            if (picSecondScreen.Tag.ToString() == "disabled")
             {
                 picSecondScreen.Tag = "enabled";
                 picSecondScreen.Image = Resources.doublescreen_enabled;
@@ -15524,10 +19745,7 @@ namespace cPlayer
             }
             enableSecondScreen.PerformClick();
         }
-
-        private int lastBackgroundIndex = 0;
-        private Bitmap RBStyleBackground;
-
+         
         private void PlayCurrentVideo(string videoPath)
         {
             long time = 0;
@@ -15547,18 +19765,20 @@ namespace cPlayer
             }
         }
 
-        private void ChangeRBStyleBackground()
+        private Bitmap RBStyleBackgroundScaled;
+
+        public void ChangeRBStyleBackground()
         {
-            if (!chartVisualsToolStripMenuItem.Checked || !rBStyle.Checked || !PlaybackTimer.Enabled) return;
-            //if (yarg.Checked && ((secondScreen == null && VideoIsPlaying) || (secondScreen != null && secondScreen.VideoIsPlaying))) return;
+            if (!doRockBandChart || !PlaybackTimer.Enabled) return;
+            if (DoYargVideo()) return;
             if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
             {
                 PlayCurrentVideo(CHVideoPath);
                 return;
-            }           
+            }
 
             // VIDEOS
-            if (doUseBackgroundVideos && BackgroundVideos != null && BackgroundVideos.Count > 0)
+            if (doUseBackgroundVideos && !doUseBackgroundVideosLast && BackgroundVideos != null && BackgroundVideos.Count > 0)
             {
                 _videoBag.ResetCount(BackgroundVideos.Count);
 
@@ -15585,6 +19805,8 @@ namespace cPlayer
                     else
                         StartVideoPlayback(path, VideoPathType.FromPath, 0);
 
+                    doUseBackgroundVideosLast = true;
+                    doUseBackgroundImagesLast = false;
                     return;
                 }
 
@@ -15593,7 +19815,7 @@ namespace cPlayer
             }
 
             // IMAGES
-            if (doUseBackgroundImages && BackgroundImages != null && BackgroundImages.Count > 0)
+            if (doUseBackgroundImages && !doUseBackgroundImagesLast && BackgroundImages != null && BackgroundImages.Count > 0)
             {
                 _imageBag.ResetCount(BackgroundImages.Count);
 
@@ -15614,80 +19836,105 @@ namespace cPlayer
                     }
 
                     StopAllVideoPlayback();
-                    RBStyleBackground?.Dispose();
-                    RBStyleBackground = (Bitmap)Image.FromFile(path);
+
+                     RBStyleBackground?.Dispose();
+                     RBStyleBackground = null;
+
+                     RBStyleBackgroundScaled?.Dispose();
+                     RBStyleBackgroundScaled = null;
+
+                    using (var original = (Bitmap)Image.FromFile(path))
+                    {
+                        RBStyleBackground = new Bitmap(original);
+
+                        RBStyleBackgroundScaled = ScaleBackgroundImage(RBStyleBackground);
+
+                        doUseBackgroundImagesLast = true;
+                        doUseBackgroundVideosLast = false;
+                    }
+                    changedBackground = true;
                     return;
                 }
             }
-        }
+        }        
 
-        public bool GetRBStyleIsChecked()
-        {
-            return rBStyle.Checked;
-        }
+        private Bitmap ScaleBackgroundImage(Bitmap original)
+        {          
+            Bitmap scaled = new Bitmap(activeRenderingResolution.Width, activeRenderingResolution.Height, PixelFormat.Format32bppPArgb);
+            using (var g = Graphics.FromImage(scaled))
+            {
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.CompositingQuality = CompositingQuality.HighSpeed;
+                g.InterpolationMode = InterpolationMode.Bilinear;
+                g.SmoothingMode = SmoothingMode.None;
+                g.PixelOffsetMode = PixelOffsetMode.Half;
 
-        private void rBStyle_Click(object sender, EventArgs e)
-        {
-            ClickRBStyle();
+                g.Clear(doFocusMode || doVerticalChart || doMIDIChart ? Color.Black : Color.Transparent);
+
+                g.DrawImage(
+                    original,
+                    new Rectangle(0, 0, activeRenderingResolution.Width, activeRenderingResolution.Height),
+                    0,
+                    0,
+                    original.Width,
+                    original.Height,
+                    GraphicsUnit.Pixel);
+            }
+            return scaled;
         }
 
         public void ClickRBStyle()
-        {            
-            CheckUncheckAll(rBStyle);
-            chartVisualsToolStripMenuItem.Checked = true;
-            updateDisplayType(rBStyle);
-            UpdateVisualStyle(rBStyle);
+        {
+            DisableAllModes();
+            doRockBandChart = true;
+            updateDisplayType();
+            UpdateVisualStyle();
             if (secondScreen != null)
             {
-                secondScreen.ChangeBackgroundColor(Color.Black);
+                SetSecondScreenBackColorIfChanged(Color.Black);
             }
             if (yarg.Checked && !string.IsNullOrEmpty(CHVideoPath))
             {
                 PlayCurrentVideo(CHVideoPath);
             }
-        }
-
-        public bool GetBackgroundVideosIsChecked()
-        {
-            return useBackgroundVideos.Checked;
-        }
-
-        private void useBackgroundVideos_Click(object sender, EventArgs e)
-        {
-            ClickBackgroundVideos();   
-        }
+        }        
 
         public void ClickBackgroundVideos()
         {
-            //if (yarg.Checked && VideoIsPlaying) return;
-            useBackgroundVideos.Checked = true;
-            useBackgroundImages.Checked = false;
+            if (DoYargVideo()) return;
+            enableYARGCHVideos = false;
+            doBackgroundImages = false;
             changedBackground = false;
             doUseBackgroundVideos = true;
             doUseBackgroundImages = false;
+            doAnimatedSpectrum = false;
             ChangeRBStyleBackground();
-        }
-
-        public bool GetBackgroundImagesIsChecked()
-        {
-            return useBackgroundImages.Checked;
-        }
-
-        private void useBackgroundImages_Click(object sender, EventArgs e)
-        {
-            ClickBackgroundImages();
         }
 
         public void ClickBackgroundImages()
         {
-            //if (yarg.Checked && VideoIsPlaying) return;
-            useBackgroundVideos.Checked = false;
-            useBackgroundImages.Checked = true;
+            if (DoYargVideo()) return;
+            enableYARGCHVideos = false;
+            doBackgroundImages = true;
             changedBackground = false;
             doUseBackgroundVideos = false;
             doUseBackgroundImages = true;
+            doAnimatedSpectrum = false;
             StopAllVideoPlayback();
             ChangeRBStyleBackground();
+        }
+
+        public void ClickFocusMode(bool enable)
+        {
+            if (DoYargVideo()) return;
+            enableYARGCHVideos = false;
+            doBackgroundImages = false;
+            doAnimatedSpectrum = false;
+            changedBackground = false;
+            doFocusMode = enable;
+            doUseBackgroundImagesLast = false;
+            doUseBackgroundImagesLast = false;
+            StopAllVideoPlayback();
         }
 
         private void playToolStripMenuItem_Click(object sender, EventArgs e)
@@ -15707,8 +19954,11 @@ namespace cPlayer
 
         private void bluetoothAVOffset_Click(object sender, EventArgs e)
         {
-            var bt = new BTAVSync(this, BTAVOffsetSync, enableBTAVOffsetSync);
-            bt.Show();
+            if (btSyncForm == null || btSyncForm.IsDisposed)
+            {
+                btSyncForm = new BTAVSync(this, BTAVOffsetSync, enableBTAVOffsetSync);
+            }
+            btSyncForm.Show();
         }
 
         private void setNautilusPath_Click(object sender, EventArgs e)
@@ -15741,7 +19991,7 @@ namespace cPlayer
 
             string args = $"-visualizer \"-{ActiveSong.Location}\"";
             LaunchNautilus(args);
-            
+
         }
 
         private void LaunchNautilus(string args)
@@ -15758,23 +20008,36 @@ namespace cPlayer
 
         private void sendToCONExplorer_Click(object sender, EventArgs e)
         {
+            if (ActiveSong == null)
+            {
+                MessageBox.Show("There is no active song", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string args = $"\"{ActiveSong.Location}\"";
             LaunchNautilus(args);
         }
 
         private void sendToFileAnalyzer_Click(object sender, EventArgs e)
         {
+            if (ActiveSong == null)
+            {
+                MessageBox.Show("There is no active song", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string args = $"-analyzer \"-{ActiveSong.Location}\"";
             LaunchNautilus(args);
         }
 
         private void sendToAudioAnalyzer_Click(object sender, EventArgs e)
         {
+            if (ActiveSong == null)
+            {
+                MessageBox.Show("There is no active song", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
             string args = $"-audioa \"-{ActiveSong.Location}\"";
             LaunchNautilus(args);
         }
-
-        private frmSettings settingsForm;
 
         private void changeViewToolStrip_Click(object sender, EventArgs e)
         {
@@ -15785,19 +20048,19 @@ namespace cPlayer
         {
             if (settingsForm == null || settingsForm.IsDisposed)
             {
-                settingsForm = new frmSettings(this);                
+                settingsForm = new frmSettings(this);
             }
             settingsForm.Show();
-        }               
+        }
 
         private void frmMain_SizeChanged(object sender, EventArgs e)
         {
-            UpdateOverlayPosition();
+            //UpdateOverlayPosition();
         }
 
         private void frmMain_LocationChanged(object sender, EventArgs e)
         {
-            UpdateOverlayPosition();
+            //UpdateOverlayPosition();
         }
 
         private void awesomenessDetection_Click(object sender, EventArgs e)
@@ -15806,6 +20069,134 @@ namespace cPlayer
             videoOverlay.TopMost = false;
             MessageBox.Show("Awesomeness Detection enabled!", "Nice", MessageBoxButtons.OK, MessageBoxIcon.Information);
             videoOverlay.TopMost = true;
+        }
+
+        private void audioMixerTool_Click(object sender, EventArgs e)
+        {
+            if (audioMixerForm == null || audioMixerForm.IsDisposed)
+            {
+                audioMixerForm = new AudioMixer(this, PlayingSong);
+            }
+            audioMixerForm.Show();
+        }
+
+        private static void CheckForConnectedStageKits()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (XInput.GetState(i, out _))
+                {
+                    stageKitIndices.Add(i);
+                }
+            }
+        }
+
+        private void enableDebugFPS_Click(object sender, EventArgs e)
+        {
+            debugText.Visible = enableDebugFPS.Checked;
+            lblFPS.Visible = enableDebugFPS.Checked;
+            lblFPS.Left = picVisuals.Width - lblFPS.Width;
+        }
+
+        private void DisableFatsCoLights(bool message)
+        {
+            if (message)
+            {
+                MessageBox.Show("No FatsCo Lights found", AppName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            foreach (var fatsCo in fatsCoLights)
+            {
+                fatsCo.AllOff();
+            }
+            if (!stageKitToolStripMenuItem.Checked)
+            {
+                StopStageKitCommandWorker();
+                stageKitTimer.Enabled = false;
+            }
+        }
+
+        private void enableFatsCoLights_Click(object sender, EventArgs e)
+        {
+            if (!enableFatsCoLights.Checked)
+            {
+                DisableFatsCoLights(false);
+                return;
+            }
+
+            var hidDevices = DeviceList.Local.GetHidDevices().ToList();
+            enableFatsCoLights.Checked = false;
+            fatsCoLights.Clear();
+
+            foreach (var hidDevice in hidDevices)
+            {                
+                if (IsFatsCoLight(hidDevice))
+                {
+                    var fatsCo = new FatsCoHidLightController(hidDevice);
+                    if (fatsCo.Open())
+                    {
+                        fatsCoLights.Add(fatsCo);
+                    }                    
+                }
+            }
+
+            enableFatsCoLights.Checked = fatsCoLights.Any();
+            useFatsCoLEDs.Enabled = enableFatsCoLights.Checked;
+            useFatsCoStrobe.Enabled = enableFatsCoLights.Checked;
+
+            if (enableFatsCoLights.Checked)
+            {
+                StartStageKitCommandWorker();
+                stageKitTimer.Enabled = true;
+            }
+            else
+            {
+                DisableFatsCoLights(true);
+            }
+        }
+
+        private void useLEDs_Click(object sender, EventArgs e)
+        {
+            if (useLEDs.Checked) return;
+            foreach (var stageKit in stageKits)
+            {
+                stageKit.TurnAllOff();
+            }
+        }
+
+        private void useFatsCoLEDs_Click(object sender, EventArgs e)
+        {
+            if (useFatsCoLEDs.Checked) return;
+            foreach (var fatsco in fatsCoLights)
+            {
+                fatsco.AllOff();
+            }
+        }
+
+        private void useStrobe_Click(object sender, EventArgs e)
+        {
+            if (useStrobe.Checked) return;
+            foreach (var stageKit in stageKits)
+            {
+                stageKit.TurnStrobeOff();
+            }
+        }
+
+        private void useFatsCoStrobe_Click(object sender, EventArgs e)
+        {
+            if (useFatsCoStrobe.Checked) return;
+            foreach (var fatsco in fatsCoLights)
+            {
+                fatsco.TurnOffStrobe();
+            }
+        }
+
+        private void useFogger_Click(object sender, EventArgs e)
+        {
+            if (useFogger.Checked) return;
+            foreach (var stageKit in stageKits)
+            {
+                stageKit.TurnFogOff();
+            }
         }
     }
 
@@ -15821,42 +20212,7 @@ namespace cPlayer
             WordStart = wordStart;
             WordEnd = wordEnd;
         }
-    }
-
-    public class RoundedPictureBox : PictureBox
-    {
-        public int CornerRadius { get; set; } = 10; // Default radius
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            // Enable anti-aliasing for smooth edges
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-            using (GraphicsPath path = new GraphicsPath())
-            {
-                int adjustedWidth = Width - 1; // Adjust for pen width
-                int adjustedHeight = Height - 1; // Adjust for pen width
-
-                // Define the rounded rectangle path
-                path.AddArc(0, 0, CornerRadius, CornerRadius, 180, 90); // Top-left
-                path.AddArc(adjustedWidth - CornerRadius, 0, CornerRadius, CornerRadius, 270, 90); // Top-right
-                path.AddArc(adjustedWidth - CornerRadius, adjustedHeight - CornerRadius, CornerRadius, CornerRadius, 0, 90); // Bottom-right
-                path.AddArc(0, adjustedHeight - CornerRadius, CornerRadius, CornerRadius, 90, 90); // Bottom-left
-                path.CloseFigure();
-
-                // Apply the region for rounded edges
-                this.Region = new Region(path);
-
-                // Optional: Draw a border (if desired)
-                using (Pen pen = new Pen(this.BackColor, 1)) // Change BackColor to the desired border color
-                {
-                    e.Graphics.DrawPath(pen, path);
-                }
-            }
-        }
-    }
+    }       
 
     public class RoundedPanel : Panel
     {
@@ -15894,7 +20250,6 @@ namespace cPlayer
                 }
             }
         }
-
     }
 
     public class FavoriteSong
@@ -15907,23 +20262,7 @@ namespace cPlayer
     {
         Drums, Bass, Guitar, Keys, ProKeys, Vocals
     }
-
-    public enum LEDColor
-    {
-        Red, Green, Yellow, Blue, White, Orange
-    }
-
-    public class LED
-    {
-        public int Index { get; set; }
-        
-        public bool Enabled { get; set; }
-
-        public DateTime Time { get; set; }
-
-        public LEDColor Color { get; set; }
-    }
-
+           
     public class Song
     {
         public string Name { get; set; }
@@ -16044,4 +20383,19 @@ namespace cPlayer
         }
     }
 
+    public class KaraokeSyllablePixel
+    {
+        public double Start;
+        public double End;
+        public int X;
+        public int Width;
+
+        public KaraokeSyllablePixel(double start, double end, int x, int width)
+        {
+            Start = start;
+            End = end;
+            X = x;
+            Width = width;
+        }
+    }
 }

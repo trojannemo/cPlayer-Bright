@@ -264,7 +264,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "📘 Help & Documentation";
-            this.TopMost = true;
             this.panelLeftPane.ResumeLayout(false);
             this.ResumeLayout(false);
 

@@ -29,8 +29,17 @@ namespace cPlayer
             public List<ChartEvent> SyncTrack = new List<ChartEvent>();
             public List<ChartEvent> Events = new List<ChartEvent>();
             public List<ChartNote> ExpertGuitar = new List<ChartNote>();
+            public List<ChartNote> HardGuitar = new List<ChartNote>();
+            public List<ChartNote> MediumGuitar = new List<ChartNote>();
+            public List<ChartNote> EasyGuitar = new List<ChartNote>();
             public List<ChartNote> ExpertBass = new List<ChartNote>();
+            public List<ChartNote> HardBass = new List<ChartNote>();
+            public List<ChartNote> MediumBass = new List<ChartNote>();
+            public List<ChartNote> EasyBass = new List<ChartNote>();
             public List<ChartNote> ExpertDrums = new List<ChartNote>();
+            public List<ChartNote> HardDrums = new List<ChartNote>();
+            public List<ChartNote> MediumDrums = new List<ChartNote>();
+            public List<ChartNote> EasyDrums = new List<ChartNote>();
             public List<ChartEvent> Lyrics = new List<ChartEvent>();
         }
 
@@ -90,12 +99,12 @@ namespace cPlayer
             track0.Add(new MetaEvent(MetaEventType.EndTrack, 0, lastTick + offsetTicks));
             midi.AddTrack(track0);
 
-            var guitarTrack = CreateInstrumentTrack(chart.ExpertGuitar, 96, "PART GUITAR", chart.Resolution, offsetTicks);
+            var guitarTrack = CreateInstrumentTrack(chart.ExpertGuitar, chart.HardGuitar, chart.MediumGuitar, chart.EasyGuitar, "PART GUITAR", chart.Resolution, offsetTicks);
             midi.AddTrack(guitarTrack);
 
-            var bassTrack = CreateInstrumentTrack(chart.ExpertBass, 96, "PART BASS", chart.Resolution, offsetTicks);
+            var bassTrack = CreateInstrumentTrack(chart.ExpertBass, chart.HardBass, chart.MediumBass, chart.EasyBass, "PART BASS", chart.Resolution, offsetTicks);
             midi.AddTrack(bassTrack);
-            
+
             var drumsTrack = new List<MidiEvent>();
             drumsTrack.Add(new TextEvent("PART DRUMS", MetaEventType.SequenceTrackName, 0));
 
@@ -161,6 +170,156 @@ namespace cPlayer
                 }
             }
 
+            for (int i = 0; i < chart.HardDrums.Count; i++)
+            {
+                var note = chart.HardDrums[i];
+                int tick = note.Tick + offsetTicks;
+                int basepitch = 84;
+
+                // Check if this note is followed by a cymbal marker at the same tick
+                bool followedByCymbal = false;
+                if (i + 1 < chart.HardDrums.Count)
+                {
+                    var next = chart.HardDrums[i + 1];
+                    if ((next.Number >= 66 && next.Number <= 68) && next.Tick == note.Tick)
+                    {
+                        followedByCymbal = true;
+                    }
+                }
+
+                int pitch;
+                // Handle cymbal modifiers directly
+                if (note.Number >= 66 && note.Number <= 68)
+                {
+                    pitch = basepitch + 2 + (note.Number - 66);
+                    drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                    drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+                    continue;
+                }
+
+                // Skip normal note if followed by cymbal modifier
+                if (followedByCymbal)
+                    continue;
+
+                // Map normal notes 0–4
+                switch (note.Number)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        pitch = basepitch + note.Number;
+                        break;
+                    default:
+                        continue; // Skip unknown notes
+                }
+
+                // Add the regular note
+                drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+            }
+
+            for (int i = 0; i < chart.MediumDrums.Count; i++)
+            {
+                var note = chart.MediumDrums[i];
+                int tick = note.Tick + offsetTicks;
+                int basepitch = 72;
+
+                // Check if this note is followed by a cymbal marker at the same tick
+                bool followedByCymbal = false;
+                if (i + 1 < chart.MediumDrums.Count)
+                {
+                    var next = chart.MediumDrums[i + 1];
+                    if ((next.Number >= 66 && next.Number <= 68) && next.Tick == note.Tick)
+                    {
+                        followedByCymbal = true;
+                    }
+                }
+
+                int pitch;
+                // Handle cymbal modifiers directly
+                if (note.Number >= 66 && note.Number <= 68)
+                {
+                    pitch = basepitch + 2 + (note.Number - 66);
+                    drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                    drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+                    continue;
+                }
+
+                // Skip normal note if followed by cymbal modifier
+                if (followedByCymbal)
+                    continue;
+
+                // Map normal notes 0–4
+                switch (note.Number)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        pitch = basepitch + note.Number;
+                        break;
+                    default:
+                        continue; // Skip unknown notes
+                }
+
+                // Add the regular note
+                drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+            }
+
+            for (int i = 0; i < chart.EasyDrums.Count; i++)
+            {
+                var note = chart.EasyDrums[i];
+                int tick = note.Tick + offsetTicks;
+                int basepitch = 60;
+
+                // Check if this note is followed by a cymbal marker at the same tick
+                bool followedByCymbal = false;
+                if (i + 1 < chart.EasyDrums.Count)
+                {
+                    var next = chart.EasyDrums[i + 1];
+                    if ((next.Number >= 66 && next.Number <= 68) && next.Tick == note.Tick)
+                    {
+                        followedByCymbal = true;
+                    }
+                }
+
+                int pitch;
+                // Handle cymbal modifiers directly
+                if (note.Number >= 66 && note.Number <= 68)
+                {
+                    pitch = basepitch + 2 + (note.Number - 66);
+                    drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                    drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+                    continue;
+                }
+
+                // Skip normal note if followed by cymbal modifier
+                if (followedByCymbal)
+                    continue;
+
+                // Map normal notes 0–4
+                switch (note.Number)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        pitch = basepitch + note.Number;
+                        break;
+                    default:
+                        continue; // Skip unknown notes
+                }
+
+                // Add the regular note
+                drumsTrack.Add(new NoteOnEvent(tick, 10, pitch, 100, drumNoteLength));
+                drumsTrack.Add(new NoteEvent(tick + drumNoteLength, 10, MidiCommandCode.NoteOff, pitch, 0));
+            }
+
             int lastDrumTick = drumsTrack.Count > 0 ? (int)drumsTrack[drumsTrack.Count - 1].AbsoluteTime + 1 : 0;
             drumsTrack.Add(new MetaEvent(MetaEventType.EndTrack, 0, lastDrumTick));
             midi.AddTrack(drumsTrack);
@@ -211,13 +370,42 @@ namespace cPlayer
             return midi;
         }
 
-        private static List<MidiEvent> CreateInstrumentTrack(List<ChartNote> notes, int basePitch, string trackName, int resolution, int offsetTicks)
+        private static List<MidiEvent> CreateInstrumentTrack(List<ChartNote> notesExpert, List<ChartNote> notesHard, List<ChartNote> notesMedium, List<ChartNote> notesEasy, string trackName, int resolution, int offsetTicks)
         {
             var track = new List<MidiEvent>();
             track.Add(new TextEvent(trackName, MetaEventType.SequenceTrackName, 0));
-            foreach (var note in notes)
+            int basePitchExpert = 96;
+            int basePitchHard = 84;
+            int basePitchMedium = 72;
+            int basePitchEasy = 60;
+
+            foreach (var note in notesExpert)
             {
-                int pitch = basePitch + note.Number;
+                int pitch = basePitchExpert + note.Number;
+                int tick = note.Tick + offsetTicks;
+                int length = Math.Max(resolution / 8, note.Length);
+                track.Add(new NoteOnEvent(tick, 1, pitch, 100, length));
+                track.Add(new NoteEvent(tick + length, 1, MidiCommandCode.NoteOff, pitch, 0));
+            }
+            foreach (var note in notesHard)
+            {
+                int pitch = basePitchHard + note.Number;
+                int tick = note.Tick + offsetTicks;
+                int length = Math.Max(resolution / 8, note.Length);
+                track.Add(new NoteOnEvent(tick, 1, pitch, 100, length));
+                track.Add(new NoteEvent(tick + length, 1, MidiCommandCode.NoteOff, pitch, 0));
+            }
+            foreach (var note in notesMedium)
+            {
+                int pitch = basePitchMedium + note.Number;
+                int tick = note.Tick + offsetTicks;
+                int length = Math.Max(resolution / 8, note.Length);
+                track.Add(new NoteOnEvent(tick, 1, pitch, 100, length));
+                track.Add(new NoteEvent(tick + length, 1, MidiCommandCode.NoteOff, pitch, 0));
+            }
+            foreach (var note in notesEasy)
+            {
+                int pitch = basePitchEasy + note.Number;
                 int tick = note.Tick + offsetTicks;
                 int length = Math.Max(resolution / 8, note.Length);
                 track.Add(new NoteOnEvent(tick, 1, pitch, 100, length));
@@ -278,12 +466,45 @@ namespace cPlayer
                             case "ExpertDoubleGuitar":
                                 if (type == "N") AddNote(data.ExpertGuitar, tick, value);
                                 break;
+                            case "HardSingle":
+                            case "HardDoubleGuitar":
+                                if (type == "N") AddNote(data.HardGuitar, tick, value);
+                                break;
+                            case "MediumSingle":
+                            case "MediumDoubleGuitar":
+                                if (type == "N") AddNote(data.MediumGuitar, tick, value);
+                                break;
+                            case "EasySingle":
+                            case "EasyDoubleGuitar":
+                                if (type == "N") AddNote(data.EasyGuitar, tick, value);
+                                break;
                             case "ExpertDoubleBass":
                             case "ExpertDoubleRhythm":
                                 if (type == "N") AddNote(data.ExpertBass, tick, value);
                                 break;
+                            case "HardDoubleBass":
+                            case "HardDoubleRhythm":
+                                if (type == "N") AddNote(data.HardBass, tick, value);
+                                break;
+                            case "MediumDoubleBass":
+                            case "MediumDoubleRhythm":
+                                if (type == "N") AddNote(data.MediumBass, tick, value);
+                                break;
+                            case "EasyDoubleBass":
+                            case "EasyDoubleRhythm":
+                                if (type == "N") AddNote(data.EasyBass, tick, value);
+                                break;
                             case "ExpertDrums":
                                 if (type == "N") AddNote(data.ExpertDrums, tick, value);
+                                break;
+                            case "HardDrums":
+                                if (type == "N") AddNote(data.HardDrums, tick, value);
+                                break;
+                            case "MediumDrums":
+                                if (type == "N") AddNote(data.MediumDrums, tick, value);
+                                break;
+                            case "EasyDrums":
+                                if (type == "N") AddNote(data.EasyDrums, tick, value);
                                 break;
                         }
                     }
@@ -292,7 +513,7 @@ namespace cPlayer
                 {
                     continue; //don't choke on a problem line
                 }
-            }                
+            }
             return data;
         }
 

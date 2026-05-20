@@ -101,7 +101,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.AliceBlue;
             this.ClientSize = new System.Drawing.Size(292, 242);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnDeselect);
@@ -114,7 +114,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MicControl";
-            this.Opacity = 0.95D;
+            this.Opacity = 0.9D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

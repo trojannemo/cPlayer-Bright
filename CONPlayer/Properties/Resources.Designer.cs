@@ -223,26 +223,6 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap background_bass_soloRB {
-            get {
-                object obj = ResourceManager.GetObject("background_bass_soloRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_bassRB {
-            get {
-                object obj = ResourceManager.GetObject("background_bassRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap background_drums {
             get {
                 object obj = ResourceManager.GetObject("background_drums", resourceCulture);
@@ -256,26 +236,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap background_drums_solo {
             get {
                 object obj = ResourceManager.GetObject("background_drums_solo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_drums_soloRB {
-            get {
-                object obj = ResourceManager.GetObject("background_drums_soloRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_drumsRB {
-            get {
-                object obj = ResourceManager.GetObject("background_drumsRB", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -303,26 +263,6 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap background_guitar_soloRB {
-            get {
-                object obj = ResourceManager.GetObject("background_guitar_soloRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_guitarRB {
-            get {
-                object obj = ResourceManager.GetObject("background_guitarRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap background_keys {
             get {
                 object obj = ResourceManager.GetObject("background_keys", resourceCulture);
@@ -336,26 +276,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap background_keys_solo {
             get {
                 object obj = ResourceManager.GetObject("background_keys_solo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_keys_soloRB {
-            get {
-                object obj = ResourceManager.GetObject("background_keys_soloRB", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap background_keysRB {
-            get {
-                object obj = ResourceManager.GetObject("background_keysRB", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -463,29 +383,9 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap drums_cymbal_b_glow {
-            get {
-                object obj = ResourceManager.GetObject("drums_cymbal_b_glow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap drums_cymbal_g {
             get {
                 object obj = ResourceManager.GetObject("drums_cymbal_g", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap drums_cymbal_g_glow {
-            get {
-                object obj = ResourceManager.GetObject("drums_cymbal_g_glow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -503,29 +403,9 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap drums_cymbal_od_glow {
-            get {
-                object obj = ResourceManager.GetObject("drums_cymbal_od_glow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap drums_cymbal_y {
             get {
                 object obj = ResourceManager.GetObject("drums_cymbal_y", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap drums_cymbal_y_glow {
-            get {
-                object obj = ResourceManager.GetObject("drums_cymbal_y_glow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -576,6 +456,16 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap filters {
             get {
                 object obj = ResourceManager.GetObject("filters", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap focus {
+            get {
+                object obj = ResourceManager.GetObject("focus", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -666,16 +556,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap frostedglasslyrics85black {
             get {
                 object obj = ResourceManager.GetObject("frostedglasslyrics85black", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap genres {
-            get {
-                object obj = ResourceManager.GetObject("genres", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -993,16 +873,6 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap note_blue_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_blue_hopo_glow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap note_green {
             get {
                 object obj = ResourceManager.GetObject("note_green", resourceCulture);
@@ -1026,16 +896,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap note_green_hopo {
             get {
                 object obj = ResourceManager.GetObject("note_green_hopo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap note_green_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_green_hopo_glow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1083,16 +943,6 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap note_orange_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_orange_hopo_glow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap note_overdrive_glow {
             get {
                 object obj = ResourceManager.GetObject("note_overdrive_glow", resourceCulture);
@@ -1106,16 +956,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap note_overdrive_hopo {
             get {
                 object obj = ResourceManager.GetObject("note_overdrive_hopo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap note_overdrive_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_overdrive_hopo_glow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1146,16 +986,6 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap note_red_hopo {
             get {
                 object obj = ResourceManager.GetObject("note_red_hopo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap note_red_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_red_hopo_glow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1233,16 +1063,6 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap note_yellow_hopo_glow {
-            get {
-                object obj = ResourceManager.GetObject("note_yellow_hopo_glow", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap oldies_disabled {
             get {
                 object obj = ResourceManager.GetObject("oldies_disabled", resourceCulture);
@@ -1303,6 +1123,86 @@ namespace cPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap prokeys_blue_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_blue_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_green_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_green_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_red_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_red_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_white_center_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_white_center_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_white_full_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_white_full_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_white_left_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_white_left_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_white_right_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_white_right_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap prokeys_yellow_glow {
+            get {
+                object obj = ResourceManager.GetObject("prokeys_yellow_glow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap prokeyschord {
             get {
                 object obj = ResourceManager.GetObject("prokeyschord", resourceCulture);
@@ -1346,6 +1246,16 @@ namespace cPlayer.Properties {
         internal static System.Drawing.Bitmap splashscreen {
             get {
                 object obj = ResourceManager.GetObject("splashscreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap stage_background {
+            get {
+                object obj = ResourceManager.GetObject("stage_background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

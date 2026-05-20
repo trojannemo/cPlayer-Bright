@@ -38,7 +38,7 @@
             this.tabSettings = new System.Windows.Forms.TabControl();
             this.tabKaraokeModern = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.chkDefault = new System.Windows.Forms.RadioButton();
+            this.radioDefault = new System.Windows.Forms.RadioButton();
             this.radioForceHarmonies = new System.Windows.Forms.RadioButton();
             this.radioForceSolo = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -52,13 +52,21 @@
             this.radioBGAnimated = new System.Windows.Forms.RadioButton();
             this.radioBGStatic = new System.Windows.Forms.RadioButton();
             this.tabVisualsRB = new System.Windows.Forms.TabPage();
+            this.chkFocusMode = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkColorful = new System.Windows.Forms.CheckBox();
+            this.lblRandomImage = new System.Windows.Forms.Label();
+            this.lblRandomVideo = new System.Windows.Forms.Label();
+            this.radioAnimSpectrum = new System.Windows.Forms.RadioButton();
             this.radioBGVideos = new System.Windows.Forms.RadioButton();
             this.radioBGImages = new System.Windows.Forms.RadioButton();
             this.tabVisualsVertical = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
             this.tabVisualsMIDI = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
+            this.tabVisualizer = new System.Windows.Forms.TabPage();
+            this.btnSpectrumBG = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.btnHarm3HighlightColor = new System.Windows.Forms.Button();
@@ -75,9 +83,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.btnBGColor = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.tabVisualizer = new System.Windows.Forms.TabPage();
-            this.btnSpectrumBG = new System.Windows.Forms.Button();
-            this.label11 = new System.Windows.Forms.Label();
+            this.btnFullScreen = new System.Windows.Forms.Button();
             this.tabSettings.SuspendLayout();
             this.tabKaraokeModern.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -89,8 +95,8 @@
             this.groupBox4.SuspendLayout();
             this.tabVisualsVertical.SuspendLayout();
             this.tabVisualsMIDI.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.tabVisualizer.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnAlbumArt
@@ -206,7 +212,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.chkDefault);
+            this.groupBox2.Controls.Add(this.radioDefault);
             this.groupBox2.Controls.Add(this.radioForceHarmonies);
             this.groupBox2.Controls.Add(this.radioForceSolo);
             this.groupBox2.Location = new System.Drawing.Point(6, 68);
@@ -216,17 +222,17 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Vocals";
             // 
-            // chkDefault
+            // radioDefault
             // 
-            this.chkDefault.AutoSize = true;
-            this.chkDefault.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkDefault.Location = new System.Drawing.Point(15, 19);
-            this.chkDefault.Name = "chkDefault";
-            this.chkDefault.Size = new System.Drawing.Size(59, 17);
-            this.chkDefault.TabIndex = 3;
-            this.chkDefault.Text = "Default";
-            this.chkDefault.UseVisualStyleBackColor = true;
-            this.chkDefault.CheckedChanged += new System.EventHandler(this.chkDefault_CheckedChanged);
+            this.radioDefault.AutoSize = true;
+            this.radioDefault.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioDefault.Location = new System.Drawing.Point(15, 19);
+            this.radioDefault.Name = "radioDefault";
+            this.radioDefault.Size = new System.Drawing.Size(59, 17);
+            this.radioDefault.TabIndex = 3;
+            this.radioDefault.Text = "Default";
+            this.radioDefault.UseVisualStyleBackColor = true;
+            this.radioDefault.CheckedChanged += new System.EventHandler(this.chkDefault_CheckedChanged);
             // 
             // radioForceHarmonies
             // 
@@ -368,6 +374,7 @@
             // tabVisualsRB
             // 
             this.tabVisualsRB.BackColor = System.Drawing.Color.AliceBlue;
+            this.tabVisualsRB.Controls.Add(this.chkFocusMode);
             this.tabVisualsRB.Controls.Add(this.groupBox4);
             this.tabVisualsRB.Location = new System.Drawing.Point(4, 22);
             this.tabVisualsRB.Name = "tabVisualsRB";
@@ -375,26 +382,92 @@
             this.tabVisualsRB.TabIndex = 3;
             this.tabVisualsRB.Text = "RB Visuals";
             // 
+            // chkFocusMode
+            // 
+            this.chkFocusMode.AutoSize = true;
+            this.chkFocusMode.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.chkFocusMode.Location = new System.Drawing.Point(6, 106);
+            this.chkFocusMode.Name = "chkFocusMode";
+            this.chkFocusMode.Size = new System.Drawing.Size(85, 17);
+            this.chkFocusMode.TabIndex = 4;
+            this.chkFocusMode.Text = "Focus Mode";
+            this.chkFocusMode.UseVisualStyleBackColor = true;
+            this.chkFocusMode.CheckedChanged += new System.EventHandler(this.chkFocusMode_CheckedChanged);
+            // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.chkColorful);
+            this.groupBox4.Controls.Add(this.lblRandomImage);
+            this.groupBox4.Controls.Add(this.lblRandomVideo);
+            this.groupBox4.Controls.Add(this.radioAnimSpectrum);
             this.groupBox4.Controls.Add(this.radioBGVideos);
             this.groupBox4.Controls.Add(this.radioBGImages);
             this.groupBox4.Location = new System.Drawing.Point(6, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(148, 53);
+            this.groupBox4.Size = new System.Drawing.Size(186, 94);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Background";
             // 
+            // chkColorful
+            // 
+            this.chkColorful.AutoSize = true;
+            this.chkColorful.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.chkColorful.Location = new System.Drawing.Point(94, 69);
+            this.chkColorful.Name = "chkColorful";
+            this.chkColorful.Size = new System.Drawing.Size(61, 17);
+            this.chkColorful.TabIndex = 7;
+            this.chkColorful.Text = "Colorful";
+            this.chkColorful.UseVisualStyleBackColor = true;
+            this.chkColorful.CheckedChanged += new System.EventHandler(this.chkColorful_CheckedChanged);
+            // 
+            // lblRandomImage
+            // 
+            this.lblRandomImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblRandomImage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblRandomImage.Location = new System.Drawing.Point(94, 44);
+            this.lblRandomImage.Name = "lblRandomImage";
+            this.lblRandomImage.Size = new System.Drawing.Size(86, 17);
+            this.lblRandomImage.TabIndex = 6;
+            this.lblRandomImage.Text = "Random Image";
+            this.lblRandomImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblRandomImage.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lblRandomImage_MouseClick);
+            // 
+            // lblRandomVideo
+            // 
+            this.lblRandomVideo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblRandomVideo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblRandomVideo.Location = new System.Drawing.Point(94, 19);
+            this.lblRandomVideo.Name = "lblRandomVideo";
+            this.lblRandomVideo.Size = new System.Drawing.Size(86, 17);
+            this.lblRandomVideo.TabIndex = 5;
+            this.lblRandomVideo.Text = "Random Video";
+            this.lblRandomVideo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblRandomVideo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lblRandomVideo_MouseClick);
+            // 
+            // radioAnimSpectrum
+            // 
+            this.radioAnimSpectrum.AutoSize = true;
+            this.radioAnimSpectrum.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.radioAnimSpectrum.Location = new System.Drawing.Point(15, 69);
+            this.radioAnimSpectrum.Name = "radioAnimSpectrum";
+            this.radioAnimSpectrum.Size = new System.Drawing.Size(70, 17);
+            this.radioAnimSpectrum.TabIndex = 4;
+            this.radioAnimSpectrum.Text = "Spectrum";
+            this.radioAnimSpectrum.UseVisualStyleBackColor = true;
+            this.radioAnimSpectrum.CheckedChanged += new System.EventHandler(this.radioAnimSpectrum_CheckedChanged);
+            // 
             // radioBGVideos
             // 
             this.radioBGVideos.AutoSize = true;
+            this.radioBGVideos.Checked = true;
             this.radioBGVideos.Cursor = System.Windows.Forms.Cursors.Hand;
             this.radioBGVideos.Location = new System.Drawing.Point(15, 19);
             this.radioBGVideos.Name = "radioBGVideos";
-            this.radioBGVideos.Size = new System.Drawing.Size(57, 17);
+            this.radioBGVideos.Size = new System.Drawing.Size(52, 17);
             this.radioBGVideos.TabIndex = 2;
-            this.radioBGVideos.Text = "Videos";
+            this.radioBGVideos.TabStop = true;
+            this.radioBGVideos.Text = "Video";
             this.radioBGVideos.UseVisualStyleBackColor = true;
             this.radioBGVideos.CheckedChanged += new System.EventHandler(this.radioBGVideos_CheckedChanged);
             // 
@@ -402,11 +475,11 @@
             // 
             this.radioBGImages.AutoSize = true;
             this.radioBGImages.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.radioBGImages.Location = new System.Drawing.Point(78, 19);
+            this.radioBGImages.Location = new System.Drawing.Point(15, 44);
             this.radioBGImages.Name = "radioBGImages";
-            this.radioBGImages.Size = new System.Drawing.Size(59, 17);
+            this.radioBGImages.Size = new System.Drawing.Size(54, 17);
             this.radioBGImages.TabIndex = 1;
-            this.radioBGImages.Text = "Images";
+            this.radioBGImages.Text = "Image";
             this.radioBGImages.UseVisualStyleBackColor = true;
             this.radioBGImages.CheckedChanged += new System.EventHandler(this.radioBGImages_CheckedChanged);
             // 
@@ -447,6 +520,38 @@
             this.label3.Size = new System.Drawing.Size(93, 13);
             this.label3.TabIndex = 1;
             this.label3.Text = "No settings here...";
+            // 
+            // tabVisualizer
+            // 
+            this.tabVisualizer.BackColor = System.Drawing.Color.AliceBlue;
+            this.tabVisualizer.Controls.Add(this.btnSpectrumBG);
+            this.tabVisualizer.Controls.Add(this.label11);
+            this.tabVisualizer.Location = new System.Drawing.Point(4, 22);
+            this.tabVisualizer.Name = "tabVisualizer";
+            this.tabVisualizer.Size = new System.Drawing.Size(304, 131);
+            this.tabVisualizer.TabIndex = 6;
+            this.tabVisualizer.Text = "Visualizer";
+            // 
+            // btnSpectrumBG
+            // 
+            this.btnSpectrumBG.BackColor = System.Drawing.Color.Black;
+            this.btnSpectrumBG.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSpectrumBG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSpectrumBG.Location = new System.Drawing.Point(126, 9);
+            this.btnSpectrumBG.Name = "btnSpectrumBG";
+            this.btnSpectrumBG.Size = new System.Drawing.Size(20, 20);
+            this.btnSpectrumBG.TabIndex = 3;
+            this.btnSpectrumBG.UseVisualStyleBackColor = false;
+            this.btnSpectrumBG.Click += new System.EventHandler(this.btnSpectrumBG_Click);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 13);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(92, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Background Color";
             // 
             // groupBox5
             // 
@@ -631,37 +736,19 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "Background Color";
             // 
-            // tabVisualizer
+            // btnFullScreen
             // 
-            this.tabVisualizer.BackColor = System.Drawing.Color.AliceBlue;
-            this.tabVisualizer.Controls.Add(this.btnSpectrumBG);
-            this.tabVisualizer.Controls.Add(this.label11);
-            this.tabVisualizer.Location = new System.Drawing.Point(4, 22);
-            this.tabVisualizer.Name = "tabVisualizer";
-            this.tabVisualizer.Size = new System.Drawing.Size(304, 131);
-            this.tabVisualizer.TabIndex = 6;
-            this.tabVisualizer.Text = "Visualizer";
-            // 
-            // btnSpectrumBG
-            // 
-            this.btnSpectrumBG.BackColor = System.Drawing.Color.Black;
-            this.btnSpectrumBG.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSpectrumBG.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSpectrumBG.Location = new System.Drawing.Point(126, 9);
-            this.btnSpectrumBG.Name = "btnSpectrumBG";
-            this.btnSpectrumBG.Size = new System.Drawing.Size(20, 20);
-            this.btnSpectrumBG.TabIndex = 3;
-            this.btnSpectrumBG.UseVisualStyleBackColor = false;
-            this.btnSpectrumBG.Click += new System.EventHandler(this.btnSpectrumBG_Click);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(16, 13);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(92, 13);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Background Color";
+            this.btnFullScreen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnFullScreen.BackColor = System.Drawing.Color.CadetBlue;
+            this.btnFullScreen.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnFullScreen.ForeColor = System.Drawing.Color.White;
+            this.btnFullScreen.Location = new System.Drawing.Point(12, 402);
+            this.btnFullScreen.Name = "btnFullScreen";
+            this.btnFullScreen.Size = new System.Drawing.Size(89, 40);
+            this.btnFullScreen.TabIndex = 10;
+            this.btnFullScreen.Text = "Toggle\r\nFull Screen";
+            this.btnFullScreen.UseVisualStyleBackColor = false;
+            this.btnFullScreen.Click += new System.EventHandler(this.btnFullScreen_Click);
             // 
             // frmSettings
             // 
@@ -669,6 +756,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AliceBlue;
             this.ClientSize = new System.Drawing.Size(434, 453);
+            this.Controls.Add(this.btnFullScreen);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -683,12 +771,12 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmSettings";
-            this.Opacity = 0.95D;
+            this.Opacity = 0.9D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Settings";
+            this.Text = "Display Settings";
             this.TopMost = true;
             this.tabSettings.ResumeLayout(false);
             this.tabKaraokeModern.ResumeLayout(false);
@@ -702,16 +790,17 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.tabVisualsRB.ResumeLayout(false);
+            this.tabVisualsRB.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.tabVisualsVertical.ResumeLayout(false);
             this.tabVisualsVertical.PerformLayout();
             this.tabVisualsMIDI.ResumeLayout(false);
             this.tabVisualsMIDI.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.tabVisualizer.ResumeLayout(false);
             this.tabVisualizer.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -763,9 +852,15 @@
         private System.Windows.Forms.Button btnHarm3Color;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button btnDefaults;
-        private System.Windows.Forms.RadioButton chkDefault;
+        private System.Windows.Forms.RadioButton radioDefault;
         private System.Windows.Forms.TabPage tabVisualizer;
         private System.Windows.Forms.Button btnSpectrumBG;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.RadioButton radioAnimSpectrum;
+        private System.Windows.Forms.CheckBox chkFocusMode;
+        private System.Windows.Forms.Label lblRandomVideo;
+        private System.Windows.Forms.Label lblRandomImage;
+        private System.Windows.Forms.CheckBox chkColorful;
+        private System.Windows.Forms.Button btnFullScreen;
     }
 }

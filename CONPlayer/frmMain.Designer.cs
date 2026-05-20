@@ -77,7 +77,6 @@ namespace cPlayer
             this.continuousPlayback = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.skipIntroOutroSilence = new System.Windows.Forms.ToolStripMenuItem();
-            this.audioTracks = new System.Windows.Forms.ToolStripMenuItem();
             this.playBGVideos = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.showPracticeSections = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,16 +88,15 @@ namespace cPlayer
             this.openSideWindow = new System.Windows.Forms.ToolStripMenuItem();
             this.enableSecondScreen = new System.Windows.Forms.ToolStripMenuItem();
             this.changeViewToolStrip = new System.Windows.Forms.ToolStripMenuItem();
+            this.audioMixerTool = new System.Windows.Forms.ToolStripMenuItem();
             this.equipmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stageKitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.controller1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.controller2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.controller3 = new System.Windows.Forms.ToolStripMenuItem();
-            this.controller4 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem8 = new System.Windows.Forms.ToolStripSeparator();
             this.useLEDs = new System.Windows.Forms.ToolStripMenuItem();
             this.useStrobe = new System.Windows.Forms.ToolStripMenuItem();
             this.useFogger = new System.Windows.Forms.ToolStripMenuItem();
+            this.enableFatsCoLights = new System.Windows.Forms.ToolStripMenuItem();
+            this.useFatsCoLEDs = new System.Windows.Forms.ToolStripMenuItem();
+            this.useFatsCoStrobe = new System.Windows.Forms.ToolStripMenuItem();
             this.microphoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bluetoothAVOffset = new System.Windows.Forms.ToolStripMenuItem();
             this.nautilusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,42 +111,9 @@ namespace cPlayer
             this.checkForUpdates = new System.Windows.Forms.ToolStripMenuItem();
             this.viewChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.VisualsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.displayBackgroundVideo = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.displayAlbumArt = new System.Windows.Forms.ToolStripMenuItem();
-            this.displayAudioSpectrum = new System.Windows.Forms.ToolStripMenuItem();
-            this.displayKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
-            this.classicKaraokeMode = new System.Windows.Forms.ToolStripMenuItem();
-            this.solidColorBackground = new System.Windows.Forms.ToolStripMenuItem();
-            this.staticBackground2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.animatedBackground2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripSeparator();
-            this.forceSoloVocals = new System.Windows.Forms.ToolStripMenuItem();
-            this.forceTwoPartHarmonies = new System.Windows.Forms.ToolStripMenuItem();
-            this.cPlayerStyle = new System.Windows.Forms.ToolStripMenuItem();
-            this.rockBandKaraoke = new System.Windows.Forms.ToolStripMenuItem();
-            this.animatedBackground = new System.Windows.Forms.ToolStripMenuItem();
-            this.staticBackground = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripSeparator();
-            this.selectBackgroundColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectLyricColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHighlightColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHarmonyTextColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHarmonyHighlightColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHarmony3TextColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectHarmony3HighlightColor = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripSeparator();
-            this.changeStageBackground = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem16 = new System.Windows.Forms.ToolStripSeparator();
-            this.restoreDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chartVisualsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rBStyle = new System.Windows.Forms.ToolStripMenuItem();
-            this.useBackgroundVideos = new System.Windows.Forms.ToolStripMenuItem();
-            this.useBackgroundImages = new System.Windows.Forms.ToolStripMenuItem();
-            this.chartVertical = new System.Windows.Forms.ToolStripMenuItem();
-            this.chartSnippet = new System.Windows.Forms.ToolStripMenuItem();
-            this.chartFull = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem10 = new System.Windows.Forms.ToolStripSeparator();
+            this.enableDebugFPS = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugText = new System.Windows.Forms.ToolStripMenuItem();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.panelPlaying = new System.Windows.Forms.Panel();
             this.picSecondScreen = new System.Windows.Forms.PictureBox();
@@ -213,7 +178,6 @@ namespace cPlayer
             this.PlaybackTimer = new System.Windows.Forms.Timer(this.components);
             this.songPreparer = new System.ComponentModel.BackgroundWorker();
             this.songExtractor = new System.ComponentModel.BackgroundWorker();
-            this.NotifyTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.NotifyContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -227,7 +191,6 @@ namespace cPlayer
             this.Uploader = new System.ComponentModel.BackgroundWorker();
             this.updater = new System.ComponentModel.BackgroundWorker();
             this.gifTmr = new System.Windows.Forms.Timer(this.components);
-            this.stageTimer = new System.Windows.Forms.Timer(this.components);
             this.cursorTimer = new System.Windows.Forms.Timer(this.components);
             this.foggerTimer = new System.Windows.Forms.Timer(this.components);
             this.stageKitTimer = new System.Windows.Forms.Timer(this.components);
@@ -236,8 +199,8 @@ namespace cPlayer
             this.picVisuals = new System.Windows.Forms.PictureBox();
             this.lblSections = new System.Windows.Forms.Label();
             this.picFilters = new System.Windows.Forms.PictureBox();
+            this.lblFPS = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
-            this.VisualsContextMenu.SuspendLayout();
             this.panelPlaying.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSecondScreen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).BeginInit();
@@ -274,12 +237,14 @@ namespace cPlayer
             this.toolsToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.changeViewToolStrip,
+            this.audioMixerTool,
             this.equipmentToolStripMenuItem,
             this.nautilusToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.debugText});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1573, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1904, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -638,7 +603,6 @@ namespace cPlayer
             this.continuousPlayback,
             this.toolStripMenuItem4,
             this.skipIntroOutroSilence,
-            this.audioTracks,
             this.playBGVideos,
             this.toolStripMenuItem3,
             this.showPracticeSections,
@@ -696,16 +660,7 @@ namespace cPlayer
             this.skipIntroOutroSilence.Name = "skipIntroOutroSilence";
             this.skipIntroOutroSilence.Size = new System.Drawing.Size(242, 22);
             this.skipIntroOutroSilence.Text = "Skip intro/outro silence";
-            // 
-            // audioTracks
-            // 
-            this.audioTracks.BackColor = System.Drawing.Color.White;
-            this.audioTracks.ForeColor = System.Drawing.Color.Black;
-            this.audioTracks.Name = "audioTracks";
-            this.audioTracks.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.audioTracks.Size = new System.Drawing.Size(242, 22);
-            this.audioTracks.Text = "Audio tracks to play";
-            this.audioTracks.Click += new System.EventHandler(this.audioTracks_Click);
+            this.skipIntroOutroSilence.Visible = false;
             // 
             // playBGVideos
             // 
@@ -725,6 +680,7 @@ namespace cPlayer
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
             this.toolStripMenuItem3.Size = new System.Drawing.Size(239, 6);
+            this.toolStripMenuItem3.Visible = false;
             // 
             // showPracticeSections
             // 
@@ -809,10 +765,18 @@ namespace cPlayer
             this.changeViewToolStrip.Text = "Display Settings";
             this.changeViewToolStrip.Click += new System.EventHandler(this.changeViewToolStrip_Click);
             // 
+            // audioMixerTool
+            // 
+            this.audioMixerTool.Name = "audioMixerTool";
+            this.audioMixerTool.Size = new System.Drawing.Size(83, 20);
+            this.audioMixerTool.Text = "Audio Mixer";
+            this.audioMixerTool.Click += new System.EventHandler(this.audioMixerTool_Click);
+            // 
             // equipmentToolStripMenuItem
             // 
             this.equipmentToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stageKitToolStripMenuItem,
+            this.enableFatsCoLights,
             this.microphoneToolStripMenuItem,
             this.bluetoothAVOffset});
             this.equipmentToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
@@ -824,93 +788,90 @@ namespace cPlayer
             // 
             this.stageKitToolStripMenuItem.CheckOnClick = true;
             this.stageKitToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.controller1,
-            this.controller2,
-            this.controller3,
-            this.controller4,
-            this.toolStripMenuItem8,
             this.useLEDs,
             this.useStrobe,
             this.useFogger});
             this.stageKitToolStripMenuItem.Name = "stageKitToolStripMenuItem";
-            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.stageKitToolStripMenuItem.Text = "Enable Stage Kit";
+            this.stageKitToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.stageKitToolStripMenuItem.Text = "Enable Stage Kits";
             this.stageKitToolStripMenuItem.CheckedChanged += new System.EventHandler(this.stageKitToolStripMenuItem_CheckedChanged);
             this.stageKitToolStripMenuItem.Click += new System.EventHandler(this.stageKitToolStripMenuItem_Click);
-            // 
-            // controller1
-            // 
-            this.controller1.Enabled = false;
-            this.controller1.Name = "controller1";
-            this.controller1.Size = new System.Drawing.Size(136, 22);
-            this.controller1.Text = "Controller 1";
-            this.controller1.Click += new System.EventHandler(this.controller1_Click);
-            // 
-            // controller2
-            // 
-            this.controller2.Enabled = false;
-            this.controller2.Name = "controller2";
-            this.controller2.Size = new System.Drawing.Size(136, 22);
-            this.controller2.Text = "Controller 2";
-            this.controller2.Click += new System.EventHandler(this.controller2_Click);
-            // 
-            // controller3
-            // 
-            this.controller3.Enabled = false;
-            this.controller3.Name = "controller3";
-            this.controller3.Size = new System.Drawing.Size(136, 22);
-            this.controller3.Text = "Controller 3";
-            this.controller3.Click += new System.EventHandler(this.controller3_Click);
-            // 
-            // controller4
-            // 
-            this.controller4.Enabled = false;
-            this.controller4.Name = "controller4";
-            this.controller4.Size = new System.Drawing.Size(136, 22);
-            this.controller4.Text = "Controller 4";
-            this.controller4.Click += new System.EventHandler(this.controller4_Click);
-            // 
-            // toolStripMenuItem8
-            // 
-            this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(133, 6);
             // 
             // useLEDs
             // 
             this.useLEDs.Checked = true;
             this.useLEDs.CheckOnClick = true;
             this.useLEDs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useLEDs.Enabled = false;
             this.useLEDs.Name = "useLEDs";
-            this.useLEDs.Size = new System.Drawing.Size(136, 22);
+            this.useLEDs.Size = new System.Drawing.Size(180, 22);
             this.useLEDs.Text = "Use LEDs";
+            this.useLEDs.Click += new System.EventHandler(this.useLEDs_Click);
             // 
             // useStrobe
             // 
             this.useStrobe.Checked = true;
             this.useStrobe.CheckOnClick = true;
             this.useStrobe.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useStrobe.Enabled = false;
             this.useStrobe.Name = "useStrobe";
-            this.useStrobe.Size = new System.Drawing.Size(136, 22);
+            this.useStrobe.Size = new System.Drawing.Size(180, 22);
             this.useStrobe.Text = "Use strobe";
+            this.useStrobe.Click += new System.EventHandler(this.useStrobe_Click);
             // 
             // useFogger
             // 
             this.useFogger.CheckOnClick = true;
+            this.useFogger.Enabled = false;
             this.useFogger.Name = "useFogger";
-            this.useFogger.Size = new System.Drawing.Size(136, 22);
+            this.useFogger.Size = new System.Drawing.Size(180, 22);
             this.useFogger.Text = "Use fogger";
+            this.useFogger.Click += new System.EventHandler(this.useFogger_Click);
+            // 
+            // enableFatsCoLights
+            // 
+            this.enableFatsCoLights.CheckOnClick = true;
+            this.enableFatsCoLights.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useFatsCoLEDs,
+            this.useFatsCoStrobe});
+            this.enableFatsCoLights.Name = "enableFatsCoLights";
+            this.enableFatsCoLights.Size = new System.Drawing.Size(183, 22);
+            this.enableFatsCoLights.Text = "Enable FatsCo Lights";
+            this.enableFatsCoLights.Click += new System.EventHandler(this.enableFatsCoLights_Click);
+            // 
+            // useFatsCoLEDs
+            // 
+            this.useFatsCoLEDs.Checked = true;
+            this.useFatsCoLEDs.CheckOnClick = true;
+            this.useFatsCoLEDs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useFatsCoLEDs.Enabled = false;
+            this.useFatsCoLEDs.Name = "useFatsCoLEDs";
+            this.useFatsCoLEDs.Size = new System.Drawing.Size(180, 22);
+            this.useFatsCoLEDs.Text = "Use LEDs";
+            this.useFatsCoLEDs.Click += new System.EventHandler(this.useFatsCoLEDs_Click);
+            // 
+            // useFatsCoStrobe
+            // 
+            this.useFatsCoStrobe.Checked = true;
+            this.useFatsCoStrobe.CheckOnClick = true;
+            this.useFatsCoStrobe.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useFatsCoStrobe.Enabled = false;
+            this.useFatsCoStrobe.Name = "useFatsCoStrobe";
+            this.useFatsCoStrobe.Size = new System.Drawing.Size(180, 22);
+            this.useFatsCoStrobe.Text = "Use strobe";
+            this.useFatsCoStrobe.Click += new System.EventHandler(this.useFatsCoStrobe_Click);
             // 
             // microphoneToolStripMenuItem
             // 
             this.microphoneToolStripMenuItem.Name = "microphoneToolStripMenuItem";
-            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.microphoneToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.microphoneToolStripMenuItem.Text = "Microphone Control";
             this.microphoneToolStripMenuItem.Click += new System.EventHandler(this.microphoneToolStripMenuItem_Click);
             // 
             // bluetoothAVOffset
             // 
             this.bluetoothAVOffset.Name = "bluetoothAVOffset";
-            this.bluetoothAVOffset.Size = new System.Drawing.Size(182, 22);
+            this.bluetoothAVOffset.Size = new System.Drawing.Size(183, 22);
             this.bluetoothAVOffset.Text = "Bluetooth AV Offset";
             this.bluetoothAVOffset.Click += new System.EventHandler(this.bluetoothAVOffset_Click);
             // 
@@ -926,7 +887,6 @@ namespace cPlayer
             this.nautilusToolStripMenuItem.Name = "nautilusToolStripMenuItem";
             this.nautilusToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.nautilusToolStripMenuItem.Text = "Nautilus";
-            this.nautilusToolStripMenuItem.Visible = false;
             // 
             // setNautilusPath
             // 
@@ -978,7 +938,9 @@ namespace cPlayer
             this.howToUseToolStripMenuItem,
             this.checkForUpdates,
             this.viewChangeLog,
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.toolStripMenuItem10,
+            this.enableDebugFPS});
             this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -1020,327 +982,25 @@ namespace cPlayer
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // VisualsContextMenu
+            // toolStripMenuItem10
             // 
-            this.VisualsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.displayBackgroundVideo,
-            this.toolStripMenuItem2,
-            this.displayAlbumArt,
-            this.displayAudioSpectrum,
-            this.displayKaraokeMode,
-            this.chartVisualsToolStripMenuItem});
-            this.VisualsContextMenu.Name = "VisualsContextMenu";
-            this.VisualsContextMenu.Size = new System.Drawing.Size(205, 120);
-            this.VisualsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.VisualsContextMenu_Opening);
+            this.toolStripMenuItem10.Name = "toolStripMenuItem10";
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(168, 6);
             // 
-            // displayBackgroundVideo
+            // enableDebugFPS
             // 
-            this.displayBackgroundVideo.BackColor = System.Drawing.Color.White;
-            this.displayBackgroundVideo.Checked = true;
-            this.displayBackgroundVideo.CheckOnClick = true;
-            this.displayBackgroundVideo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.displayBackgroundVideo.ForeColor = System.Drawing.Color.Black;
-            this.displayBackgroundVideo.Name = "displayBackgroundVideo";
-            this.displayBackgroundVideo.Size = new System.Drawing.Size(204, 22);
-            this.displayBackgroundVideo.Text = "Play Background Videos";
-            this.displayBackgroundVideo.Visible = false;
+            this.enableDebugFPS.CheckOnClick = true;
+            this.enableDebugFPS.Name = "enableDebugFPS";
+            this.enableDebugFPS.Size = new System.Drawing.Size(171, 22);
+            this.enableDebugFPS.Text = "Debug: FPS";
+            this.enableDebugFPS.Click += new System.EventHandler(this.enableDebugFPS_Click);
             // 
-            // toolStripMenuItem2
+            // debugText
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(201, 6);
-            this.toolStripMenuItem2.Visible = false;
-            // 
-            // displayAlbumArt
-            // 
-            this.displayAlbumArt.BackColor = System.Drawing.Color.White;
-            this.displayAlbumArt.ForeColor = System.Drawing.Color.Black;
-            this.displayAlbumArt.Name = "displayAlbumArt";
-            this.displayAlbumArt.Size = new System.Drawing.Size(204, 22);
-            this.displayAlbumArt.Text = "Display: Album Art";
-            this.displayAlbumArt.Visible = false;
-            this.displayAlbumArt.Click += new System.EventHandler(this.displayAlbumArt_Click);
-            // 
-            // displayAudioSpectrum
-            // 
-            this.displayAudioSpectrum.BackColor = System.Drawing.Color.White;
-            this.displayAudioSpectrum.ForeColor = System.Drawing.Color.Black;
-            this.displayAudioSpectrum.Name = "displayAudioSpectrum";
-            this.displayAudioSpectrum.Size = new System.Drawing.Size(204, 22);
-            this.displayAudioSpectrum.Text = "Display: Audio Spectrum";
-            this.displayAudioSpectrum.Visible = false;
-            this.displayAudioSpectrum.Click += new System.EventHandler(this.displayAudioSpectrum_Click);
-            // 
-            // displayKaraokeMode
-            // 
-            this.displayKaraokeMode.BackColor = System.Drawing.Color.White;
-            this.displayKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.classicKaraokeMode,
-            this.cPlayerStyle,
-            this.rockBandKaraoke,
-            this.toolStripMenuItem13,
-            this.selectBackgroundColor,
-            this.selectLyricColor,
-            this.selectHighlightColor,
-            this.selectHarmonyTextColor,
-            this.selectHarmonyHighlightColor,
-            this.selectHarmony3TextColor,
-            this.selectHarmony3HighlightColor,
-            this.toolStripMenuItem14,
-            this.changeStageBackground,
-            this.toolStripMenuItem16,
-            this.restoreDefaultsToolStripMenuItem});
-            this.displayKaraokeMode.ForeColor = System.Drawing.Color.Black;
-            this.displayKaraokeMode.Name = "displayKaraokeMode";
-            this.displayKaraokeMode.Size = new System.Drawing.Size(204, 22);
-            this.displayKaraokeMode.Text = "Display: Karaoke Mode";
-            this.displayKaraokeMode.Visible = false;
-            // 
-            // classicKaraokeMode
-            // 
-            this.classicKaraokeMode.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.solidColorBackground,
-            this.staticBackground2,
-            this.animatedBackground2,
-            this.toolStripMenuItem15,
-            this.forceSoloVocals,
-            this.forceTwoPartHarmonies});
-            this.classicKaraokeMode.Name = "classicKaraokeMode";
-            this.classicKaraokeMode.Size = new System.Drawing.Size(254, 22);
-            this.classicKaraokeMode.Text = "Classic Karaoke";
-            this.classicKaraokeMode.Click += new System.EventHandler(this.classicKaraokeMode_Click);
-            // 
-            // solidColorBackground
-            // 
-            this.solidColorBackground.Checked = true;
-            this.solidColorBackground.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.solidColorBackground.Name = "solidColorBackground";
-            this.solidColorBackground.Size = new System.Drawing.Size(199, 22);
-            this.solidColorBackground.Text = "Solid Color Background";
-            this.solidColorBackground.Click += new System.EventHandler(this.solidColorBackgroundToolStripMenuItem_Click);
-            // 
-            // staticBackground2
-            // 
-            this.staticBackground2.CheckOnClick = true;
-            this.staticBackground2.Name = "staticBackground2";
-            this.staticBackground2.Size = new System.Drawing.Size(199, 22);
-            this.staticBackground2.Text = "Static Background";
-            this.staticBackground2.Click += new System.EventHandler(this.enableBackgroundImage_Click);
-            // 
-            // animatedBackground2
-            // 
-            this.animatedBackground2.Name = "animatedBackground2";
-            this.animatedBackground2.Size = new System.Drawing.Size(199, 22);
-            this.animatedBackground2.Text = "Animated Background";
-            this.animatedBackground2.Click += new System.EventHandler(this.animatedBackground2_Click);
-            // 
-            // toolStripMenuItem15
-            // 
-            this.toolStripMenuItem15.Name = "toolStripMenuItem15";
-            this.toolStripMenuItem15.Size = new System.Drawing.Size(196, 6);
-            // 
-            // forceSoloVocals
-            // 
-            this.forceSoloVocals.Name = "forceSoloVocals";
-            this.forceSoloVocals.Size = new System.Drawing.Size(199, 22);
-            this.forceSoloVocals.Text = "Force Solo Vocals";
-            this.forceSoloVocals.Click += new System.EventHandler(this.forceSoloVocals_Click);
-            // 
-            // forceTwoPartHarmonies
-            // 
-            this.forceTwoPartHarmonies.Name = "forceTwoPartHarmonies";
-            this.forceTwoPartHarmonies.Size = new System.Drawing.Size(199, 22);
-            this.forceTwoPartHarmonies.Text = "Force 2-Part Harmonies";
-            this.forceTwoPartHarmonies.Click += new System.EventHandler(this.forceTwoPartHarmonies_Click);
-            // 
-            // cPlayerStyle
-            // 
-            this.cPlayerStyle.Name = "cPlayerStyle";
-            this.cPlayerStyle.Size = new System.Drawing.Size(254, 22);
-            this.cPlayerStyle.Text = "cPlayer Karaoke";
-            this.cPlayerStyle.Click += new System.EventHandler(this.cPlayerStyle_Click);
-            // 
-            // rockBandKaraoke
-            // 
-            this.rockBandKaraoke.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.animatedBackground,
-            this.staticBackground});
-            this.rockBandKaraoke.Name = "rockBandKaraoke";
-            this.rockBandKaraoke.Size = new System.Drawing.Size(254, 22);
-            this.rockBandKaraoke.Text = "Rock Band Karaoke";
-            this.rockBandKaraoke.Click += new System.EventHandler(this.rockBandKaraoke_Click);
-            // 
-            // animatedBackground
-            // 
-            this.animatedBackground.Checked = true;
-            this.animatedBackground.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.animatedBackground.Name = "animatedBackground";
-            this.animatedBackground.Size = new System.Drawing.Size(193, 22);
-            this.animatedBackground.Text = "Animated Background";
-            this.animatedBackground.Click += new System.EventHandler(this.animatedBackground_Click);
-            // 
-            // staticBackground
-            // 
-            this.staticBackground.Name = "staticBackground";
-            this.staticBackground.Size = new System.Drawing.Size(193, 22);
-            this.staticBackground.Text = "Static Background";
-            this.staticBackground.Click += new System.EventHandler(this.staticBackground_Click);
-            // 
-            // toolStripMenuItem13
-            // 
-            this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(251, 6);
-            // 
-            // selectBackgroundColor
-            // 
-            this.selectBackgroundColor.Name = "selectBackgroundColor";
-            this.selectBackgroundColor.Size = new System.Drawing.Size(254, 22);
-            this.selectBackgroundColor.Text = "Background Color";
-            this.selectBackgroundColor.Visible = false;
-            this.selectBackgroundColor.Click += new System.EventHandler(this.selectBackgroundColor_Click);
-            // 
-            // selectLyricColor
-            // 
-            this.selectLyricColor.Name = "selectLyricColor";
-            this.selectLyricColor.Size = new System.Drawing.Size(254, 22);
-            this.selectLyricColor.Text = "Lead / Harmony 1 Text Color";
-            this.selectLyricColor.Visible = false;
-            this.selectLyricColor.Click += new System.EventHandler(this.selectLyricColor_Click);
-            // 
-            // selectHighlightColor
-            // 
-            this.selectHighlightColor.Name = "selectHighlightColor";
-            this.selectHighlightColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHighlightColor.Text = "Lead / Harmony 1 Highlight Color";
-            this.selectHighlightColor.Visible = false;
-            this.selectHighlightColor.Click += new System.EventHandler(this.selectHighlightColor_Click);
-            // 
-            // selectHarmonyTextColor
-            // 
-            this.selectHarmonyTextColor.Name = "selectHarmonyTextColor";
-            this.selectHarmonyTextColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmonyTextColor.Text = "Harmony 2 Text Color";
-            this.selectHarmonyTextColor.Visible = false;
-            this.selectHarmonyTextColor.Click += new System.EventHandler(this.selectHarmonyTextColor_Click);
-            // 
-            // selectHarmonyHighlightColor
-            // 
-            this.selectHarmonyHighlightColor.Name = "selectHarmonyHighlightColor";
-            this.selectHarmonyHighlightColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmonyHighlightColor.Text = "Harmony 2 Highlight Color";
-            this.selectHarmonyHighlightColor.Visible = false;
-            this.selectHarmonyHighlightColor.Click += new System.EventHandler(this.selectHarmonyHighlightColor_Click);
-            // 
-            // selectHarmony3TextColor
-            // 
-            this.selectHarmony3TextColor.Name = "selectHarmony3TextColor";
-            this.selectHarmony3TextColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmony3TextColor.Text = "Harmony 3 Text Color";
-            this.selectHarmony3TextColor.Visible = false;
-            this.selectHarmony3TextColor.Click += new System.EventHandler(this.selectHarmony3TextColor_Click);
-            // 
-            // selectHarmony3HighlightColor
-            // 
-            this.selectHarmony3HighlightColor.Name = "selectHarmony3HighlightColor";
-            this.selectHarmony3HighlightColor.Size = new System.Drawing.Size(254, 22);
-            this.selectHarmony3HighlightColor.Text = "Harmony 3 Highlight Color";
-            this.selectHarmony3HighlightColor.Visible = false;
-            this.selectHarmony3HighlightColor.Click += new System.EventHandler(this.selectHarmony3HighlightColor_Click);
-            // 
-            // toolStripMenuItem14
-            // 
-            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(251, 6);
-            // 
-            // changeStageBackground
-            // 
-            this.changeStageBackground.Name = "changeStageBackground";
-            this.changeStageBackground.Size = new System.Drawing.Size(254, 22);
-            this.changeStageBackground.Text = "Change Stage Background";
-            this.changeStageBackground.Click += new System.EventHandler(this.changeStageBackground_Click);
-            // 
-            // toolStripMenuItem16
-            // 
-            this.toolStripMenuItem16.Name = "toolStripMenuItem16";
-            this.toolStripMenuItem16.Size = new System.Drawing.Size(251, 6);
-            // 
-            // restoreDefaultsToolStripMenuItem
-            // 
-            this.restoreDefaultsToolStripMenuItem.Name = "restoreDefaultsToolStripMenuItem";
-            this.restoreDefaultsToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.restoreDefaultsToolStripMenuItem.Text = "Restore Defaults";
-            this.restoreDefaultsToolStripMenuItem.Click += new System.EventHandler(this.restoreDefaultsToolStripMenuItem_Click);
-            // 
-            // chartVisualsToolStripMenuItem
-            // 
-            this.chartVisualsToolStripMenuItem.BackColor = System.Drawing.Color.White;
-            this.chartVisualsToolStripMenuItem.Checked = true;
-            this.chartVisualsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chartVisualsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.rBStyle,
-            this.chartVertical,
-            this.chartSnippet,
-            this.chartFull});
-            this.chartVisualsToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
-            this.chartVisualsToolStripMenuItem.Name = "chartVisualsToolStripMenuItem";
-            this.chartVisualsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.chartVisualsToolStripMenuItem.Text = "Display: Chart Visuals";
-            this.chartVisualsToolStripMenuItem.Visible = false;
-            // 
-            // rBStyle
-            // 
-            this.rBStyle.Checked = true;
-            this.rBStyle.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.rBStyle.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.useBackgroundVideos,
-            this.useBackgroundImages});
-            this.rBStyle.Name = "rBStyle";
-            this.rBStyle.Size = new System.Drawing.Size(140, 22);
-            this.rBStyle.Text = "RB Style";
-            this.rBStyle.Click += new System.EventHandler(this.rBStyle_Click);
-            // 
-            // useBackgroundVideos
-            // 
-            this.useBackgroundVideos.Checked = true;
-            this.useBackgroundVideos.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.useBackgroundVideos.Name = "useBackgroundVideos";
-            this.useBackgroundVideos.Size = new System.Drawing.Size(201, 22);
-            this.useBackgroundVideos.Text = "Use Background Videos";
-            this.useBackgroundVideos.Click += new System.EventHandler(this.useBackgroundVideos_Click);
-            // 
-            // useBackgroundImages
-            // 
-            this.useBackgroundImages.Name = "useBackgroundImages";
-            this.useBackgroundImages.Size = new System.Drawing.Size(201, 22);
-            this.useBackgroundImages.Text = "Use Background Images";
-            this.useBackgroundImages.Click += new System.EventHandler(this.useBackgroundImages_Click);
-            // 
-            // chartVertical
-            // 
-            this.chartVertical.Name = "chartVertical";
-            this.chartVertical.Size = new System.Drawing.Size(140, 22);
-            this.chartVertical.Text = "Vertical Style";
-            this.chartVertical.Click += new System.EventHandler(this.chartVertical_Click);
-            // 
-            // chartSnippet
-            // 
-            this.chartSnippet.BackColor = System.Drawing.Color.White;
-            this.chartSnippet.ForeColor = System.Drawing.Color.Black;
-            this.chartSnippet.Name = "chartSnippet";
-            this.chartSnippet.Size = new System.Drawing.Size(140, 22);
-            this.chartSnippet.Text = "MIDI Style";
-            this.chartSnippet.Click += new System.EventHandler(this.chartSnippet_Click);
-            // 
-            // chartFull
-            // 
-            this.chartFull.BackColor = System.Drawing.Color.White;
-            this.chartFull.Enabled = false;
-            this.chartFull.ForeColor = System.Drawing.Color.Black;
-            this.chartFull.Name = "chartFull";
-            this.chartFull.Size = new System.Drawing.Size(140, 22);
-            this.chartFull.Text = "Chart: Full";
-            this.chartFull.Visible = false;
-            this.chartFull.Click += new System.EventHandler(this.chartFull_Click);
+            this.debugText.Name = "debugText";
+            this.debugText.Size = new System.Drawing.Size(107, 20);
+            this.debugText.Text = "[Debug Enabled]";
+            this.debugText.Visible = false;
             // 
             // lblAuthor
             // 
@@ -1676,7 +1336,7 @@ namespace cPlayer
             this.panelPlaylist.ForeColor = System.Drawing.Color.Black;
             this.panelPlaylist.Location = new System.Drawing.Point(9, 282);
             this.panelPlaylist.Name = "panelPlaylist";
-            this.panelPlaylist.Size = new System.Drawing.Size(380, 679);
+            this.panelPlaylist.Size = new System.Drawing.Size(380, 749);
             this.panelPlaylist.TabIndex = 3;
             this.panelPlaylist.MouseDown += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseDown);
             this.panelPlaylist.MouseUp += new System.Windows.Forms.MouseEventHandler(this.frmMain_MouseUp);
@@ -1807,7 +1467,7 @@ namespace cPlayer
             this.lstPlaylist.HideSelection = false;
             this.lstPlaylist.Location = new System.Drawing.Point(4, 358);
             this.lstPlaylist.Name = "lstPlaylist";
-            this.lstPlaylist.Size = new System.Drawing.Size(372, 317);
+            this.lstPlaylist.Size = new System.Drawing.Size(372, 387);
             this.lstPlaylist.TabIndex = 0;
             this.lstPlaylist.UseCompatibleStateImageBehavior = false;
             this.lstPlaylist.View = System.Windows.Forms.View.Details;
@@ -2063,7 +1723,7 @@ namespace cPlayer
             // 
             // PlaybackTimer
             // 
-            this.PlaybackTimer.Interval = 16;
+            this.PlaybackTimer.Interval = 8;
             this.PlaybackTimer.Tick += new System.EventHandler(this.PlaybackTimer_Tick);
             // 
             // songPreparer
@@ -2080,17 +1740,6 @@ namespace cPlayer
             this.songExtractor.DoWork += new System.ComponentModel.DoWorkEventHandler(this.songExtractor_DoWork);
             this.songExtractor.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.songExtractor_RunWorkerCompleted);
             // 
-            // NotifyTray
-            // 
-            this.NotifyTray.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.NotifyTray.BalloonTipText = "cPlayer is running in the background";
-            this.NotifyTray.BalloonTipTitle = "cPlayer";
-            this.NotifyTray.ContextMenuStrip = this.NotifyContextMenu;
-            this.NotifyTray.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyTray.Icon")));
-            this.NotifyTray.Text = "Inactive";
-            this.NotifyTray.Visible = true;
-            this.NotifyTray.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyTray_MouseDoubleClick);
-            // 
             // NotifyContextMenu
             // 
             this.NotifyContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -2102,7 +1751,6 @@ namespace cPlayer
             this.NotifyContextMenu.Name = "contextMenuStrip2";
             this.NotifyContextMenu.ShowImageMargin = false;
             this.NotifyContextMenu.Size = new System.Drawing.Size(89, 114);
-            this.NotifyContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.NotifyContextMenu_Opening);
             // 
             // playToolStripMenuItem
             // 
@@ -2205,16 +1853,6 @@ namespace cPlayer
             this.gifTmr.Enabled = true;
             this.gifTmr.Interval = 16;
             // 
-            // stageTimer
-            // 
-            this.stageTimer.Interval = 33;
-            this.stageTimer.Tick += new System.EventHandler(this.stageTimer_Tick);
-            // 
-            // cursorTimer
-            // 
-            this.cursorTimer.Interval = 1000;
-            this.cursorTimer.Tick += new System.EventHandler(this.cursorTimer_Tick);
-            // 
             // foggerTimer
             // 
             this.foggerTimer.Interval = 1500;
@@ -2222,6 +1860,7 @@ namespace cPlayer
             // 
             // stageKitTimer
             // 
+            this.stageKitTimer.Interval = 25;
             this.stageKitTimer.Tick += new System.EventHandler(this.stageKitTimer_Tick);
             // 
             // lblClearSearch
@@ -2255,7 +1894,7 @@ namespace cPlayer
             this.picVisuals.Image = global::cPlayer.Properties.Resources.logo;
             this.picVisuals.Location = new System.Drawing.Point(396, 27);
             this.picVisuals.Name = "picVisuals";
-            this.picVisuals.Size = new System.Drawing.Size(1169, 934);
+            this.picVisuals.Size = new System.Drawing.Size(1500, 1004);
             this.picVisuals.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picVisuals.TabIndex = 1;
             this.picVisuals.TabStop = false;
@@ -2276,7 +1915,7 @@ namespace cPlayer
             this.lblSections.Location = new System.Drawing.Point(0, 0);
             this.lblSections.Margin = new System.Windows.Forms.Padding(0);
             this.lblSections.Name = "lblSections";
-            this.lblSections.Size = new System.Drawing.Size(1169, 20);
+            this.lblSections.Size = new System.Drawing.Size(1500, 20);
             this.lblSections.TabIndex = 2;
             this.lblSections.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSections.UseMnemonic = false;
@@ -2294,12 +1933,26 @@ namespace cPlayer
             this.picFilters.TabStop = false;
             this.picFilters.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picGenres_MouseClick);
             // 
+            // lblFPS
+            // 
+            this.lblFPS.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.lblFPS.Font = new System.Drawing.Font("Arial Narrow", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFPS.ForeColor = System.Drawing.Color.Red;
+            this.lblFPS.Location = new System.Drawing.Point(1816, 28);
+            this.lblFPS.Name = "lblFPS";
+            this.lblFPS.Size = new System.Drawing.Size(80, 80);
+            this.lblFPS.TabIndex = 12;
+            this.lblFPS.Text = "0";
+            this.lblFPS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblFPS.Visible = false;
+            // 
             // frmMain
             // 
             this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.AliceBlue;
-            this.ClientSize = new System.Drawing.Size(1573, 971);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.Controls.Add(this.lblFPS);
             this.Controls.Add(this.picVisuals);
             this.Controls.Add(this.picFilters);
             this.Controls.Add(this.picSearch);
@@ -2330,7 +1983,6 @@ namespace cPlayer
             this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.VisualsContextMenu.ResumeLayout(false);
             this.panelPlaying.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picSecondScreen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picShuffle)).EndInit();
@@ -2415,7 +2067,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripSeparator separator;
         private System.Windows.Forms.ToolStripMenuItem returnToPlaylist;
         private System.ComponentModel.BackgroundWorker songExtractor;
-        private System.Windows.Forms.NotifyIcon NotifyTray;
         private System.Windows.Forms.ContextMenuStrip NotifyContextMenu;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restoreToolStripMenuItem;
@@ -2424,11 +2075,7 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem sortPlaylistByDuration;
         private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.TextBox txtSearch;
-        private System.Windows.Forms.ContextMenuStrip VisualsContextMenu;
-        private System.Windows.Forms.ToolStripMenuItem chartVisualsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem chartFull;
         private System.Windows.Forms.Label lblAuthor;
-        private System.Windows.Forms.ToolStripMenuItem chartSnippet;
         private System.Windows.Forms.ToolStripMenuItem playToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextToolStripMenuItem;
@@ -2463,8 +2110,6 @@ namespace cPlayer
         private System.Windows.Forms.ToolStripMenuItem recent3;
         private System.Windows.Forms.ToolStripMenuItem recent4;
         private System.Windows.Forms.ToolStripMenuItem recent5;
-        private System.Windows.Forms.ToolStripMenuItem displayAlbumArt;
-        private System.Windows.Forms.ToolStripMenuItem displayAudioSpectrum;
         private System.Windows.Forms.ToolStripMenuItem yarg;
         //private AxWMPLib.AxWindowsMediaPlayer MediaPlayer;
         private System.Windows.Forms.ToolStripMenuItem takeScreenshot;
@@ -2478,12 +2123,8 @@ namespace cPlayer
         private ToolStripMenuItem checkForUpdates;
         private ToolStripMenuItem viewChangeLog;
         private ToolStripMenuItem sortPlaylistByModifiedDate;
-        private ToolStripMenuItem displayKaraokeMode;
         private ToolStripMenuItem skipIntroOutroSilence;
-        private ToolStripMenuItem displayBackgroundVideo;
-        private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem rebuildPlaylistMetadata;
-        private ToolStripMenuItem audioTracks;
         private ToolStripMenuItem rockSmith;
         private ToolStripMenuItem fortNite;
         private ToolStripMenuItem guitarHero;
@@ -2497,47 +2138,18 @@ namespace cPlayer
         private PictureBox picNext;
         private PictureBox picLoop;
         private PictureBox picShuffle;
-        private ToolStripMenuItem chartVertical;
         private ToolStripMenuItem equipmentToolStripMenuItem;
         private ToolStripMenuItem microphoneToolStripMenuItem;
         private ToolStripMenuItem stageKitToolStripMenuItem;
-        private ToolStripMenuItem controller1;
-        private ToolStripMenuItem controller2;
-        private ToolStripMenuItem controller3;
-        private ToolStripMenuItem controller4;
-        private ToolStripMenuItem selectBackgroundColor;
-        private ToolStripMenuItem selectLyricColor;
-        private ToolStripMenuItem selectHighlightColor;
-        private ToolStripMenuItem restoreDefaultsToolStripMenuItem;
         private ToolStripMenuItem rebuildPlaylistMetadataAudio;
-        private ToolStripMenuItem classicKaraokeMode;
-        private ToolStripMenuItem cPlayerStyle;
-        private ToolStripSeparator toolStripMenuItem13;
-        private ToolStripMenuItem selectHarmonyTextColor;
-        private ToolStripMenuItem selectHarmonyHighlightColor;
-        private ToolStripSeparator toolStripMenuItem14;
-        private ToolStripMenuItem selectHarmony3TextColor;
-        private ToolStripMenuItem selectHarmony3HighlightColor;
-        private ToolStripMenuItem rockBandKaraoke;
-        private Timer stageTimer;
         private Timer cursorTimer;
-        private ToolStripMenuItem animatedBackground;
-        private ToolStripMenuItem staticBackground;
-        private ToolStripSeparator toolStripMenuItem8;
         private ToolStripMenuItem useLEDs;
         private ToolStripMenuItem useStrobe;
         private ToolStripMenuItem useFogger;
         private Timer foggerTimer;
-        private ToolStripMenuItem staticBackground2;
-        private ToolStripSeparator toolStripMenuItem15;
-        private ToolStripMenuItem forceSoloVocals;
-        private ToolStripMenuItem forceTwoPartHarmonies;
         private ToolStripMenuItem continuousPlayback;
         private Timer stageKitTimer;
         private ToolStripMenuItem enableSecondScreen;
-        private ToolStripMenuItem changeStageBackground;
-        private ToolStripSeparator toolStripMenuItem16;
-        private ToolStripMenuItem animatedBackground2;
         private Label lblClearSearch;
         private PictureBox picFavorites;
         private PictureBox picOldies;
@@ -2550,11 +2162,7 @@ namespace cPlayer
         private PictureBox pic2020s;
         private PictureBox picSearch;
         private PictureBox picFilters;
-        private ToolStripMenuItem solidColorBackground;
         private PictureBox picSecondScreen;
-        private ToolStripMenuItem rBStyle;
-        private ToolStripMenuItem useBackgroundVideos;
-        private ToolStripMenuItem useBackgroundImages;
         private ToolStripMenuItem fullSupportToolStripMenuItem;
         private ToolStripMenuItem limitedSupportToolStripMenuItem;
         private ToolStripMenuItem bluetoothAVOffset;
@@ -2569,6 +2177,14 @@ namespace cPlayer
         private ToolStripMenuItem documentationToolStripMenuItem;
         private ToolStripMenuItem awesomenessDetection;
         private ToolStripMenuItem rb4PS4;
+        private ToolStripSeparator toolStripMenuItem10;
+        private ToolStripMenuItem enableDebugFPS;
+        private ToolStripMenuItem audioMixerTool;
+        private ToolStripMenuItem debugText;
+        private Label lblFPS;
+        private ToolStripMenuItem enableFatsCoLights;
+        private ToolStripMenuItem useFatsCoLEDs;
+        private ToolStripMenuItem useFatsCoStrobe;
     }
 }
 

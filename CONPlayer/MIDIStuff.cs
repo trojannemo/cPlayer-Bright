@@ -79,8 +79,9 @@ namespace cPlayer
 
         private List<SpecialMarker> GetSpecialMarker(IEnumerable<MidiEvent> track, int marker_note)
         {
-            return (from notes in track where notes.CommandCode == MidiCommandCode.NoteOn select (NoteOnEvent)notes into note where note.Velocity > 0 && note.NoteNumber == marker_note let time = GetRealtime(note.AbsoluteTime) let end = GetRealtime(note.AbsoluteTime + note.NoteLength) select new SpecialMarker { MarkerBegin = time, MarkerEnd = end }).ToList();
-        }
+            var markers = (from notes in track where notes.CommandCode == MidiCommandCode.NoteOn select (NoteOnEvent)notes into note where note.Velocity > 0 && note.NoteNumber == marker_note let time = GetRealtime(note.AbsoluteTime) let end = GetRealtime(note.AbsoluteTime + note.NoteLength) select new SpecialMarker { MarkerBegin = time, MarkerEnd = end }).ToList();            
+            return markers;
+        }        
 
         public bool ReadMIDIFile(string midi, int HOPOThreshhold, bool output_info = true)
         {
@@ -569,7 +570,7 @@ namespace cPlayer
                     }
                 }
             }
-            catch (Exception ex)
+            catch// (Exception ex)
             {
                 //Clipboard.SetText(ex.Message + "\n\n" + ex.StackTrace + "\n\n" + ex.StackTrace);
                 //MessageBox.Show("Error when loading with MidiProcessor:\n" + ex.Message);
@@ -959,10 +960,14 @@ namespace cPlayer
                     if (notes.CommandCode != MidiCommandCode.NoteOn) continue;
                     var note = (NoteOnEvent)notes;
                     if (note.Velocity <= 0) continue;
-                    if (!valid_notes.Contains(note.NoteNumber)) continue;                    
-                    var time = GetRealtime(note.AbsoluteTime);
+                    if (!valid_notes.Contains(note.NoteNumber)) continue;
+                    /*var time = GetRealtime(note.AbsoluteTime);
                     var length = GetRealtime(note.NoteLength);
-                    var end = Math.Round(time + length, 5);
+                    var end = Math.Round(time + length, 5);*/
+                    var time = GetRealtime(note.AbsoluteTime);
+                    var end = GetRealtime(note.AbsoluteTime + note.NoteLength);
+                    var length = Math.Round(end - time, 5);
+                    end = Math.Round(end, 5);
                     if (isDrums && MIDIInfo.DiscoFlips.Any() && (note.NoteNumber == 97 || note.NoteNumber == 98))
                     {
                         if (MIDIInfo.DiscoFlips.Where(flip => flip.MarkerBegin <= time).Any(flip => flip.MarkerEnd > time || flip.MarkerEnd == -1.0))
