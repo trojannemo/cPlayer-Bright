@@ -1,10 +1,82 @@
-cPlayer - The Rock Band Customs Player
-Created by TrojanNemo
-For instructions on how to use, click on Help -> How to Use
-© 2014-2025
--------------------
+v6.0.0
 
-CHANGE LOG:
+🎨 User Interface & Visual Overhaul
+
+Significant UI changes in my never-ending attempt to modernize cPlayer with my limited UX skills
+Added splash screen, removed the old logo image, and updated the program icon
+Significantly improved the display settings menu system — no more nested context menus; settings are now controlled through a fancy overlay form that you can adjust while the song is playing for real-time feedback
+Improved how this change log is presented to the user in-app
+Significant improvements to the Active Song Details display — looks better, allows copying song information, and lets you navigate directly to the song file on your hard drive
+
+🎮 Chart & Gameplay-Style Visuals
+
+Added RB/YARG-style visual display to show game charts in a look similar to Rock Band / YARG (with my own spin on things — this is not a game engine!)
+Backgrounds can be removed, edited, or supplemented in /res/backgrounds/
+Supported formats: .jpg or .png (recommended width: ~2000px)
+Video backgrounds are supported in .mp4 format
+Added option to display lyrics in static and karaoke modes for Rock Band-style karaoke mode
+Significantly improved performance for all display styles that show scrolling lyrics
+
+🎵 Karaoke & Lyrics Improvements
+
+Added stroke to the lyrics in Classic Karaoke mode for a more polished look
+Added option to use a solid-color background (with an elegant gradient) for Classic Karaoke mode
+Added lead-in indicator when there’s a gap between phrases so the singer knows when to start singing in Classic Karaoke mode
+Fixed behavior where Classic Karaoke mode would constantly change the background image when pausing, resuming, or changing tracks — backgrounds now only change when the song changes
+
+📁 Format & Game Support
+
+Added support for playback of Rock Band 4 PS4 files (extracted folder structure)
+Drag and drop any *_ps4 file, or perform an automatic search from the top-level folder
+Significantly improved video playback quality for Clone Hero and Phase Shift songs that include video files
+RB-style charts can now be displayed over video, along with Modern Karaoke and cPlayer Karaoke display modes
+
+🔍 Playlist, Filtering & Discovery
+
+Added Favorites feature — cPlayer now tracks how often you play songs; clicking the Favorites button shows your top 50 songs (assuming you’ve played at least 50)
+Added ability to filter by decade — click one or more decade icons to display only songs from those decades
+Added ability to filter by genre — click the Filters icon, select one or more genres, and apply filters to narrow your playlist
+Added ability to filter by instrument — select one or more required instruments and apply filters
+Note: To include harm2/harm3 parts, you’ll need to rebuild your existing playlist the first time you run this version. If you’re starting from scratch, it will just work.
+Added ability to filter by song language
+Click the Filters icon and select a language
+Important: This only works well if the song was properly authored in Magma with the correct language selected
+You’ll need to rescan and rebuild your playlist the first time you run this version to populate language data
+
+🎛️ MIDI & Audio Enhancements
+
+Added option to select No Keys and No Vocals in the MIDI options
+Previously, you had to choose either Keys or Pro Keys, and Vocals or Harmonies
+You can now opt for neither
+Added tool to allow users to add an AV offset value to compensate for Bluetooth headset latency
+Specify your Bluetooth latency and play in sync even with wireless headphones
+My Sony headphones have ~250ms latency, but you can experiment up to 3000ms in real time to find what works best for your setup
+
+🔀 Insta-Mix Improvements
+
+Improved Insta-Mix by adding genre families and allowing multiple songs from the same seed artist, even across different genres (for artists that cross genre boundaries)
+
+🔗 Nautilus Integration
+
+Added Nautilus integration
+After an upcoming Nautilus update, the Visualizer will accept input from all games supported by cPlayer
+Limited support for sending data to CON Explorer, File Analyzer, and Audio Analyzer (Rock Band / CON files only)
+
+🛠️ Fixes, Restorations & Miscellaneous
+
+Fixed broken Play, Pause, and Next buttons in the tray icon when cPlayer is minimized
+Percussion is back!
+Awesomeness Detection is back!
+Various other under-the-hood improvements
+
+----------
+
+v5.1.1
+
+- Improved highlighting behavior when using Classic Karaoke mode so it should no longer "go over" to the next syllable
+- Improved behavior so now next lyrics will appear up to 1.5 seconds earlier than you're supposed to sing them so you're not mumbling through the first word or two (this is dependent on the song)
+
+----------
 
 v5.1.0
 

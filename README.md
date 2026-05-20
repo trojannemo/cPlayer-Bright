@@ -1,6 +1,6 @@
 # 🎵 cPlayer
 
-![cPlayer](https://nemosnautilus.com/cplayer/v400bright.jpg)
+![cPlayer](https://nemosnautilus.com/cplayer/v600.png)
 
 ---
 
