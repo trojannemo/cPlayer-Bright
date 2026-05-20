@@ -1,3 +1,38 @@
+v6.1.0
+
+- major renderer overhaul to improve performance - based on the built-in FPS counter used for debugging, most modes improved from roughly 10–12 FPS to 30-40 FPS - second-screen performance now matches the built-in viewer in most non-video modes - video overlay on the second screen still carries a significant performance cost so FPS take a dive there
+- major rework of many textures and assets for what I'm hoping is a cleaner and more cohesive look
+- added new Audio Mixer feature that allows you to remix the audio on songs with isolated stems, so you can really listen to a song however you want - this replaces the old "Select tracks to play" form and the old volume control form, so it combines three things into one cool tool - thanks to raynebc for the idea
+- tweaked highway perspective for less severe angle and more consistency with actual Rock Band perspective
+- added animated track background
+- added "Focus Mode" (all black, no videos or images)
+- reworked how cPlayer detects and interacts with the original Stage Kit - now there's no noticeable performance loss and it automatically detects how many lights you have connected and automatically controls them all at the same time - meaning multiple Stage Kits are now supported - also put a lot of work into creating different patterns and beat recognition so it somewhat goes with the song's BPM - it does NOT parse the VENUE track for lighting cues however
+- added support for FatsCo Lightshow and FatsCo Strobe - I only have one of each to test with but in theory it'll work with as many as you have plugged into your computer
+- improved all karaoke modes both visually and functionally for a smoother overall experience
+- improved cPlayer Karaoke Mode with smoother text edges, text stroke rendering, and more consistent lyric highlighting
+- improved Modern Karaoke Mode highlighting to prevent spillover into the next syllable on certain songs
+- improved the loading bar animation from stepped movement to smooth animation
+- added a 5-second countdown to the Modern Karaoke loading animation, inspired by KaraFun
+- disabled the random floating music notes that appeared during loading bars - the code is still present for anyone who wants to restore it in a fork
+- fixed an issue where the ^ character could appear in lyrics for some Spanish songs, such as José José’s “Triste”
+- added support for stripping Clone Hero .chart color codes from charter names when displayed in Modern Karaoke Mode
+- fixed major issues affecting Clone Hero and YARG songs that include background videos
+- most views should now display correctly over background video playback
+- added support for detecting the video_start_time value used in Clone Hero-style charts, which had been overlooked in earlier versions
+- updated .chart to .mid conversion to include lower difficulties - this is not yet visible in cPlayer itself, but keeps the conversion logic more complete and consistent for future use
+- made change that allows decoupling of lyrics and vocals/harmony notes - this won't make a difference for Rock Band style charts but will allow for playback of another project's files i'm working on
+- improved performance of scrolling lyrics so now it's tempo aware and lyrics don't bunch up over each other
+- fixed bug where on Pro Keys sustain chords would drop the lower notes and only display the highest note
+- fixed bug where on Pro Keys sustain broken chords/arpeggios would only hold the last note of the chord/arpeggio and not all the notes in the chord
+- fixed bug where it would inflate your song play count when enabling/disabling audio tracks to play
+- fixed bug where some songs with slow tempo and long sustain notes it would prematurely show the countdown to the next playable section while still in a sustain
+- added ability to double click on the screen to make it full screen or to return it to windowed mode (functionality is not guaranteed with video mode enabled)
+- fixed the update-checking code, which was mistakenly checking against an older version update file on the server and therefore always failed
+- removed the AI-generated splash screen, which was apparently causing damage to the environment and making some users sad
+- and much more!
+
+----------
+
 v6.0.0
 
 🎨 User Interface & Visual Overhaul
