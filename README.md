@@ -152,7 +152,7 @@ A Help document is included if you’d like a more structured walkthrough.
 
 - **Language:** C#  
 - **Framework:** .NET Framework **4.8.1**  
-- **IDE:** Visual Studio **2022 Community Edition**
+- **IDE:** Visual Studio **2022 Community Edition or newer**
 
 For best results, use the same environment.
 
@@ -177,4 +177,4 @@ cPlayer has grown well beyond its original scope and continues to evolve alongsi
 
 Enjoy.
 
-*May 19, 2026*
+*July 29, 2026*
